@@ -142,7 +142,7 @@ class PyNastTests(TestCase):
         actual = pynast_seqs(input_seqs.todict().items(),\
          template_aln,\
          min_len=1000,min_pct=75.0,\
-         align_unaligned_seqs_f=pair_hmm_align_unaligned_seqs)
+         align_unaligned_seqs_f=blast_align_unaligned_seqs)
         # remove format.log as it will have already been
         # cleaned up by pynast_seq()
         self.files_to_remove = self.files_to_remove[1:]
@@ -289,7 +289,7 @@ class PyNastTests(TestCase):
          DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='input')
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=None,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
-         min_len=5,align_unaligned_seqs_f=muscle_align_unaligned_seqs)
+         min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
         # remove format.log as it will have already been cleaned up by pynast_seq()
         self.files_to_remove = self.files_to_remove[1:]
         
@@ -318,7 +318,7 @@ class PyNastTests(TestCase):
          DNA.makeSequence('ACTACCAGGGTATTAACGTACGT',Name='input')
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=None,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
-         min_len=5,align_unaligned_seqs_f=muscle_align_unaligned_seqs)
+         min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
         # remove format.log as it will have already been cleaned up by pynast_seq()
         self.files_to_remove = self.files_to_remove[1:]
         
@@ -345,7 +345,7 @@ class PyNastTests(TestCase):
          DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='input')
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=self.blast_db2,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
-         min_len=5,align_unaligned_seqs_f=muscle_align_unaligned_seqs)
+         min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
         # remove format.log as it will have already been cleaned up by pynast_seq()
         self.files_to_remove = self.files_to_remove[1:]
         
@@ -381,7 +381,7 @@ class PyNastTests(TestCase):
         actual = pynast_seq(candidate_sequence,template_aln,\
          blast_db=None,max_hits=30,\
          max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
-         align_unaligned_seqs_f=pair_hmm_align_unaligned_seqs)
+         align_unaligned_seqs_f=blast_align_unaligned_seqs)
          
         # remove format.log as it will have already been cleaned up by pynast_seq()
         self.files_to_remove = self.files_to_remove[1:]
@@ -434,7 +434,7 @@ class PyNastTests(TestCase):
             self.assertRaises(ValueError,pynast_seq,cs,db_aln2,\
              blast_db=None,max_hits=1,max_e_value=1e-1,\
              addl_blast_params={},min_pct=75.0,min_len=5,\
-             align_unaligned_seqs_f=muscle_align_unaligned_seqs)
+             align_unaligned_seqs_f=blast_align_unaligned_seqs)
              
             seq = seq.replace('-','').replace('.','')
             # no error when no gaps in seq
@@ -442,7 +442,7 @@ class PyNastTests(TestCase):
             pynast_seq(cs,db_aln2,\
              blast_db=None,max_hits=1,max_e_value=1e-1,\
              addl_blast_params={},min_pct=75.0,min_len=5,\
-             align_unaligned_seqs_f=muscle_align_unaligned_seqs)
+             align_unaligned_seqs_f=blast_align_unaligned_seqs)
              
         # remove format.log as it will have already been cleaned up 
         # by pynast_seq()
