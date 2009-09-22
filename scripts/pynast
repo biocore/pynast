@@ -1,0 +1,180 @@
+#!/usr/bin/env python
+
+from optparse import OptionParser
+from os.path import exists, splitext
+from cogent import LoadSeqs, DNA
+from cogent.core.alignment import DenseAlignment
+from cogent.parse.fasta import MinimalFastaParser
+from pynast.util import pynast_seqs, pairwise_alignment_methods,\
+    null_status_callback_f
+from pynast.logger import NastLogger
+
+__author__ = "Greg Caporaso"
+__copyright__ = "Copyright 2009, the PyNAST project"
+__credits__ = ["Greg Caporaso", "Kyle Bittinger"]
+__license__ = "GPL"
+__version__ = "0.1"
+__maintainer__ = "Greg Caporaso"
+__email__ = "gregcaporaso@gmail.com"
+__status__ = "Beta"
+
+
+pynast_usage_string = """usage: %prog [options] {-i input_fp -t template_fp}
+
+[] indicates optional input (order unimportant)
+{} indicates required input (order unimportant)
+
+Example usage:
+ %prog -i my_input.fasta -t my_template.fasta
+"""
+
+def parse_command_line_parameters():
+    """ Parses command line arguments """
+    usage = pynast_usage_string
+    version = 'Version: %prog 0.1'
+    parser = OptionParser(usage=usage, version=version)
+
+    parser.add_option('-t','--template_fp',action='store',\
+          type='string',help='path to template '+\
+          'alignment file [REQUIRED]')
+    parser.add_option('-i','--input_fp',action='store',\
+          type='string',help='path to input '+\
+          'fasta file [REQUIRED]')
+
+    parser.add_option('-v','--verbose',action='store_true',\
+        dest='verbose',default=False,\
+        help='Print status and other information '+\
+        'during execution [default: %default]')
+    parser.add_option('-p','--min_pct_id',action='store',\
+          type='float',default=75.0,help='minimum percent sequence '+\
+          ' identity to consider a sequence a match [default: %default]')
+    parser.add_option('-e','--max_e_value',action='store',\
+          type='float',default=1e-1,help='max_e_value to consider '+\
+          'a blast hit [default: %default]')
+    parser.add_option('-l','--min_len',action='store',\
+          type='int',default=1000,help='minimum sequence length '+\
+          'to include in NAST alignment [default: %default]')
+    parser.add_option('-m','--pairwise_alignment_method',action='store',\
+          type='string',default='blast',help='method '+\
+          'for performing pairwise alignment ' +\
+          '[default: %default]')
+          
+    parser.add_option('-d','--blast_db',action='store',\
+          type='string',dest='blast_db',\
+          help='database to blast against ' +\
+          '[default: Constructed on-the-fly from degapped template alignment]')
+    parser.add_option('-a','--fasta_out_fp',action='store',\
+          type='string',dest='fasta_out_fp',help='path to store '+\
+          'resulting alignment file ' +\
+          '[default: derived from input filepath]')
+    parser.add_option('-g','--log_fp',action='store',\
+          type='string',dest='log_fp',help='path to store '+\
+          'log file ' +\
+          '[default: derived from input filepath]')
+    parser.add_option('-f','--failure_fp',action='store',\
+          type='string',dest='failure_fp',help='path to store '+\
+          'file of seqs which fail to align ' +\
+          '[default: derived from input filepath]')
+          
+    opts,args = parser.parse_args()
+    
+    if args:
+        parser.error('All parameters must be passed as options.'+\
+        ' Offending parameter(s):\n %s' % '\n '.join(args))
+
+    required_options = ['input_fp','template_fp']    
+    for option in required_options:
+        if eval('opts.%s' % option) == None:
+            parser.error('Required option --%s omitted.' % option) 
+        
+    pairwise_alignment_methods = {}.fromkeys([\
+     'muscle','mafft','clustal','pair_hmm','blast'])
+    if opts.pairwise_alignment_method not in pairwise_alignment_methods:
+        parser.error(\
+         'Unknown pairwise alignment method. Available options are:\n %s' %\
+         ' '.join(pairwise_alignment_methods))
+         
+    if not exists(opts.template_fp):
+        parser.error(\
+         'Template filepath does not exist:\n %s\n Pass a valid one via -t.'%\
+         opts.template_fp)
+         
+    if not exists(opts.input_fp):
+        parser.error(\
+         'Input filepath does not exist:\n %s\n Pass a valid one via -i.'%\
+         opts.input_fp)
+
+    return opts,args
+
+class CommandLineStatusTracker(object):
+    completed_seqs_count = 0
+    
+    def __init__(self,status_update_increments=100):
+        self.status_update_increments = status_update_increments
+        
+    def update_completed_seqs_count(self,x):
+        self.completed_seqs_count += 1
+        if self.completed_seqs_count % self.status_update_increments == 0:
+            print '%d sequences completed.' % self.completed_seqs_count
+
+def main():
+    opts, args = parse_command_line_parameters()
+    verbose = opts.verbose
+    
+    seqs_fp = opts.input_fp
+    min_pct_id = opts.min_pct_id
+    min_len = opts.min_len
+    template_fp = opts.template_fp
+    
+    # Set up status tracking if verbose
+    if verbose:
+        status_tracker = CommandLineStatusTracker()
+        status_tracker_callback = status_tracker.update_completed_seqs_count
+    else:
+        status_tracker_callback = null_status_callback_f
+        
+    align_unaligned_seqs_f =\
+     pairwise_alignment_methods[opts.pairwise_alignment_method]
+
+    # If necessary, derive default locations for alignment, log, and
+    # failure files by removing the file extension from the sequences
+    # filepath, seqs_fp.
+    seqs_fp_base = splitext(seqs_fp)[0]
+    aln_fp = opts.fasta_out_fp or (seqs_fp_base + '_pynast_aligned.fasta')
+    log_fp = opts.log_fp or (seqs_fp_base + '_pynast_log.txt') 
+    fail_fp = opts.failure_fp or (seqs_fp_base + '_pynast_fail.fasta')
+
+    if verbose:
+        print "Input file              : %s" % seqs_fp
+        print "Template alignment      : %s" % template_fp
+        print "Output alignment        : %s" % aln_fp
+        print "Log file                : %s" % log_fp
+        print "Failure file            : %s" % fail_fp
+
+    logger = NastLogger(log_fp)
+
+    candidate_sequences = MinimalFastaParser(open(seqs_fp))
+    template_alignment = LoadSeqs(template_fp,moltype=DNA,\
+     format='fasta',aligned=DenseAlignment)
+    
+    aligned_sequences, failed_to_align = pynast_seqs(\
+      candidate_sequences,\
+      template_alignment,\
+      blast_db=opts.blast_db,\
+      max_hits=30,\
+      max_e_value=opts.max_e_value,\
+      addl_blast_params={},\
+      min_pct=min_pct_id,\
+      min_len=min_len,\
+      align_unaligned_seqs_f=align_unaligned_seqs_f,\
+      logger=logger,
+      status_callback_f=status_tracker_callback)
+    
+    for fp,seqs in [(aln_fp,aligned_sequences),(fail_fp,failed_to_align)]:
+        f = open(fp,'w')
+        for seq in seqs:
+            f.write('>%s\n%s\n' % (seq.Name,str(seq)))
+        f.close()
+
+if __name__ == "__main__":
+    main()
