@@ -657,6 +657,106 @@ def pynast_seq(candidate_sequence,template_alignment,\
     result = DNA.makeSequence(result,Name=candidate_seq_id)
     return template_seq_id, result
 
+def ipynast_seqs(candidate_sequences,template_alignment,\
+    blast_db=None,max_hits=30,\
+    max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
+    align_unaligned_seqs_f=blast_align_unaligned_seqs, log_fp=None,\
+    logger=None):
+    """Iterator that yields results of pynast_seq on candidate_sequences
+    
+    This function yields the sequence and exit status of the alignment step,
+     as (sequence, exit status) tuples.
+     Status values can be:
+       0 : indicates a sucessful alignment, in which case the sequence will be
+            aligned
+       1 : indicates unsucessful alignment (i.e., an UnalignableSequenceError
+            was caught), in which case the sequence will be unaligned
+            
+     Statuses are returned as ints (rather than bools) to support new statuses
+      in the future. 0 is used to indicate success because there is only one
+      way the call can result in a sucessful alignment, but we may want to
+      allow for alternate failure types in the future.
+     All sequences are returned as DNA sequence objects.
+    
+    candidate_sequences
+        an iterable object (e.g., a list) containing tuples of
+        (seq_id, sequence) pairs (e.g., as returned by MinimalFastaParser)
+    template_alignment
+        a PyCogent alignment object containing the template alignment
+    blast_db
+      Database to BLAST against (default: derived from template)
+    max_hits
+      Maximum number of BLAST hits to return (passed to 
+      cogent.app.blast.blastn())
+    max_e_value
+      expectation value passed to BLAST application controller
+    addl_blast_params
+      additional parameters to pass to the BLAST application controller 
+      (see documentation for cogent.app.blast.blastn()) 
+    min_pct
+      minimum % identity for BLAST hit
+    min_len
+      minimum length of match for BLAST hit      
+    align_unaligned_seqs_f
+      Function to align sequences. Must be of the form:
+       align_unaligned_seqs(seqs, moltype, params=None)
+       see cogent.app.muscle.align_unaligned_seqs
+    log_fp
+      Optional path to log file
+    logger
+      Optional NastLogger object, takes precedence over log_fp
+    """
+    
+    # Set up logging.  NastLogger object takes precedence over log
+    # file path, if both are provided.
+    if logger is not None:
+        logger = logger
+    elif log_fp is not None:
+        logger = NastLogger(log_fp)
+    else:
+        logger = NastLogger()
+    
+    # if a blast database was not passed in, create one from the
+    # (degapped) template alignment
+    if not blast_db:
+        blast_db, db_files_to_remove = \
+         build_temp_blast_db_from_seqs(template_alignment)
+    else:
+        db_files_to_remove = []
+        
+    # cache a copy of the degapped template alignment
+    degapped_template_alignment = template_alignment.degap()
+    
+    # iterate over the candidate sequences
+    for seq_id, seq in candidate_sequences:
+        candidate_sequence = DNA.makeSequence(seq,Name=seq_id)
+        try:
+            # align the candidate sequence to the template alignment
+            # and store the best blast hit id and aligned sequence
+            template_seq_id, aligned_seq = \
+             pynast_seq(candidate_sequence,template_alignment,\
+             degapped_template_alignment=degapped_template_alignment,\
+             blast_db=blast_db,max_hits=max_hits,max_e_value=max_e_value,\
+             addl_blast_params=addl_blast_params,min_pct=min_pct,\
+             min_len=min_len,align_unaligned_seqs_f=align_unaligned_seqs_f,\
+             logger=logger)
+            yield aligned_seq, 0
+            
+        except UnalignableSequenceError,e:
+            # if the sequence could not be aligned, store the sequence
+            # in the failures list
+            yield DNA.makeSequence(seq,Name=seq_id), 1
+            logger.record(seq_id, len(seq), e)
+            
+        except ValueError,e:
+            # clean-up temporary blast database files if any were created
+            remove_files(db_files_to_remove,error_on_missing=False)
+            # Re-raise the error
+            raise ValueError, e
+
+    # clean-up temporary blast database files if any were created
+    remove_files(db_files_to_remove,error_on_missing=False)
+
 def null_status_callback_f(x):
     """Dummy function to pass as default status_callback_f"""
     pass
@@ -665,12 +765,17 @@ def pynast_seqs(candidate_sequences,template_alignment,blast_db=None,max_hits=30
     max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
     align_unaligned_seqs_f=blast_align_unaligned_seqs, log_fp=None,\
     logger=None, status_callback_f=null_status_callback_f):
-    """Runs the NAST algorithm over a list of sequences.
+    """Function which runs pynast_seq on candidate_sequences.
     
-    Handles both file I/O and logging for the task of sequence
-    alignment.  A collection of template sequences must be passed as
-    the second argument.  Optional keyword arguments:
+    Results are returned as a tuple of lists:
+     (aligned_sequences, failed_to_align_sequences)
+     where all sequences are DNA sequence objects.
     
+    candidate_sequences
+        an iterable object (e.g., a list) containing tuples of
+        (seq_id, sequence) pairs (e.g., as returned by MinimalFastaParser)
+    template_alignment
+        a PyCogent alignment object containing the template alignment
     blast_db
       Database to BLAST against (default: derived from template)
     max_hits
@@ -695,74 +800,30 @@ def pynast_seqs(candidate_sequences,template_alignment,blast_db=None,max_hits=30
       Optional NastLogger object, takes precedence over log_fp
      status_callback_f:
       Callback function to provide status updates to callers of pynast_seqs.
-      This function must take a single parameter. An example usage is via the
-      StatusTracker object used by pynast.util.main. This is also used by the
-      GUI to update the status bar.
+      This function must take a single parameter.
     """
-    
-    # Set up logging.  NastLogger object takes precedence over log
-    # file path, if both are provided.
-    if logger is not None:
-        logger = logger
-    elif log_fp is not None:
-        logger = NastLogger(log_fp)
-    else:
-        logger = NastLogger()
 
     # create lists to keep track of the aligned candidate sequences 
     # and the sequences which fail to align
     aligned = []
     failed_to_align = []
     
-    # if a blast database was not passed in, create one from the
-    # (degapped) template alignment
-    if not blast_db:
-        blast_db, db_files_to_remove = \
-         build_temp_blast_db_from_seqs(template_alignment)
-    else:
-        db_files_to_remove = []
-        
-    # cache a copy of the degapped template alignment
-    degapped_template_alignment = template_alignment.degap()
+    pynast_iterator = ipynast_seqs(\
+     candidate_sequences,template_alignment,blast_db=blast_db,\
+     max_hits=max_hits,max_e_value=max_e_value,\
+     addl_blast_params=addl_blast_params,min_pct=min_pct,min_len=min_len,\
+     align_unaligned_seqs_f=align_unaligned_seqs_f, log_fp=log_fp,\
+     logger=logger)
     
-    ## TODO: This needs to be reimplemented as an iterator to better support
-    ## large input sets. Need to figure out how to do this while still splitting
-    ## failures from aligned sequences. 
+    for seq, status in pynast_iterator:
+        if status == 0:
+            aligned.append(seq)
+            status_callback_f(seq)
+        else:
+            failed_to_align.append(seq)
+            status_callback_f(seq)
     
-    # iterate over the candidate sequences
-    for seq_id, seq in candidate_sequences:
-        candidate_sequence = DNA.makeSequence(seq,Name=seq_id)
-        try:
-            # align the candidate sequence to the template alignment
-            # and store the best blast hit id and aligned sequence
-            template_seq_id, aligned_seq = \
-             pynast_seq(candidate_sequence,template_alignment,\
-             degapped_template_alignment=degapped_template_alignment,\
-             blast_db=blast_db,max_hits=max_hits,max_e_value=max_e_value,\
-             addl_blast_params=addl_blast_params,min_pct=min_pct,\
-             min_len=min_len,align_unaligned_seqs_f=align_unaligned_seqs_f,\
-             logger=logger)
-            aligned.append(aligned_seq)
-            status_callback_f((seq_id,template_seq_id))
-            
-        except UnalignableSequenceError,e:
-            # if the sequence could not be aligned, store the sequence
-            # in the failures list
-            failed_to_align.append(DNA.makeSequence(seq,Name=seq_id))
-            logger.record(seq_id, len(seq), e)
-            status_callback_f((seq_id,None))
-            
-        except ValueError,e:
-            # clean-up temporary blast database files if any were created
-            remove_files(db_files_to_remove,error_on_missing=False)
-            # Re-raise the error
-            raise ValueError, e
-
-    # clean-up temporary blast database files if any were created
-    remove_files(db_files_to_remove,error_on_missing=False)
-    # return the aligned sequence list and the failed to align list
     return aligned, failed_to_align
-
 
 pairwise_alignment_methods = {\
      'muscle':muscle_align_unaligned_seqs,\

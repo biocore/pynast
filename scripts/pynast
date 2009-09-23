@@ -5,7 +5,7 @@ from os.path import exists, splitext
 from cogent import LoadSeqs, DNA
 from cogent.core.alignment import DenseAlignment
 from cogent.parse.fasta import MinimalFastaParser
-from pynast.util import pynast_seqs, pairwise_alignment_methods,\
+from pynast.util import ipynast_seqs, pairwise_alignment_methods,\
     null_status_callback_f
 from pynast.logger import NastLogger
 
@@ -106,17 +106,6 @@ def parse_command_line_parameters():
 
     return opts,args
 
-class CommandLineStatusTracker(object):
-    completed_seqs_count = 0
-    
-    def __init__(self,status_update_increments=100):
-        self.status_update_increments = status_update_increments
-        
-    def update_completed_seqs_count(self,x):
-        self.completed_seqs_count += 1
-        if self.completed_seqs_count % self.status_update_increments == 0:
-            print '%d sequences completed.' % self.completed_seqs_count
-
 def main():
     opts, args = parse_command_line_parameters()
     verbose = opts.verbose
@@ -125,14 +114,7 @@ def main():
     min_pct_id = opts.min_pct_id
     min_len = opts.min_len
     template_fp = opts.template_fp
-    
-    # Set up status tracking if verbose
-    if verbose:
-        status_tracker = CommandLineStatusTracker()
-        status_tracker_callback = status_tracker.update_completed_seqs_count
-    else:
-        status_tracker_callback = null_status_callback_f
-        
+
     align_unaligned_seqs_f =\
      pairwise_alignment_methods[opts.pairwise_alignment_method]
 
@@ -157,7 +139,7 @@ def main():
     template_alignment = LoadSeqs(template_fp,moltype=DNA,\
      format='fasta',aligned=DenseAlignment)
     
-    aligned_sequences, failed_to_align = pynast_seqs(\
+    pynast_iterator = ipynast_seqs(\
       candidate_sequences,\
       template_alignment,\
       blast_db=opts.blast_db,\
@@ -167,14 +149,26 @@ def main():
       min_pct=min_pct_id,\
       min_len=min_len,\
       align_unaligned_seqs_f=align_unaligned_seqs_f,\
-      logger=logger,
-      status_callback_f=status_tracker_callback)
+      logger=logger)
     
-    for fp,seqs in [(aln_fp,aligned_sequences),(fail_fp,failed_to_align)]:
-        f = open(fp,'w')
-        for seq in seqs:
-            f.write('>%s\n%s\n' % (seq.Name,str(seq)))
-        f.close()
+    aln_file = open(aln_fp,'w')
+    fail_file = open(fail_fp,'w')
+    completed_seq_count = 0
+    
+    for seq, status in pynast_iterator:
+        if status == 0: 
+            aln_file.write('>%s\n%s\n' % (seq.Name,str(seq)))
+        else:
+            fail_file.write('>%s\n%s\n' % (seq.Name,str(seq)))
+        
+        # Update completed sequence count, and print status message
+        # when requested by user.
+        completed_seq_count += 1
+        if verbose and completed_seq_count % 100 == 0:
+            print '%d sequences completed.' % completed_seq_count
+
+    aln_file.close()
+    fail_file.close()
 
 if __name__ == "__main__":
     main()
