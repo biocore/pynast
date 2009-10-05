@@ -10,6 +10,8 @@ from cogent.util.misc import remove_files
 from cogent.core.alignment import SequenceCollection, DenseAlignment
 from cogent.align.align import make_dna_scoring_dict, global_pairwise
 from cogent.app.blast import blastn
+from cogent.app.formatdb import build_blast_db_from_seqs, \
+ build_blast_db_from_fasta_path
 from cogent.app.muscle import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
@@ -499,72 +501,6 @@ def introduce_terminal_gaps(template,aligned_candidate):
      '-'*five_prime_gaps,\
      str(aligned_candidate),\
      '-'*three_prime_gaps]),Name=aligned_candidate.Name)
-
-def build_temp_blast_db_from_alignment_fp(aln_filepath,\
-    formatdb_executable='formatdb'): 
-    # REPLACE WITH FUNCTIONALITY FROM NEW FORMAT DB APPC
-    
-    # get a temp file name for the blast database
-    blast_db = get_tmp_filename(tmp_dir='/tmp/',\
-     prefix='Blast_temp_db_',suffix='')
-    # write the degapped alignment to file
-    f = open(blast_db,'w')
-    for seq_id, seq in MinimalFastaParser(open(aln_filepath)):
-        f.write('>%s\n%s\n' % (seq_id, seq.replace('-','')))
-    f.close()
-    # create the blast db
-    if system('%s -i %s -o T -p F' % (formatdb_executable,blast_db)) != 0:
-        # WHAT TYPE OF ERROR SHOULD BE RAISED IF THE BLAST_DB
-        # BUILD FAILS?
-        raise RuntimeError,\
-         "Creation of temporary Blast database failed."
-    
-    # create a list of the files to clean-up
-    db_files_to_remove = ['formatdb.log'] + glob(blast_db + '*')
-    
-    return blast_db, db_files_to_remove
-    
-def build_temp_blast_db(seq_filepath,\
-    formatdb_executable='formatdb'): 
-    # REPLACE WITH FUNCTIONALITY FROM NEW FORMAT DB APPC
-    
-    # get a temp file name for the blast database
-    blast_db = get_tmp_filename(tmp_dir='/tmp/',\
-     prefix='Blast_temp_db_',suffix='')
-    # copy the reference seqs file so formatdb can safely
-    # create files based on the filename (without the danger of
-    # overwriting existing files)
-    copy_file(seq_filepath,blast_db)    
-    # create the blast db
-    if system('%s -i %s -o T -p F' % (formatdb_executable,blast_db)) != 0:
-        # WHAT TYPE OF ERROR SHOULD BE RAISED IF THE BLAST_DB
-        # BUILD FAILS?
-        raise RuntimeError,\
-         "Creation of temporary Blast database failed."
-    
-    # create a list of the files to clean-up
-    db_files_to_remove = ['formatdb.log'] + glob(blast_db + '*')
-    
-    return blast_db, db_files_to_remove
-    
-def build_temp_blast_db_from_seqs(seqs,\
-    formatdb_executable='formatdb'):
-    # REPLACE WITH FUNCTIONALITY FROM NEW FORMAT DB APPC
-    
-    blast_db = get_tmp_filename(tmp_dir='/tmp/',\
-     prefix='Blast_temp_db_',suffix='')
-    blast_db_fasta = blast_db + '.fasta'
-    
-    f = open(blast_db_fasta,'w')
-    f.write(seqs.degap().toFasta())
-    f.close() 
-    
-    blast_db, db_files_to_remove = \
-     build_temp_blast_db(blast_db_fasta,formatdb_executable)
-    db_files_to_remove.append(blast_db_fasta)
-    
-    return blast_db, db_files_to_remove
-    
     
 def pynast_seq(candidate_sequence,template_alignment,\
     degapped_template_alignment=None,blast_db=None,max_hits=30,\
@@ -593,7 +529,7 @@ def pynast_seq(candidate_sequence,template_alignment,\
     # template alignment
     if not blast_db:
         blast_db, db_files_to_remove = \
-         build_temp_blast_db_from_seqs(template_alignment)
+         build_blast_db_from_seqs(template_alignment,output_dir='/tmp/')
     else:
         db_files_to_remove = []
         
@@ -720,7 +656,7 @@ def ipynast_seqs(candidate_sequences,template_alignment,\
     # (degapped) template alignment
     if not blast_db:
         blast_db, db_files_to_remove = \
-         build_temp_blast_db_from_seqs(template_alignment)
+         build_blast_db_from_seqs(template_alignment,output_dir='/tmp/')
     else:
         db_files_to_remove = []
         

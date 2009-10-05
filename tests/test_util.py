@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from os import remove
 import sys
 from cogent import LoadSeqs, DNA
 from cogent.util.misc import remove_files
 from cogent.core.alignment import DenseAlignment
 from cogent.app.util import get_tmp_filename
+from cogent.app.formatdb import build_blast_db_from_seqs, \
+ build_blast_db_from_fasta_path
 from cogent.app.muscle import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
@@ -14,7 +15,7 @@ from cogent.parse.fasta import MinimalFastaParser
 from cogent.util.unit_test import TestCase, main
 from pynast.util import blast_sequence, process_blast_result,\
  align_two_seqs, reintroduce_template_spacing, adjust_alignment,\
- nearest_gap, build_temp_blast_db, build_temp_blast_db_from_seqs, pynast_seq,\
+ nearest_gap, pynast_seq,\
  introduce_terminal_gaps, UnalignableSequenceError, pynast_seqs,\
  pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs
 from pynast.logger import NastLogger
@@ -48,7 +49,7 @@ class PyNastTests(TestCase):
         self.input_seqs_gaps = input_seqs_gaps.split('\n')
         
         self.blast_db2, self.files_to_remove = \
-         build_temp_blast_db_from_seqs(db_aln2)
+         build_blast_db_from_seqs(db_aln2,output_dir='/tmp/')
          
         self.log_filename = \
             get_tmp_filename(prefix='PyNastTest', suffix='.log')
@@ -70,9 +71,6 @@ class PyNastTests(TestCase):
                 ('2','AA')]
         # testing for side effect - do not collect return value
         pynast_seqs(seqs, db_aln2, min_len=5, logger=logger)
-        # remove format.log as it will have already been 
-        # cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
 
         log_file = open(self.log_filename, 'r')
         header = log_file.readline()
@@ -88,9 +86,6 @@ class PyNastTests(TestCase):
         seqs = [('1','ACGTACGTTAATACCCTGGTAGT')]
         # testing for side effect - do not collect return value
         pynast_seqs(seqs, db_aln2, min_len=500, logger=logger)
-        # remove format.log as it will have already been 
-        # cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
 
         log_file = open(self.log_filename, 'r')
         header = log_file.readline()
@@ -107,9 +102,6 @@ class PyNastTests(TestCase):
          MinimalFastaParser(self.full_length_test1_input_seqs_lines),\
          self.full_length_test1_template_aln,\
          min_len=1000,min_pct=75.0)
-        # remove format.log as it will have already been
-        # cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
         
         # build the expected object - a list of sequence objects which 
         # failed to align
@@ -143,9 +135,6 @@ class PyNastTests(TestCase):
          template_aln,\
          min_len=1000,min_pct=75.0,\
          align_unaligned_seqs_f=blast_align_unaligned_seqs)
-        # remove format.log as it will have already been
-        # cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
         
         # Load the result into an alignment object
         actual_aln = LoadSeqs(data=actual[0],moltype=DNA,\
@@ -198,10 +187,7 @@ class PyNastTests(TestCase):
         for n in expected_aln.Names:
             expected_seqs.append(\
              DNA.makeSequence(str(expected_aln.getGappedSeq(n))))
-        
-        # remove format.log as it will have already been
-        # cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
+             
         actual_aln = LoadSeqs(data=actual[0],moltype=DNA,\
          aligned=DenseAlignment)    
                 
@@ -220,9 +206,6 @@ class PyNastTests(TestCase):
          MinimalFastaParser(self.input_seqs_gaps),\
          self.full_length_test1_template_aln,\
          min_len=1000,min_pct=75.0)
-        # remove format.log as it will have already been
-        # cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
         
     def test_pynast_seqs_simple(self):
         """pynast_seqs: fns with simple test data
@@ -249,8 +232,6 @@ class PyNastTests(TestCase):
          DNA.makeSequence('AA',Name='3')]
         
         actual = pynast_seqs(candidate_seqs,db_aln2,min_len=5000,min_pct=75.0)
-        # remove format.log as it will have already been cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
         
         self.assertEqual(actual,(expected_aln,expected_fail))
 
@@ -277,8 +258,6 @@ class PyNastTests(TestCase):
         self.assertEqual(st.completed_seqs_count,0)
         results = pynast_seqs(candidate_seqs,db_aln2,min_len=5,min_pct=75.0,\
          status_callback_f=st.update_completed_seqs_count)
-        # remove format.log as it will have already been cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
         
         self.assertEqual(st.completed_seqs_count,3)
 
@@ -290,8 +269,6 @@ class PyNastTests(TestCase):
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=None,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
          min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
-        # remove format.log as it will have already been cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
         
         # check individual components of result object
         expected_template_hit = '5'
@@ -319,8 +296,6 @@ class PyNastTests(TestCase):
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=None,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
          min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
-        # remove format.log as it will have already been cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
         
         # check individual components of result object
         expected_template_hit = '5'
@@ -346,8 +321,6 @@ class PyNastTests(TestCase):
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=self.blast_db2,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
          min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
-        # remove format.log as it will have already been cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
         
         # check individual components of result object
         expected_template_hit = '5'
@@ -382,9 +355,6 @@ class PyNastTests(TestCase):
          blast_db=None,max_hits=30,\
          max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
          align_unaligned_seqs_f=blast_align_unaligned_seqs)
-         
-        # remove format.log as it will have already been cleaned up by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
          
         # put handles on result parts for easier access
         actual_seq_id, actual_seq = map(str,actual)
@@ -444,9 +414,6 @@ class PyNastTests(TestCase):
              addl_blast_params={},min_pct=75.0,min_len=5,\
              align_unaligned_seqs_f=blast_align_unaligned_seqs)
              
-        # remove format.log as it will have already been cleaned up 
-        # by pynast_seq()
-        self.files_to_remove = self.files_to_remove[1:]
 
             
     def test_blast_sequence_errors_on_missing_blast_db(self):
