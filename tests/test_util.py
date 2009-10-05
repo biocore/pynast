@@ -338,6 +338,29 @@ class PyNastTests(TestCase):
         self.assertEqual(actual,expected)
         
     
+    def test_pynast_seq_10116(self):
+        """pynast_seq: real seq that introduces 5' gaps in pw aligned template
+        
+            The pairwise alignment of this sequence to the template alignment
+             results in five prime gaps in the pairwise aligned template. This
+             caused a bug in early versions of PyNAST because too many terminal
+             gaps were being reintroduced. Therefore keeping this as a real
+             test case, essentially of the introduce_terminal_gaps 
+             functionality.
+        
+        """
+        candidate_sequence =\
+         LoadSeqs(data=input_seq_10116.split('\n'),moltype=DNA).\
+         getSeq('10116')
+        template_aln = self.full_length_test1_template_aln
+        
+        actual = pynast_seq(candidate_sequence,template_aln,\
+         blast_db=None,max_hits=30,\
+         max_e_value=1e-1,addl_blast_params={},min_pct=70.0,min_len=150,\
+         align_unaligned_seqs_f=blast_align_unaligned_seqs)
+         
+        self.assertEqual(len(actual[1]),len(template_aln))
+    
         
     def test_pynast_seq_14990(self):
         """pynast_seq: aligning handles input seq longer than best template seq
@@ -1104,7 +1127,7 @@ class PyNastTests(TestCase):
          template,pw_aligned_template,pw_aligned_candidate)
         self.assertEqual(actual,\
          (template_expected,candidate_expected,new_gaps_expected))   
-         
+        
     def test_adjust_alignment_paper_example(self):
         """ adjust_alignment: example from DeSantis2006
         """
@@ -1153,6 +1176,7 @@ class PyNastTests(TestCase):
         c_expected = DNA.makeSequence('AATCCTTAAAAA')
         self.assertEqual(adjust_alignment(t,c,new_gaps),\
          (t_expected,c_expected))
+        
          
     def test_adjust_alignment_multiple_adjancent_new_gaps(self):
         """ adjust_alignmnet: multiple adjacent new gaps handled as expected
@@ -1249,50 +1273,118 @@ class PyNastTests(TestCase):
         seq = 'AAA'
         self.assertRaises(UnalignableSequenceError,nearest_gap,seq,1)
         
-    def test_introduce_terminal_gaps(self):
+    def test_introduce_terminal_gaps_simple(self):
         """introduce_terminal_gaps: functions as expected
         """
         # no terminal gaps
         template = DNA.makeSequence('AAA',Name='t')
-        aligned_candidate = DNA.makeSequence('AAA',Name='c')
-        actual = introduce_terminal_gaps(template,aligned_candidate)
-        expected = DNA.makeSequence('AAA',Name='c')
+        aligned_candidate = DNA.makeSequence('AAA',Name='ac')
+        aligned_template = DNA.makeSequence('AAA',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('AAA',Name='ac')
         self.assertEqual(actual,expected)
         
         # 5' terminal gaps only
         template = DNA.makeSequence('-AAA',Name='t')
-        aligned_candidate = DNA.makeSequence('AAA',Name='c')
-        actual = introduce_terminal_gaps(template,aligned_candidate)
-        expected = DNA.makeSequence('-AAA',Name='c')
+        aligned_candidate = DNA.makeSequence('AAA',Name='ac')
+        aligned_template = DNA.makeSequence('AAA',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('-AAA',Name='ac')
         self.assertEqual(actual,expected)
         
         template = DNA.makeSequence('-----AAA',Name='t')
-        aligned_candidate = DNA.makeSequence('AAA',Name='c')
-        actual = introduce_terminal_gaps(template,aligned_candidate)
-        expected = DNA.makeSequence('-----AAA',Name='c')
+        aligned_candidate = DNA.makeSequence('AAA',Name='ac')
+        aligned_template = DNA.makeSequence('AAA',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('-----AAA',Name='ac')
         self.assertEqual(actual,expected)
         
         # 3' terminal gaps only
         template = DNA.makeSequence('ACG--',Name='t')
-        aligned_candidate = DNA.makeSequence('ACG',Name='c')
-        actual = introduce_terminal_gaps(template,aligned_candidate)
-        expected = DNA.makeSequence('ACG--',Name='c')
+        aligned_candidate = DNA.makeSequence('ACG',Name='ac')
+        aligned_template = DNA.makeSequence('AAA',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('ACG--',Name='ac')
         self.assertEqual(actual,expected)
         
         template = DNA.makeSequence('ACCTG----',Name='t')
-        aligned_candidate = DNA.makeSequence('ACGGG',Name='c')
-        actual = introduce_terminal_gaps(template,aligned_candidate)
-        expected = DNA.makeSequence('ACGGG----',Name='c')
+        aligned_candidate = DNA.makeSequence('ACGGG',Name='ac')
+        aligned_template = DNA.makeSequence('ACCTG',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('ACGGG----',Name='ac')
         self.assertEqual(actual,expected)
         
         # 5' and 3' terminal gaps
         template = DNA.makeSequence('---AC--CTG----',Name='t')
-        aligned_candidate = DNA.makeSequence('ACTTGGG',Name='c')
-        actual = introduce_terminal_gaps(template,aligned_candidate)
-        expected = DNA.makeSequence('---ACTTGGG----',Name='c')
+        aligned_candidate = DNA.makeSequence('ACTTGGG',Name='ac')
+        aligned_template = DNA.makeSequence( 'AC--CTG',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('---ACTTGGG----',Name='ac')
         self.assertEqual(actual,expected)
-
-
+        
+    def test_introduce_terminal_gaps_existing_terminal_template_gaps(self):
+        """introduce_terminal_gaps: aligned template already has terminal gaps
+        """
+        
+        # one 5' gap in aligned_template
+        template = DNA.makeSequence('---AAA',Name='t')
+        aligned_candidate = DNA.makeSequence('AAAA',Name='ac')
+        aligned_template = DNA.makeSequence('-AAA',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('--AAAA',Name='ac')
+        self.assertEqual(actual,expected)
+        
+        # multiple 5' gaps in aligned_template
+        template = DNA.makeSequence('---AAA',Name='t')
+        aligned_candidate = DNA.makeSequence('AAAAAA',Name='ac')
+        aligned_template = DNA.makeSequence( '---AAA',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('AAAAAA',Name='ac')
+        self.assertEqual(actual,expected)
+        
+        # one 3' gap in aligned_template
+        template = DNA.makeSequence('AAA---',Name='t')
+        aligned_candidate = DNA.makeSequence('AAAA',Name='ac')
+        aligned_template = DNA.makeSequence( 'AAA-',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('AAAA--',Name='ac')
+        self.assertEqual(actual,expected)
+        
+        # multiple 3' gaps in aligned_template
+        template = DNA.makeSequence('AAA---',Name='t')
+        aligned_candidate = DNA.makeSequence('AAAAAA',Name='ac')
+        aligned_template = DNA.makeSequence( 'AAA---',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('AAAAAA',Name='ac')
+        self.assertEqual(actual,expected)
+        
+        # 5 prime, 3 prime gaps in aligned_template
+        template = DNA.makeSequence('--CAA---',Name='t')
+        aligned_candidate = DNA.makeSequence('GCAAT',Name='ac')
+        aligned_template = DNA.makeSequence( '-CAA-',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('-GCAAT--',Name='ac')
+        self.assertEqual(actual,expected)
+        
+        # internal, 5', 3' gaps
+        template = DNA.makeSequence('--CATA---',Name='t')
+        aligned_candidate = DNA.makeSequence('GCA-AT',Name='ac')
+        aligned_template = DNA.makeSequence( '-CATA-',Name='at')
+        actual = introduce_terminal_gaps(\
+            template,aligned_template,aligned_candidate)
+        expected = DNA.makeSequence('-GCA-AT--',Name='ac')
+        self.assertEqual(actual,expected)
 
 db_aln2 = LoadSeqs(data=dict([
 ('1','ACGT--ACGTAC-ATA-C-----CC-T-G-GTA-G-T---'),
@@ -1308,6 +1400,9 @@ template_14990_trimmed = """>14990_5_and_3_prime_lost_four_bases_each
 
 input_seq_14990 = """>14990
 GCTCAGGACGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGCGGAAATTTTATTGGTGCTTGCACCTTTAAAATTTTAGCGGCGGACGGGTGAGTAACACGTGGGTAACCTACCTTATAGATTGGGATAACTCCGGGAAACCGGGGCTAATACCGAATAATACTTTTTAACACATGTTTGAAAGTTGAAAGACGGTTTCGGCTGTCACTATAAGATGGACCCGCGGCGCATTAGCTAGTTGGTGAGGTAACGGCTCACCAAGGCAACGATGCGTAGCCGACCTGAGAGGGTGATCGGCCACACTGGGACTGAGACACGGCCCAGACTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGAAAGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGATTTCGGTTCGTAAAACTCTGTTGCAAGGGAAGAACAAGTAGCGTAGTAACTGGCGCTACCTTGACGGTACCTTGTTAGAAAGCCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGAATTATTGGGCGTAAAGCGCGCGCAGGTGGTTCCTTAAGTCTGATGTGAAAGCCCCCGGCTCAACCGGGGAGGGTCATTGGAAACTGGGGAACTTGAGTGCAGAAGAGGATAGTGGAATTCCAAGTGTAGCGGTGAAATGCGTAGAGATTTGGAGGAACACCAGTGGCGAAGGCGACTGTCTGGTCTGTAACTGACACTGAGGCGCGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAGTGCTAAGTGTTGGGGGGTTTCCGCCCCTCAGTGCTGCAGCTAACGCATTAAGCACTCCGCCTGGGGAGTACGGTCGCAAGACTGAAACTCAAAGGAATTGACGGGGGCCCGCACAAGCGGTGGAGCATGTGGTTTAATTCGAAGCAACGCGAAGAACCTTACCAGGTCTTGACATCCCGGTGACCACTATGGAGACATAGTTTCCCCTTCGGGGGCAACGGTGACAGGTGGTGCATGGTTGTCGTCAGCTCGTGTCGTGAGATGTTGGGTTAAGTCCCGCAACGAGCGCAACCCTTATTCTTAGTTGCCATCATTCAGTTGGGCACTCTAAGGAGACTGCCGGTGATAAACCGGAGGAAGGTGGGGATGACGTCAAATCATCATGCCCCTTATGACCTGGGCTACACACGTGCTACAATGGACGGTACAAACGGTTGCCAACCCGCGAGGGGGAGCTAATCCGATAAAACCGTTCTCAGTTCGGATTGTAGGCTGCAACTCGCCTACATGAAGCCGGAATCGCTAGTAATCGCGGATCAGCATGCCGCGGTGAATACGTTCCCGGGCCTTGTACACACCGCCCGTCACACCACGAGAGTTTGTAACACCCGAAGTCGGTGAGGTAACCTTTATGGACCCACCCGCCGAAGGTGGGATAAATAATTGGGGTGAATTCTTAACAAGGTACCCGTATCGGAAGGTGCGGCTGGATCA"""
+
+input_seq_10116 = """>10116
+CTGGTCCGTGTCTCAGTACCAGTGTGGGGGACCTTCCTCTCAGAACCCCTACGCATCGTCGCCTTGGTGGGCCGTTACCCCACCAACTATCTAATCAGACGCGAGCCCATCTCTGAGCGAATTTCTTTGATATTCAAATCATGCGATTTAAATATGTTATGAGGTATTACCATCCGTTTCCAGAAGCTATCCCTCTCTCAGAGGCAGGTTGCTCACGTGTTACTCACCCGTTCGCCACTCAACTCTTCATCGGTGAGTGCAAGCACTCGGTGATGAAGAAGTTTCGTTCGACTTGCATGTATTAGGCACGCCGCCAGCGTTCATCCTGAGCCAGGATCAAACTCTG"""
 
 expected_fail1 = [('FAKE1 here is some desc.73602 tag1;tag2, tag3:tag4',\
 'AGGCGGCTACCTGGACCAACACTGACACTGAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCCTAAACGATGCGAACTGGATGTTGGGTGCAATTTGGCACGCAGTATCGAAGCTAACGCGTTAAGTTCGCCGCCTGGGGAGTACGGTCGCAAGACTTAAACTCAAAGGAATTGACGGGGGCCCGCACAAGCGGTGGAGTATGTGGTTTAATTCGATGCAACGCGAAGAACCTTACCTGGTCTTGACATCCACGGAACTTTCCATAGATGGATTGGTGCCTTCGGGAACCGTGAGACAGGTGCTGCATGGCTGTCGTCAGCTCGTGTCGTGAGATGTTGGGTTAAGTCCCGCAACGAGCGCAACCCTTGTCCTTAGTTGCCAGCACGTAATGGTGGGAACTCTAAGGAGACCGCCGGTGACAAACCGGAGGAAGGTGGGGATGACGTCAAGTCATCATGGCCCTTAGGGGACCAGGGCTACACACGTACTACAATGGTAGGGACAGAGGGCTGCAAACCCGCGAGGGCAAGCCAATCCCAGAAACCCTATCTCAGTCCGGATTGGAGTTTGCAACTCGACTCCATGAAGTCGGAATCGCTAGTAATCGCAGATCAGCATTGCTGCGGTGAATACGTTCCCGGGCCTTGTACACACCGCCCGTCACACCATGGGAGTTTGTTGCACCAGAAGCAGGTAGCTTAACCTTCGGGAGGGCGCTCACGGTGTGGCCGATGACTGGGGTGAAGTCGTAACAAGGTAGCCGTATCGGAAGGTGCGGCTGGATCACCTCCTTTTGAGCATGACGTCATCGTCCTGTCGGGCGTCCTCACAAATTACCTGCATTCAGAGATGCGTATCGGCACAGGCCGGTATGCGAAAGTCCCATCATGGGGCCTTAGCTCAGCTGGGAGAGCACCTGCTTTGCAAGCAGGGGGTCGTCGGTTCGATCCCGACAGGCTCCACCATTTGAGTGAAACGACTTTGGGTCTGTAGCTCAGGTGGTTAGAGCGCACCCCTGATAAGGGTGAGGTCGGTGGTTCGAGTCCTCCCAGACCCACCACTCTGAATGTAGTGCACACTTAAGAATTTATATGGCTCAGCGTTGAGGCTGAGACATGTTCTTTTATAACTTGTGACGTAGCGAGCGTTTGAGATATCTATCTAAACGTGTCGTTGAGGCTAAGGCGGGGACTTCGAGTCCCTAAATAATTGAGTCGTATGTTCGCGTTGGTGGCTTTGTACCCCACACAACACGGCGTATGGCCCCGAGGCAACTTGGGGTTATATGGTCAAGCGAATAAGCGCACACGGTGGATGCCTAGGCGGTCAGAGGCGATGAAGGACGTGGTAGCCTGCGAAAAGTGTCGGGGAGCTGGCAACAAGCTTTGATCCGGCAATATCCGAATGGGGAAACCCGG')]

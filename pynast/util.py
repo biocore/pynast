@@ -352,7 +352,6 @@ def reintroduce_template_spacing(template,\
 
     template_result = list(pw_aligned_template)
     candidate_result = list(pw_aligned_candidate) 
-   
     # begin iteration over the alignment positions
     for aln_curr_pos in range(len(pw_aligned_template)):
         try:
@@ -476,31 +475,60 @@ def adjust_alignment(template,candidate,new_gaps):
     return (DNA.makeSequence(''.join(template_l)), \
             DNA.makeSequence(''.join(candidate_l)))
         
-def introduce_terminal_gaps(template,aligned_candidate):
+def introduce_terminal_gaps(template,aligned_template,aligned_candidate):
     """ introduce terminal gaps from template into the aligned candidate seq
     """
-    template = str(template)
-    # count the 5' gaps
-    five_prime_gaps = 0
+    
+    # count the 5' gaps in the original aligned template
+    original_five_prime_gaps = 0
     for c in template:
         if c == '-':
-            five_prime_gaps +=1
+            original_five_prime_gaps +=1
         else:
             break
             
-    # count the 3' gaps
-    three_prime_gaps = 0
-    for c in template[::-1]:
+    # count the 5' gaps already existing in the pairwise aligned template
+    # (because we don't need to add these)
+    aligned_template_five_prime_gaps = 0
+    for c in aligned_template:
         if c == '-':
-            three_prime_gaps +=1
+            aligned_template_five_prime_gaps += 1
         else:
             break
+            
+    # compute the number of 5' gaps that need to be added to get to the
+    # original alignment length
+    five_prime_gaps_to_add = \
+     original_five_prime_gaps - aligned_template_five_prime_gaps
+            
+    # count the 3' gaps in the original aligned template
+    original_three_prime_gaps = 0
+    for c in reversed(template):
+        if c == '-':
+            original_three_prime_gaps +=1
+        else:
+            break
+            
+    # count the 3' gaps already existing in the pairwise aligned template
+    # (because we don't need to add these)
+    aligned_template_three_prime_gaps = 0
+    for c in reversed(aligned_template):
+        if c == '-':
+            aligned_template_three_prime_gaps += 1
+        else:
+            break
+            
+    # compute the number of 3' gaps that need to be added to get to the
+    # original alignment length
+    three_prime_gaps_to_add = \
+     original_three_prime_gaps - aligned_template_three_prime_gaps
 
     # return the sequence with the 5' and 3' gaps added
     return DNA.makeSequence(''.join([\
-     '-'*five_prime_gaps,\
+     '-'*five_prime_gaps_to_add,\
      str(aligned_candidate),\
-     '-'*three_prime_gaps]),Name=aligned_candidate.Name)
+     '-'*three_prime_gaps_to_add]),\
+     Name=aligned_candidate.Name)
     
 def pynast_seq(candidate_sequence,template_alignment,\
     degapped_template_alignment=None,blast_db=None,max_hits=30,\
@@ -568,7 +596,8 @@ def pynast_seq(candidate_sequence,template_alignment,\
      pw_aligned_template,pw_aligned_candidate,new_gaps)
      
     # reintroduce any terminal gaps that were present in the template
-    result = introduce_terminal_gaps(template_aligned_seq,pw_aligned_candidate)
+    result = introduce_terminal_gaps(\
+        template_aligned_seq,pw_aligned_template,pw_aligned_candidate)
      
     # clean-up temporary blast database files if any were created
     remove_files(db_files_to_remove,error_on_missing=False)
