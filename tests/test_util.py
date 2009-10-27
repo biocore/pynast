@@ -17,7 +17,7 @@ from pynast.util import blast_sequence, process_blast_result,\
  align_two_seqs, reintroduce_template_spacing, adjust_alignment,\
  nearest_gap, pynast_seq,\
  introduce_terminal_gaps, UnalignableSequenceError, pynast_seqs,\
- pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs
+ pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs, ipynast_seqs
 from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
@@ -234,6 +234,62 @@ class PyNastTests(TestCase):
         actual = pynast_seqs(candidate_seqs,db_aln2,min_len=5000,min_pct=75.0)
         
         self.assertEqual(actual,(expected_aln,expected_fail))
+        
+    def test_ipynast_seqs_simple(self):
+        """ipynast_seqs: fns with simple test data
+        """
+        candidate_seqs = [\
+         ('1','ACGTACGTTAATACCCTGGTAGT'),\
+         ('2','ACGTACGTTAATACCCTGGTAGT'),\
+         ('3','AA')]
+         
+        expected = [\
+         (DNA.makeSequence(\
+          'ACGTACGT-TA--ATA-C-----CC-T-G-GTA-G-T---',Name='1'),0),\
+         (DNA.makeSequence(\
+          'ACGTACGT-TA--ATA-C-----CC-T-G-GTA-G-T---',Name='2'),0),\
+         (DNA.makeSequence('AA',Name='3'),1)]
+        
+        actual = list(ipynast_seqs(\
+         candidate_seqs,db_aln2,min_len=5,min_pct=75.0))
+        
+        self.assertEqual(actual,expected)
+         
+        # all fail when min_len restricts matches
+        expected = [\
+         (DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='1'),1),\
+         (DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='2'),1),\
+         (DNA.makeSequence('AA',Name='3'),1)]
+        
+        actual = list(ipynast_seqs(\
+         candidate_seqs,db_aln2,min_len=5000,min_pct=75.0))
+        
+        self.assertEqual(actual,expected)
+        
+    def test_ipynast_seqs_simple_value_error(self):
+        """ipynast_seqs: handles value error gracefully
+        """
+        
+        def align_unaligned_seqs_f(seqs,moltype,params={}):
+            raise ValueError, 'This is a test'
+        
+        candidate_seqs = [\
+         ('1','ACGTACGTTAATACCCTGGTAGT'),\
+         ('2','ACGTACGTTAATACCCTGGTAGT'),\
+         ('3','AA')]
+         
+        expected = [\
+         (DNA.makeSequence(\
+          'ACGTACGT-TA--ATA-C-----CC-T-G-GTA-G-T---',Name='1'),0),\
+         (DNA.makeSequence(\
+          'ACGTACGT-TA--ATA-C-----CC-T-G-GTA-G-T---',Name='2'),0),\
+         (DNA.makeSequence('AA',Name='3'),1)]
+        
+        pynast_iterator = ipynast_seqs(\
+         candidate_seqs,db_aln2,min_len=5,min_pct=75.0,\
+         align_unaligned_seqs_f=align_unaligned_seqs_f)
+         
+        self.assertRaises(ValueError,list,pynast_iterator)
 
         
     def test_pynast_seqs_simple_status_callback(self):

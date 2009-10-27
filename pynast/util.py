@@ -717,6 +717,7 @@ def ipynast_seqs(candidate_sequences,template_alignment,\
             # clean-up temporary blast database files if any were created
             remove_files(db_files_to_remove,error_on_missing=False)
             # Re-raise the error
+            e = str(e) + "\nseq_id:%s\nseq:%s\n" % (seq_id, seq)
             raise ValueError, e
 
     # clean-up temporary blast database files if any were created
