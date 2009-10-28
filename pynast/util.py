@@ -93,8 +93,10 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
         This needs to be moved to the blast application controller.
     
     """
-    seqs = LoadSeqs(data=seqs,moltype=moltype,aligned=False)
-    seq_ids = seqs.Names
+    seqs = dict(LoadSeqs(data=seqs,moltype=moltype,aligned=False).items())
+    seq_ids = seqs.keys()
+    query_id = seq_ids[0]
+    subject_id = seq_ids[1]
     if len(seq_ids) != 2:
         raise ValueError,\
          "Pairwise aligning of seqs with blast requires exactly two seqs."
@@ -103,23 +105,26 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
         prefix='bl2seq_input1_',suffix='.fasta')
     in_filepath2 = get_tmp_filename(tmp_dir='/tmp/',\
         prefix='bl2seq_input2_',suffix='.fasta')
+    in_filepaths = [in_filepath1,in_filepath2]
     out_filepath = get_tmp_filename(tmp_dir='/tmp/',\
         prefix='bl2seq_output_',suffix='.fasta')
      
-    for n,in_filepath in zip(seq_ids,[in_filepath1,in_filepath2]):
+    for n,in_filepath in zip(seq_ids,in_filepaths):
         f = open(in_filepath,'w')
         f.write('>%s\n' % n)
-        f.write(str(seqs.getSeq(n)))
+        f.write(str(seqs[n]))
         f.write('\n')
         f.close()
-
-    bl2seq_res = system('bl2seq -i %s -j %s -o %s -F F -q -1 -p blastn -VT' %\
+    
+    # Note: -S 1 indicated that we don't want to blast both orientations -- at
+    # this would be different behavior than other pairwise aligners.
+    bl2seq_res = system('bl2seq -i %s -j %s -o %s -F F -S 1 -q -1 -p blastn -VT' %\
      (in_filepath1,in_filepath2,out_filepath))
     if bl2seq_res != 0:
         raise RuntimeError, "bl2seq failed:\n %s" % bl2seq_res 
     
-    candidate_seq = []
-    template_seq = []
+    query_seq = []
+    subject_seq = []
     blast_res = open(out_filepath)
     in_result = False
     for line in blast_res:
@@ -131,10 +136,10 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
             
         if line.startswith('Query: '):
             fields = line.split()
-            candidate_seq.append(fields[2].upper())
+            query_seq.append(fields[2].upper())
         elif line.startswith('Sbjct: '):
             fields = line.split()
-            template_seq.append(fields[2].upper())
+            subject_seq.append(fields[2].upper())
         else:
             continue
      
@@ -144,48 +149,48 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
     
     # reintroduce terminal characters which were not aligned -- this
     # needs to be split out to another function to facilitate easier testing       
-    c = ''.join(candidate_seq)
-    c = c.replace('-','')
-    s = ''.join(template_seq)
+    q = ''.join(query_seq)
+    q = q.replace('-','')
+    s = ''.join(subject_seq)
     s = s.replace('-','')
-    cand_in = str(seqs.getSeq(seq_ids[0]))
-    subj_in = str(seqs.getSeq(seq_ids[1]))
-    c_start = cand_in.index(c[:100])
-    c_end = c_start + len(c)
-    s_start = subj_in.index(s[:100])
+    query_in = str(seqs[query_id])
+    subject_in = str(seqs[subject_id])
+    q_start = query_in.index(q[:100])
+    q_end = q_start + len(q)
+    s_start = subject_in.index(s[:100])
     s_end = s_start + len(s)
     
-    five_prime_bases_to_add = max(c_start,s_start)
-    three_prime_bases_to_add = max(len(cand_in)-c_end, len(subj_in)-s_end)
+    five_prime_bases_to_add = max(q_start,s_start)
+    three_prime_bases_to_add = max(len(query_in)-q_end, len(subject_in)-s_end)
     
     if five_prime_bases_to_add:
-        leading_bases = cand_in[:c_start]
-        candidate_seq = '%s%s%s' % \
+        leading_bases = query_in[:q_start]
+        query_seq = '%s%s%s' % \
          ('-'*(five_prime_bases_to_add-len(leading_bases)),\
           leading_bases, 
-          ''.join(candidate_seq))
+          ''.join(query_seq))
          
-        leading_bases = subj_in[:s_start]
-        template_seq = '%s%s%s' % \
+        leading_bases = subject_in[:s_start]
+        subject_seq = '%s%s%s' % \
          ('-'*(five_prime_bases_to_add-len(leading_bases)),\
           leading_bases,\
-          ''.join(template_seq))
+          ''.join(subject_seq))
          
     if three_prime_bases_to_add:
-        trailing_bases = cand_in[c_end:]
-        candidate_seq = '%s%s%s' %\
-         (''.join(candidate_seq),\
+        trailing_bases = query_in[q_end:]
+        query_seq = '%s%s%s' %\
+         (''.join(query_seq),\
           trailing_bases,\
           '-'*(three_prime_bases_to_add-len(trailing_bases)))
           
-        trailing_bases = subj_in[s_end:]
-        template_seq = '%s%s%s' %\
-         (''.join(template_seq),\
+        trailing_bases = subject_in[s_end:]
+        subject_seq = '%s%s%s' %\
+         (''.join(subject_seq),\
           trailing_bases,\
           '-'*(three_prime_bases_to_add-len(trailing_bases)))
 
-    result = [(seq_ids[0],candidate_seq),\
-              (seq_ids[1],template_seq)]
+    result = [(query_id,query_seq),\
+              (subject_id,subject_seq)]
     
     return LoadSeqs(data=result,moltype=moltype)
      
