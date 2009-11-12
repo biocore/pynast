@@ -136,8 +136,20 @@ def main():
     logger = NastLogger(log_fp)
 
     candidate_sequences = MinimalFastaParser(open(seqs_fp))
-    template_alignment = LoadSeqs(template_fp,moltype=DNA,\
-     format='fasta',aligned=DenseAlignment)
+    
+    template_alignment = []
+    for seq_id, seq in MinimalFastaParser(open(template_fp)):
+        # replace '.' characters with '-' characters
+        template_alignment.append((seq_id,seq.replace('.','-')))
+        
+    try:
+        template_alignment = LoadSeqs(data=template_alignment,moltype=DNA,\
+         aligned=DenseAlignment)
+    except KeyError, e:
+        raise KeyError,\
+         'Only ACGT-. characters can be contained in template alignments.'+\
+         ' The offending character was: %s' % e
+        
     
     pynast_iterator = ipynast_seqs(\
       candidate_sequences,\
