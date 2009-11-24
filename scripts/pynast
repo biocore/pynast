@@ -139,8 +139,9 @@ def main():
     
     template_alignment = []
     for seq_id, seq in MinimalFastaParser(open(template_fp)):
-        # replace '.' characters with '-' characters
-        template_alignment.append((seq_id,seq.replace('.','-')))
+        # replace '.' chars with '-' chars
+        # and lowercase chars with uppercase chars
+        template_alignment.append((seq_id,seq.replace('.','-').upper()))
         
     try:
         template_alignment = LoadSeqs(data=template_alignment,moltype=DNA,\
