@@ -1501,7 +1501,7 @@ GAGTTTGATCATGGCTCAGGACGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAG-------------CGAATGACA
 """
 
 expected_logfile_contents = \
-"""1 1..23\t23\t\t5\t100.00\t\t\t23\t\t\t
+"""1 1..23\t23\t\t5\t100.00\t23
 2\t2\tNo blast results.
 """
 

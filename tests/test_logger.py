@@ -48,6 +48,11 @@ class NastLoggerTests(TestCase):
         header = file.readline()
         file.close()
 
+        exp_header = (
+            'candidate sequence ID\tcandidate nucleotide count\terrors\t'
+            'template ID\tBLAST percent identity to template\t'
+            'candidate nucleotide count post-NAST\n'
+            )
         self.assertEqual(header, exp_header)
 
     def test_record(self):
@@ -63,8 +68,6 @@ class NastLoggerTests(TestCase):
 
         self.assertEqual(obs_message, 'hello\tworld\n')
         
-
-exp_header = 'candidate sequence ID\tcandidate nucleotide count\terrors\ttemplate ID\tBLAST percent identity to template\tlongest insertion relative to template\tcandidate span aligned\tcandidate nucleotide count post-NAST\tunaligned length\tcount of single nucelotide 7mers or longer Nmers\tnon-ACGT nucleotide count\tnon-ACGT nucleotide percent\n'
 
 if __name__ == "__main__":
     main()

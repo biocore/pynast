@@ -615,12 +615,7 @@ def pynast_seq(candidate_sequence,template_alignment,\
         '',                  # Errors
         template_seq_id,
         pct_identity,
-        '',                  # Longest insertion rel. to template
-        '',                  # Candidate span aligned
         len(result.degap()), # Candidate Sequence length post-Nast
-        '',                  # Unaligned length
-        '',                  # Non-acgt count
-        '',                  # Non-acgt percent
         )
 
     # return the id of the best blast hit and the aligned candidate sequence

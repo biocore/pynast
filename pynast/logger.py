@@ -18,13 +18,7 @@ class NastLogger:
         "errors", 
         "template ID", 
         "BLAST percent identity to template",
-        "longest insertion relative to template",
-        "candidate span aligned",
         "candidate nucleotide count post-NAST",
-        "unaligned length",
-        "count of single nucelotide 7mers or longer Nmers",
-        "non-ACGT nucleotide count",
-        "non-ACGT nucleotide percent",
         ]
 
     def __init__(self, filename=None):
