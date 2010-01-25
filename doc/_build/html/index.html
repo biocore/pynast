@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyNAST documentation &mdash; PyNAST v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PyNAST v1.0 documentation" href="" />
+    <link rel="next" title="Installing and using the PyNAST command line application" href="install.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="">
+<!--><img src="_static/logo.png" border="0" alt="py4sci"/><!-->
+	<h1>PyNAST: Python Nearest Alignment Search Tool</h1></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installing and using the PyNAST command line application"
+             accesskey="N">next</a> |</li>
+        <li><a href="">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+       <li><a href="contents.html">documentation </a> &raquo;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">PyNAST documentation</a><ul>
+</ul>
+</li>
+<li><a class="reference external" href="#about-pynast">About PyNAST</a></li>
+<li><a class="reference external" href="#citing-pynast">Citing PyNAST</a></li>
+<li><a class="reference external" href="#need-help">Need help?</a></li>
+</ul>
+
+            <h4>Next topic</h4>
+            <p class="topless"><a href="install.html"
+                                  title="next chapter">Installing and using the PyNAST command line application</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/index.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pynast-documentation">
+<h1>PyNAST documentation<a class="headerlink" href="#pynast-documentation" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="install.html">Installing and using the PyNAST command line application</a><ul>
+<li class="toctree-l2"><a class="reference external" href="install.html#required-software">Required software</a></li>
+<li class="toctree-l2"><a class="reference external" href="install.html#optional-software">Optional software</a></li>
+<li class="toctree-l2"><a class="reference external" href="install.html#installation-steps">Installation steps</a></li>
+<li class="toctree-l2"><a class="reference external" href="install.html#using-the-pynast-command-line-application">Using the PyNAST command line application</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="install_gui.html">Installing and using the Mac OS X GUI</a><ul>
+<li class="toctree-l2"><a class="reference external" href="install_gui.html#requirements-for-the-pynast-gui">Requirements for the PyNAST GUI</a></li>
+<li class="toctree-l2"><a class="reference external" href="install_gui.html#optional-for-the-pynast-gui">Optional for the PyNAST GUI</a></li>
+<li class="toctree-l2"><a class="reference external" href="install_gui.html#limitations-in-the-draft-release-of-the-pynast-gui-to-be-fixed-before-official-release">Limitations in the draft release of the PyNAST GUI (to be fixed before official release)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="about-pynast">
+<h1>About PyNAST<a class="headerlink" href="#about-pynast" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is a reimplementation of the <a class="reference external" href="http://nar.oxfordjournals.org/cgi/content/full/34/suppl_2/W394">NAST</a> sequence aligner, which has become a popular tool for adding new 16s rDNA sequences to existing 16s rDNA alignments. This reimplementation is more flexible, faster, and easier to install and maintain than the original NAST implementation. <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is built using the PyCogent Bioinformatics Toolkit.</p>
+<p>Given a set of sequences and a template alignment, <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> will align the input sequences against the template alignment, and return a multiple sequence alignment which contains the same number of positions (or columns) as the template alignment. This facilitates the analysis of new sequences in the context of existing alignments, and additional data derived from existing alignments such as phylogenetic trees. Because any protein or nucleic acid sequences and template alignments can be provided, <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is not limited to the analysis of 16s rDNA sequences.</p>
+<p><a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is presented in an open access <a class="reference external" href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btp636">Bioinformatics Applications Note</a>.</p>
+</div>
+<div class="section" id="citing-pynast">
+<h1>Citing PyNAST<a class="headerlink" href="#citing-pynast" title="Permalink to this headline">¶</a></h1>
+<p>If you make use of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> in published work, please cite:</p>
+<p><strong>PyNAST: a flexible tool for aligning sequences to a template alignment.</strong> J. Gregory Caporaso, Kyle Bittinger, Frederic D. Bushman, Todd Z. DeSantis, Gary L. Andersen, and Rob Knight. January 15, 2010, DOI 10.1093/bioinformatics/btp636. Bioinformatics 26: 266-267.</p>
+</div>
+<div class="section" id="need-help">
+<h1>Need help?<a class="headerlink" href="#need-help" title="Permalink to this headline">¶</a></h1>
+<p>For <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> support, you can contact <a class="reference external" href="mailto:gregcaporaso&#37;&#52;&#48;gmail&#46;com">Greg Caporaso</a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installing and using the PyNAST command line application"
+             >next</a> |</li>
+        <li><a href="">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+       <li><a href="contents.html">documentation </a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Greg Caporaso.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>

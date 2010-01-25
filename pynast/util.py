@@ -21,13 +21,13 @@ from cogent.parse.fasta import MinimalFastaParser
 from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
-__copyright__ = "Copyright 2009, the PyNAST project"
+__copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger"]
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "1.0"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Beta"
+__status__ = "Production"
 
 """ PyNAST is a complete rewrite of the NAST algorithm written in python. 
  The dependencies are PyCogent, NumPy, Python, BLAST, and muscle. The versions 

@@ -1,0 +1,34 @@
+.. PyNAST documentation master file, created by
+   sphinx-quickstart on Mon Jan 25 11:42:17 2010.
+
+PyNAST documentation
+==================================
+
+.. toctree::
+   :maxdepth: 2
+
+   install.rst
+   install_gui.rst
+
+About PyNAST
+==================
+
+PyNAST_ is a reimplementation of the NAST_ sequence aligner, which has become a popular tool for adding new 16s rDNA sequences to existing 16s rDNA alignments. This reimplementation is more flexible, faster, and easier to install and maintain than the original NAST implementation. PyNAST_ is built using the PyCogent Bioinformatics Toolkit.
+
+Given a set of sequences and a template alignment, PyNAST_ will align the input sequences against the template alignment, and return a multiple sequence alignment which contains the same number of positions (or columns) as the template alignment. This facilitates the analysis of new sequences in the context of existing alignments, and additional data derived from existing alignments such as phylogenetic trees. Because any protein or nucleic acid sequences and template alignments can be provided, PyNAST_ is not limited to the analysis of 16s rDNA sequences.
+
+PyNAST_ is presented in an open access `Bioinformatics Applications Note <http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btp636>`_. 
+
+Citing PyNAST
+==============
+If you make use of PyNAST_ in published work, please cite:
+
+**PyNAST: a flexible tool for aligning sequences to a template alignment.** J. Gregory Caporaso, Kyle Bittinger, Frederic D. Bushman, Todd Z. DeSantis, Gary L. Andersen, and Rob Knight. January 15, 2010, DOI 10.1093/bioinformatics/btp636. Bioinformatics 26: 266-267. 
+
+Need help?
+==========
+For PyNAST_ support, you can contact `Greg Caporaso <gregcaporaso@gmail.com>`_.
+
+
+.. _PyNAST: http://pynast.sourceforge.net
+.. _NAST: http://nar.oxfordjournals.org/cgi/content/full/34/suppl_2/W394

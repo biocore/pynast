@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installing and using the PyNAST command line application &mdash; PyNAST v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PyNAST v1.0 documentation" href="index.html" />
+    <link rel="next" title="Installing and using the Mac OS X GUI" href="install_gui.html" />
+    <link rel="prev" title="PyNAST documentation" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html">
+<!--><img src="_static/logo.png" border="0" alt="py4sci"/><!-->
+	<h1>PyNAST: Python Nearest Alignment Search Tool</h1></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install_gui.html" title="Installing and using the Mac OS X GUI"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="PyNAST documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+       <li><a href="contents.html">documentation </a> &raquo;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Installing and using the PyNAST command line application</a><ul>
+<li><a class="reference external" href="#required-software">Required software</a></li>
+<li><a class="reference external" href="#optional-software">Optional software</a></li>
+<li><a class="reference external" href="#installation-steps">Installation steps</a></li>
+<li><a class="reference external" href="#using-the-pynast-command-line-application">Using the PyNAST command line application</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">PyNAST documentation</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="install_gui.html"
+                                  title="next chapter">Installing and using the Mac OS X GUI</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/install.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installing-and-using-the-pynast-command-line-application">
+<h1>Installing and using the PyNAST command line application<a class="headerlink" href="#installing-and-using-the-pynast-command-line-application" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="required-software">
+<h2>Required software<a class="headerlink" href="#required-software" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is built on the <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> package, and uses NCBI&#8217;s <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> software. You must have <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> 1.4.0 and <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> 2.2.22 installed to run <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>.</p>
+</div>
+<div class="section" id="optional-software">
+<h2>Optional software<a class="headerlink" href="#optional-software" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;d like to perform pairwise alignments using <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a>, <a class="reference external" href="http://align.bmr.kyushu-u.ac.jp/mafft/online/server/">MAFFT</a>, or <a class="reference external" href="http://www.ebi.ac.uk/Tools/clustalw2/index.html">ClustalW</a>, you must have those programs installed on your machine and in your system path. Currently tested versions are <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a> v3.6, MAFFT v6.602b, and ClustalW 1.81.</p>
+</div>
+<div class="section" id="installation-steps">
+<h2>Installation steps<a class="headerlink" href="#installation-steps" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Download <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> 1.4.0 and its dependencies, <a class="reference external" href="http://www.python.org">Python</a> 2.5.1 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.</p>
+</li>
+<li><p class="first">Install <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a>. Versions 2.2.16 through 2.2.21 have been tested extensively with <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>, but other versions should work. (Note: we&#8217;ve had trouble with <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> installed via package managers, so it may be best to download directly from NCBI and install per their instructions.)</p>
+</li>
+<li><dl class="first docutils">
+<dt>From your command terminal on an OS X or Linux system, change to the directory where you wish to install <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>. Checkout the latest version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> from the SVN repository with the command:</dt>
+<dd><div class="first last highlight-python"><pre>svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST</pre>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+<p>This will create a new folder in the current working directory called <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>.</p>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt>Add <tt class="docutils literal"><span class="pre">PyNAST/pynast</span></tt> to your <tt class="docutils literal"><span class="pre">$PYTHONPATH</span></tt> environment variable. Assuming you&#8217;re using the bash shell, if you downloaded <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> to <tt class="docutils literal"><span class="pre">/home/hayduke/</span></tt> you can do this with the command:</dt>
+<dd><blockquote class="first">
+<div class="highlight-python"><pre>export PYTHONPATH=/home/hayduke/PyNAST/:$PYTHONPATH</pre>
+</div>
+</blockquote>
+<p class="last">For the best results, add the above line to the .bash_profile file in your home directory.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Change to the PyNAST/tests directory:</dt>
+<dd><div class="first last highlight-python"><pre>cd PyNAST/tests</pre>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Run the following commands:</dt>
+<dd><blockquote class="first">
+<div class="highlight-python"><pre>python test_logger.py
+python test_util.py</pre>
+</div>
+</blockquote>
+<p class="last">All tests should pass, unless you don&#8217;t have <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a>, <a class="reference external" href="http://align.bmr.kyushu-u.ac.jp/mafft/online/server/">MAFFT</a>, and/or <a class="reference external" href="http://www.ebi.ac.uk/Tools/clustalw2/index.html">ClustalW</a> installed. These are optional external software packages, and you will get one test failure per missing software package. You can ignore test failures which indicate that these programs cannot be found.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>If all tests pass, you can get the usage information for the command line version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> with the following command from the directory where you downloaded <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>:</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">PyNAST</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">pynast</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><p class="first">If you&#8217;d like to be able to call <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> from anywhere on your system, you have two (good) choices. To illustrate how to do this, let&#8217;s assume that your <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> directory lives in <tt class="docutils literal"><span class="pre">/home/hayduke/</span></tt>. You can either:</p>
+<blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>add /home/hayduke/PyNAST/scripts/ to your $PATH environment variable. Assuming you&#8217;re using the bash shell, you can do this with the command:</dt>
+<dd><div class="first last highlight-python"><pre>export PATH=/home/hayduke/PyNAST/scripts/:$PATH</pre>
+</div>
+</dd>
+</dl>
+<p>For the best results, add the above line to the <tt class="docutils literal"><span class="pre">.bash_profile</span></tt> file in your home directory.</p>
+</li>
+<li><dl class="first docutils">
+<dt>or, create a symbolic link from a directory in your system path (e.g. <tt class="docutils literal"><span class="pre">/usr/bin/</span></tt>) to the pynast script:</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">hayduke</span><span class="o">/</span><span class="n">PyNAST</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">pynast</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">pynast</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="using-the-pynast-command-line-application">
+<h2>Using the PyNAST command line application<a class="headerlink" href="#using-the-pynast-command-line-application" title="Permalink to this headline">¶</a></h2>
+<p>After installing the <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> software as described above, you should download the sample candidate sequences and template alignment. You can then apply the <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> command line tool as follows:</p>
+<div class="highlight-python"><pre>pynast -i candidate_seqs_sample.fasta -t template_sample.fasta</pre>
+</div>
+<p>This will result in three files being written to the current working directory: candidate_seqs_sample_pynast_aligned.fasta, candidate_seqs_sample_pynast_log.txt, and candidate_seqs_sample_pynast_fail.fasta, which correspond to the alignment, the run log, and the list of sequences which failed to align, respectively.</p>
+<p>To get usage information for the <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> command line application run:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pynast</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install_gui.html" title="Installing and using the Mac OS X GUI"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="PyNAST documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+       <li><a href="contents.html">documentation </a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Greg Caporaso.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>

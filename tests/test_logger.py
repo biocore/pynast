@@ -9,13 +9,13 @@ from cogent.parse.fasta import MinimalFastaParser
 from pynast.logger import NastLogger
 
 __author__ = "Kyle Bittinger"
-__copyright__ = "Copyright 2009, the PyNAST project"
+__copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger"]
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "1.0"
 __maintainer__ = "Kyle Bittinger"
 __email__ = "kylebittinger@gmail.com"
-__status__ = "Beta"
+__status__ = "Production"
 
 class NastLoggerTests(TestCase):
     """Tests of the PyNAST logging class"""
