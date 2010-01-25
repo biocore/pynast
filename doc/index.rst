@@ -10,6 +10,10 @@ PyNAST documentation
    install.rst
    install_gui.rst
 
+Downloading PyNAST
+==================
+You can download `PyNAST 1.0 here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download>`_ and the `PyNAST OS X GUI here <https://sourceforge.net/projects/pynast/files/PyNAST.app.zip/download>`_.
+
 About PyNAST
 ==================
 

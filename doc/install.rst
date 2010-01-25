@@ -4,6 +4,10 @@
 Installing and using the PyNAST command line application
 *************************************************************
 
+Downloading PyNAST
+==================
+You can download `PyNAST 1.0 here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download>`_.
+
 Required software
 =================
 PyNAST_ is built on the PyCogent_ package, and uses NCBI's BLAST_ software. You must have PyCogent_ 1.4.0 and BLAST_ 2.2.22 installed to run PyNAST_.
@@ -18,12 +22,12 @@ Installation steps
 
 #. Install BLAST_. Versions 2.2.16 through 2.2.21 have been tested extensively with PyNAST_, but other versions should work. (Note: we've had trouble with BLAST_ installed via package managers, so it may be best to download directly from NCBI and install per their instructions.)
 
-#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. Checkout the latest version of PyNAST_ from the SVN repository with the command:
+#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.0 from here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the SVN repository with the command:
 	::
       
 		svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST
 		
-This will create a new folder in the current working directory called PyNAST_.
+If you downloaded from svn, you will have a new folder in the current working directory called ``PyNAST``. If you downloaded PyNAST-1.0, after untar/unzipping ``PyNAST-1.0.tar.gz`` will have a new directory named ``PyNAST-1.0``. **For consistency, all instructions below will refer to this directory as** ``PyNAST``. You may choose to rename ``PyNAST-1.0`` as ``PyNAST``.
 
 #. Add ``PyNAST/pynast`` to your ``$PYTHONPATH`` environment variable. Assuming you're using the bash shell, if you downloaded PyNAST_ to ``/home/hayduke/`` you can do this with the command:
 	::

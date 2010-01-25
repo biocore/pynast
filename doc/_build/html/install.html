@@ -55,6 +55,7 @@
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Installing and using the PyNAST command line application</a><ul>
+<li><a class="reference external" href="#downloading-pynast">Downloading PyNAST</a></li>
 <li><a class="reference external" href="#required-software">Required software</a></li>
 <li><a class="reference external" href="#optional-software">Optional software</a></li>
 <li><a class="reference external" href="#installation-steps">Installation steps</a></li>
@@ -97,6 +98,10 @@
             
   <div class="section" id="installing-and-using-the-pynast-command-line-application">
 <h1>Installing and using the PyNAST command line application<a class="headerlink" href="#installing-and-using-the-pynast-command-line-application" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="downloading-pynast">
+<h2>Downloading PyNAST<a class="headerlink" href="#downloading-pynast" title="Permalink to this headline">¶</a></h2>
+<p>You can download <a class="reference external" href="https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download">PyNAST 1.0 here</a>.</p>
+</div>
 <div class="section" id="required-software">
 <h2>Required software<a class="headerlink" href="#required-software" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is built on the <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> package, and uses NCBI&#8217;s <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> software. You must have <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> 1.4.0 and <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> 2.2.22 installed to run <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>.</p>
@@ -113,14 +118,14 @@
 <li><p class="first">Install <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a>. Versions 2.2.16 through 2.2.21 have been tested extensively with <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>, but other versions should work. (Note: we&#8217;ve had trouble with <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> installed via package managers, so it may be best to download directly from NCBI and install per their instructions.)</p>
 </li>
 <li><dl class="first docutils">
-<dt>From your command terminal on an OS X or Linux system, change to the directory where you wish to install <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>. Checkout the latest version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> from the SVN repository with the command:</dt>
+<dt>From your command terminal on an OS X or Linux system, change to the directory where you wish to install <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>. You can either download <a class="reference external" href="https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download">PyNAST 1.0 from here</a>, or if you want the latest development version you can checkout the latest version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> from the SVN repository with the command:</dt>
 <dd><div class="first last highlight-python"><pre>svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST</pre>
 </div>
 </dd>
 </dl>
 </li>
 </ol>
-<p>This will create a new folder in the current working directory called <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>.</p>
+<p>If you downloaded from svn, you will have a new folder in the current working directory called <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. If you downloaded PyNAST-1.0, after untar/unzipping <tt class="docutils literal"><span class="pre">PyNAST-1.0.tar.gz</span></tt> will have a new directory named <tt class="docutils literal"><span class="pre">PyNAST-1.0</span></tt>. <strong>For consistency, all instructions below will refer to this directory as</strong> <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. You may choose to rename <tt class="docutils literal"><span class="pre">PyNAST-1.0</span></tt> as <tt class="docutils literal"><span class="pre">PyNAST</span></tt>.</p>
 <ol class="arabic">
 <li><dl class="first docutils">
 <dt>Add <tt class="docutils literal"><span class="pre">PyNAST/pynast</span></tt> to your <tt class="docutils literal"><span class="pre">$PYTHONPATH</span></tt> environment variable. Assuming you&#8217;re using the bash shell, if you downloaded <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> to <tt class="docutils literal"><span class="pre">/home/hayduke/</span></tt> you can do this with the command:</dt>
