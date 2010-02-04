@@ -3,8 +3,7 @@
 
 {% block rootrellink %}
         <li><a href="{{ pathto('index') }}">home</a>|&nbsp;</li>
-        <li><a href="{{ pathto('search') }}">search</a>|&nbsp;</li>
-       <li><a href="{{ pathto('contents') }}">documentation </a> &raquo;</li>
+        <li><a href="{{ pathto('search') }}">search</a>&nbsp;</li>
 {% endblock %}
 
 
@@ -12,14 +11,29 @@
 
 <div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
 <a href="{{ pathto('index') }}">
-<!--><img src="{{
-pathto("_static/logo.png", 1) }}" border="0" alt="py4sci"/><!-->
 	<h1>PyNAST: Python Nearest Alignment Search Tool</h1></a>
 </div>
 {{ super() }}
 {% endblock %}
 
 {# put the sidebar before the body #}
+
+{% block sidebartoc %}
+
+<h3><a href="http://pynast.wordpress.com/">PyNAST News and Announcements</a></h3>
+<p>
+<script type="text/javascript" src="http://app.feed.informer.com/digest3/XURHWQCNXW.js">
+<noscript><a href="http://app.feed.informer.com/digest3/XURHWQCNXW.html">Click for &quot;PyNAST News and Annoucements&quot;.</a>
+Powered by <a href="http://feed.informer.com/">RSS Feed Informer</a></noscript></script>
+</p>
+
+    {{ super() }}
+
+{% endblock %}
+
 {% block sidebar1 %}{{ sidebar() }}{% endblock %}
 {% block sidebar2 %}{% endblock %}
+
+
+
 

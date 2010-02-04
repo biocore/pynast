@@ -21,13 +21,12 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="PyNAST v1.0 documentation" href="index.html" />
     <link rel="next" title="Installing and using the Mac OS X GUI" href="install_gui.html" />
-    <link rel="prev" title="PyNAST documentation" href="index.html" /> 
+    <link rel="prev" title="PyNAST documentation (version 1.1-dev)" href="index.html" /> 
   </head>
   <body>
 
 <div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
 <a href="index.html">
-<!--><img src="_static/logo.png" border="0" alt="py4sci"/><!-->
 	<h1>PyNAST: Python Nearest Alignment Search Tool</h1></a>
 </div>
 
@@ -41,17 +40,25 @@
           <a href="install_gui.html" title="Installing and using the Mac OS X GUI"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="PyNAST documentation"
+          <a href="index.html" title="PyNAST documentation (version 1.1-dev)"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">home</a>|&nbsp;</li>
-        <li><a href="search.html">search</a>|&nbsp;</li>
-       <li><a href="contents.html">documentation </a> &raquo;</li>
+        <li><a href="search.html">search</a>&nbsp;</li>
  
       </ul>
     </div>
 
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+
+<h3><a href="http://pynast.wordpress.com/">PyNAST News and Announcements</a></h3>
+<p>
+<script type="text/javascript" src="http://app.feed.informer.com/digest3/XURHWQCNXW.js">
+<noscript><a href="http://app.feed.informer.com/digest3/XURHWQCNXW.html">Click for &quot;PyNAST News and Annoucements&quot;.</a>
+Powered by <a href="http://feed.informer.com/">RSS Feed Informer</a></noscript></script>
+</p>
+
+    
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Installing and using the PyNAST command line application</a><ul>
@@ -64,9 +71,11 @@
 </li>
 </ul>
 
+
+
             <h4>Previous topic</h4>
             <p class="topless"><a href="index.html"
-                                  title="previous chapter">PyNAST documentation</a></p>
+                                  title="previous chapter">PyNAST documentation (version 1.1-dev)</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="install_gui.html"
                                   title="next chapter">Installing and using the Mac OS X GUI</a></p>
@@ -100,7 +109,12 @@
 <h1>Installing and using the PyNAST command line application<a class="headerlink" href="#installing-and-using-the-pynast-command-line-application" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="downloading-pynast">
 <h2>Downloading PyNAST<a class="headerlink" href="#downloading-pynast" title="Permalink to this headline">¶</a></h2>
-<p>You can download <a class="reference external" href="https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download">PyNAST 1.0 here</a>.</p>
+<p>THIS DOCUMENTATION REFERS ONLY TO THE SVN VERSION OF PYNAST. SEE <a class="reference external" href="http://pynast.sourceforge.net">http://pynast.sourceforge.net</a> FOR THE 1.0 DOCUMENTATION.</p>
+<p>You can download the latest development branch of PyNAST here with the command:</p>
+<blockquote>
+<div class="highlight-python"><pre>svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST</pre>
+</div>
+</blockquote>
 </div>
 <div class="section" id="required-software">
 <h2>Required software<a class="headerlink" href="#required-software" title="Permalink to this headline">¶</a></h2>
@@ -118,22 +132,20 @@
 <li><p class="first">Install <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a>. Versions 2.2.16 through 2.2.21 have been tested extensively with <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>, but other versions should work. (Note: we&#8217;ve had trouble with <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> installed via package managers, so it may be best to download directly from NCBI and install per their instructions.)</p>
 </li>
 <li><dl class="first docutils">
-<dt>From your command terminal on an OS X or Linux system, change to the directory where you wish to install <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>. You can either download <a class="reference external" href="https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download">PyNAST 1.0 from here</a>, or if you want the latest development version you can checkout the latest version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> from the SVN repository with the command:</dt>
+<dt>From your command terminal on an OS X or Linux system, change to the directory where you wish to install <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>. You can either download <a class="reference external" href="https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download">PyNAST 1.1 from here</a>, or if you want the latest development version you can checkout the latest version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> from the SVN repository with the command:</dt>
 <dd><div class="first last highlight-python"><pre>svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST</pre>
 </div>
 </dd>
 </dl>
 </li>
 </ol>
-<p>If you downloaded from svn, you will have a new folder in the current working directory called <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. If you downloaded PyNAST-1.0, after untar/unzipping <tt class="docutils literal"><span class="pre">PyNAST-1.0.tar.gz</span></tt> will have a new directory named <tt class="docutils literal"><span class="pre">PyNAST-1.0</span></tt>. <strong>For consistency, all instructions below will refer to this directory as</strong> <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. You may choose to rename <tt class="docutils literal"><span class="pre">PyNAST-1.0</span></tt> as <tt class="docutils literal"><span class="pre">PyNAST</span></tt>.</p>
+<p>If you downloaded from svn, you will have a new folder in the current working directory called <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. If you downloaded PyNAST-1.1, after untar/unzipping <tt class="docutils literal"><span class="pre">PyNAST-1.1.tar.gz</span></tt> will have a new directory named <tt class="docutils literal"><span class="pre">PyNAST-1.1</span></tt>. <strong>For consistency, all instructions below will refer to this directory as</strong> <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. You may choose to rename <tt class="docutils literal"><span class="pre">PyNAST-1.1</span></tt> as <tt class="docutils literal"><span class="pre">PyNAST</span></tt>.</p>
 <ol class="arabic">
 <li><dl class="first docutils">
-<dt>Add <tt class="docutils literal"><span class="pre">PyNAST/pynast</span></tt> to your <tt class="docutils literal"><span class="pre">$PYTHONPATH</span></tt> environment variable. Assuming you&#8217;re using the bash shell, if you downloaded <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> to <tt class="docutils literal"><span class="pre">/home/hayduke/</span></tt> you can do this with the command:</dt>
-<dd><blockquote class="first">
-<div class="highlight-python"><pre>export PYTHONPATH=/home/hayduke/PyNAST/:$PYTHONPATH</pre>
+<dt>Run setup.py. You may need to do this as root:</dt>
+<dd><div class="first last highlight-python"><pre>cd PyNAST
+python setup.py install</pre>
 </div>
-</blockquote>
-<p class="last">For the best results, add the above line to the .bash_profile file in your home directory.</p>
 </dd>
 </dl>
 </li>
@@ -156,34 +168,12 @@ python test_util.py</pre>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>If all tests pass, you can get the usage information for the command line version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> with the following command from the directory where you downloaded <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>:</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">PyNAST</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">pynast</span> <span class="o">-</span><span class="n">h</span>
+<dt>If all tests pass, you can get the usage information for the command line version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> with the following command anywhere on your system:</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">pynast</span> <span class="o">-</span><span class="n">h</span>
 </pre></div>
 </div>
 </dd>
 </dl>
-</li>
-<li><p class="first">If you&#8217;d like to be able to call <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> from anywhere on your system, you have two (good) choices. To illustrate how to do this, let&#8217;s assume that your <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> directory lives in <tt class="docutils literal"><span class="pre">/home/hayduke/</span></tt>. You can either:</p>
-<blockquote>
-<ul>
-<li><dl class="first docutils">
-<dt>add /home/hayduke/PyNAST/scripts/ to your $PATH environment variable. Assuming you&#8217;re using the bash shell, you can do this with the command:</dt>
-<dd><div class="first last highlight-python"><pre>export PATH=/home/hayduke/PyNAST/scripts/:$PATH</pre>
-</div>
-</dd>
-</dl>
-<p>For the best results, add the above line to the <tt class="docutils literal"><span class="pre">.bash_profile</span></tt> file in your home directory.</p>
-</li>
-<li><dl class="first docutils">
-<dt>or, create a symbolic link from a directory in your system path (e.g. <tt class="docutils literal"><span class="pre">/usr/bin/</span></tt>) to the pynast script:</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">hayduke</span><span class="o">/</span><span class="n">PyNAST</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">pynast</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">pynast</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</li>
-</ul>
-</blockquote>
 </li>
 </ol>
 </div>
@@ -216,11 +206,10 @@ python test_util.py</pre>
           <a href="install_gui.html" title="Installing and using the Mac OS X GUI"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="PyNAST documentation"
+          <a href="index.html" title="PyNAST documentation (version 1.1-dev)"
              >previous</a> |</li>
         <li><a href="index.html">home</a>|&nbsp;</li>
-        <li><a href="search.html">search</a>|&nbsp;</li>
-       <li><a href="contents.html">documentation </a> &raquo;</li>
+        <li><a href="search.html">search</a>&nbsp;</li>
  
       </ul>
     </div>

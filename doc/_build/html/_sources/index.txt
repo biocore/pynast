@@ -1,8 +1,8 @@
 .. PyNAST documentation master file, created by
    sphinx-quickstart on Mon Jan 25 11:42:17 2010.
 
-PyNAST documentation
-==================================
+PyNAST documentation (version 1.1-dev)
+======================================
 
 .. toctree::
    :maxdepth: 2

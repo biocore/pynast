@@ -6,7 +6,13 @@ Installing and using the PyNAST command line application
 
 Downloading PyNAST
 ==================
-You can download `PyNAST 1.0 here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download>`_.
+THIS DOCUMENTATION REFERS ONLY TO THE SVN VERSION OF PYNAST. SEE http://pynast.sourceforge.net FOR THE 1.0 DOCUMENTATION.
+
+You can download the latest development branch of PyNAST here with the command:
+
+	::
+	 
+		svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST
 
 Required software
 =================
@@ -22,51 +28,36 @@ Installation steps
 
 #. Install BLAST_. Versions 2.2.16 through 2.2.21 have been tested extensively with PyNAST_, but other versions should work. (Note: we've had trouble with BLAST_ installed via package managers, so it may be best to download directly from NCBI and install per their instructions.)
 
-#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.0 from here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the SVN repository with the command:
+#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.1 from here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the SVN repository with the command:
 	::
       
 		svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST
 		
-If you downloaded from svn, you will have a new folder in the current working directory called ``PyNAST``. If you downloaded PyNAST-1.0, after untar/unzipping ``PyNAST-1.0.tar.gz`` will have a new directory named ``PyNAST-1.0``. **For consistency, all instructions below will refer to this directory as** ``PyNAST``. You may choose to rename ``PyNAST-1.0`` as ``PyNAST``.
+If you downloaded from svn, you will have a new folder in the current working directory called ``PyNAST``. If you downloaded PyNAST-1.1, after untar/unzipping ``PyNAST-1.1.tar.gz`` will have a new directory named ``PyNAST-1.1``. **For consistency, all instructions below will refer to this directory as** ``PyNAST``. You may choose to rename ``PyNAST-1.1`` as ``PyNAST``.
 
-#. Add ``PyNAST/pynast`` to your ``$PYTHONPATH`` environment variable. Assuming you're using the bash shell, if you downloaded PyNAST_ to ``/home/hayduke/`` you can do this with the command:
+#. Run setup.py. You may need to do this as root:
 	::
-		
-		export PYTHONPATH=/home/hayduke/PyNAST/:$PYTHONPATH
-
-    For the best results, add the above line to the .bash_profile file in your home directory.
+	
+		cd PyNAST
+		python setup.py install
 
 #. Change to the PyNAST/tests directory:
 	::
-		
+	
 		cd PyNAST/tests
 
 #. Run the following commands:
 	::
-		
+	
 		python test_logger.py
 		python test_util.py
 	
       All tests should pass, unless you don't have MUSCLE_, MAFFT_, and/or ClustalW_ installed. These are optional external software packages, and you will get one test failure per missing software package. You can ignore test failures which indicate that these programs cannot be found.
 
-#. If all tests pass, you can get the usage information for the command line version of PyNAST_ with the following command from the directory where you downloaded PyNAST_:
+#. If all tests pass, you can get the usage information for the command line version of PyNAST_ with the following command anywhere on your system:
 	::
 		
-		PyNAST/scripts/pynast -h
-
-#. If you'd like to be able to call PyNAST_ from anywhere on your system, you have two (good) choices. To illustrate how to do this, let's assume that your PyNAST_ directory lives in ``/home/hayduke/``. You can either:
-
-          * add /home/hayduke/PyNAST/scripts/ to your $PATH environment variable. Assuming you're using the bash shell, you can do this with the command:
-			::
-				
-				export PATH=/home/hayduke/PyNAST/scripts/:$PATH
-				
-            For the best results, add the above line to the ``.bash_profile`` file in your home directory.
-
-          * or, create a symbolic link from a directory in your system path (e.g. ``/usr/bin/``) to the pynast script:
-			::
-	
-				ln -s /home/hayduke/PyNAST/scripts/pynast /usr/bin/pynast
+		pynast -h
 
 Using the PyNAST command line application
 =========================================
