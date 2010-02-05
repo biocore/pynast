@@ -66,6 +66,7 @@ Powered by <a href="http://feed.informer.com/">RSS Feed Informer</a></noscript><
 <li><a class="reference external" href="#required-software">Required software</a></li>
 <li><a class="reference external" href="#optional-software">Optional software</a></li>
 <li><a class="reference external" href="#installation-steps">Installation steps</a></li>
+<li><a class="reference external" href="#customizing-your-installation">Customizing your installation</a></li>
 <li><a class="reference external" href="#using-the-pynast-command-line-application">Using the PyNAST command line application</a></li>
 </ul>
 </li>
@@ -142,7 +143,7 @@ Powered by <a href="http://feed.informer.com/">RSS Feed Informer</a></noscript><
 <p>If you downloaded from svn, you will have a new folder in the current working directory called <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. If you downloaded PyNAST-1.1, after untar/unzipping <tt class="docutils literal"><span class="pre">PyNAST-1.1.tar.gz</span></tt> will have a new directory named <tt class="docutils literal"><span class="pre">PyNAST-1.1</span></tt>. <strong>For consistency, all instructions below will refer to this directory as</strong> <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. You may choose to rename <tt class="docutils literal"><span class="pre">PyNAST-1.1</span></tt> as <tt class="docutils literal"><span class="pre">PyNAST</span></tt>.</p>
 <ol class="arabic">
 <li><dl class="first docutils">
-<dt>Run setup.py. You may need to do this as root:</dt>
+<dt>Run setup.py. You may need to do this as root (see <a class="reference internal" href="#customizing-your-installation"><em>Customizing your installation</em></a> below if this is not an option, or if you&#8217;d like to install the PyNAST library code and/or scripts in non-default locations):</dt>
 <dd><div class="first last highlight-python"><pre>cd PyNAST
 python setup.py install</pre>
 </div>
@@ -157,13 +158,10 @@ python setup.py install</pre>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>Run the following commands:</dt>
-<dd><blockquote class="first">
-<div class="highlight-python"><pre>python test_logger.py
+<dt>Run the following commands. All tests should pass, unless you don&#8217;t have <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a>, <a class="reference external" href="http://align.bmr.kyushu-u.ac.jp/mafft/online/server/">MAFFT</a>, and/or <a class="reference external" href="http://www.ebi.ac.uk/Tools/clustalw2/index.html">ClustalW</a> installed. These are optional external software packages, and you will get one test failure per missing software package. You can ignore test failures which indicate that these programs cannot be found.</dt>
+<dd><div class="first last highlight-python"><pre>python test_logger.py
 python test_util.py</pre>
 </div>
-</blockquote>
-<p class="last">All tests should pass, unless you don&#8217;t have <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a>, <a class="reference external" href="http://align.bmr.kyushu-u.ac.jp/mafft/online/server/">MAFFT</a>, and/or <a class="reference external" href="http://www.ebi.ac.uk/Tools/clustalw2/index.html">ClustalW</a> installed. These are optional external software packages, and you will get one test failure per missing software package. You can ignore test failures which indicate that these programs cannot be found.</p>
 </dd>
 </dl>
 </li>
@@ -176,6 +174,19 @@ python test_util.py</pre>
 </dl>
 </li>
 </ol>
+</div>
+<div class="section" id="customizing-your-installation">
+<span id="id1"></span><h2>Customizing your installation<a class="headerlink" href="#customizing-your-installation" title="Permalink to this headline">¶</a></h2>
+<p>PyNAST consists of library code and a script. By default the script will be installed in <tt class="docutils literal"><span class="pre">/usr/local/bin</span></tt>. This can be customized with the <tt class="docutils literal"><span class="pre">-install_scripts</span></tt> option like:</p>
+<div class="highlight-python"><pre>python setup.py install --install-scripts=/Users/caporaso/bin/</pre>
+</div>
+<p>You can similarly install the library code in an alternate location using the <tt class="docutils literal"><span class="pre">--install-purelib</span></tt> option:</p>
+<div class="highlight-python"><pre>python setup.py install --install-purelib=/Users/caporaso/temp/</pre>
+</div>
+<p>A combination of these options is also possible:</p>
+<div class="highlight-python"><pre>python setup.py install --install-scripts=/Users/caporaso/bin/ --install-purelib=/Users/caporaso/temp/</pre>
+</div>
+<p>For a complete discussion of customizations related to the setup.py script, <a class="reference external" href="http://docs.python.org/install/index.html#alternate-installation-the-home-scheme">see this page</a>.</p>
 </div>
 <div class="section" id="using-the-pynast-command-line-application">
 <h2>Using the PyNAST command line application<a class="headerlink" href="#using-the-pynast-command-line-application" title="Permalink to this headline">¶</a></h2>
