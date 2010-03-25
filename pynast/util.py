@@ -571,24 +571,102 @@ def remove_template_terminal_gaps(candidate,template):
      (candidate_name,name_delimiter,candidate_start_pos,candidate_end_pos)
     
     return DNA.makeSequence(candidate,Name=candidate_name), template
-    
-def pynast_seq(candidate_sequence,template_alignment,\
-    degapped_template_alignment=None,blast_db=None,max_hits=30,\
-    max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
+
+def pynast_seq(candidate_sequence, template_alignment,
+    blast_db=None,max_e_value=None,addl_blast_params={},
+    max_hits=30, min_pct=75.0,min_len=1000,
     align_unaligned_seqs_f=None, log_fp=None, logger=None):
-    """ align candidate sequence to template aln, preserving the aln length
-    """
-    if candidate_sequence.isGapped():
-        raise ValueError,\
-         "Candidate sequence cannot contain gap characters: %s"\
-         % candidate_sequence.Name
     
-    candidate_sequence_len = len(candidate_sequence)
-    if candidate_sequence_len < min_len:
-        raise UnalignableSequenceError,\
-         "Sequence does not meet minimum length "+\
-         "requirement for alignment (%d < %d)"\
-          % (candidate_sequence_len,min_len)
+    class logger(object):
+        """ A simple object to store results of a single pynast run """
+        
+        def setUp(self):
+            self.Data = None
+        
+        def record(self,*args):
+            self.Data = tuple(args)
+    
+    l = logger()
+    candidate_sequences = [(candidate_sequence.Name,str(candidate_sequence))]
+    
+    aligned_seq, exit_status = list(ipynast_seqs(candidate_sequences,
+     template_alignment, max_hits=max_hits, min_pct=min_pct, min_len=min_len,
+     align_unaligned_seqs_f=align_unaligned_seqs_f,
+     log_fp=None, logger=l))[0]
+    
+    if exit_status == 0:
+        return l.Data[3], aligned_seq
+    else:
+        raise UnalignableSequenceError, l.Data[2]
+
+def ipynast_seqs(candidate_sequences, template_alignment,
+    blast_db=None,max_e_value=None,addl_blast_params={},
+    max_hits=30, min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None,
+    log_fp=None, logger=None):
+    """Iterator that yields results of pynast on candidate_sequences
+    
+    This function yields the sequence and exit status of the alignment step,
+     as (sequence, exit status) tuples.
+     Status values can be:
+       0 : indicates a sucessful alignment, in which case the sequence will be
+            aligned
+       1 : indicates unsucessful sequence search, in which case the sequence 
+            will be unaligned
+       2 : indicates alignment did not meet minimum requirements, in which case 
+            the sequence will be unaligned
+            
+     All sequences are returned as DNA sequence objects.
+    
+    candidate_sequences
+        an iterable object (e.g., a list) containing tuples of
+        (seq_id, sequence) pairs (e.g., as returned by MinimalFastaParser)
+        or a fasta filepath
+    template_alignment
+        a PyCogent alignment object containing the template alignment
+        or a fasta filepath
+    max_hits
+      Maximum number of uclust hits to return
+    min_pct
+      minimum % identity for best database match
+    min_len
+      minimum length of match for alignment     
+    align_unaligned_seqs_f
+      Function to align sequences. Must be of the form:
+       align_unaligned_seqs(seqs, moltype, params=None)
+       see cogent.app.muscle.align_unaligned_seqs
+    log_fp
+      Optional path to log file
+    logger
+      Optional NastLogger object, takes precedence over log_fp
+      
+    """
+    files_to_remove = []
+    if type(candidate_sequences) == str:
+        # filepath provided for candidate sequences
+        candidate_fasta_filepath = candidate_sequences
+    else:
+        # sequence list provided for candidate sequence -- write 
+        # the seqs to a temp file to pass to uclust
+        candidate_fasta_filepath = \
+         get_tmp_filename(prefix='pynast_candidate',suffix='.fasta')
+        candidate_fasta_f = open(candidate_fasta_filepath,'w')
+        for s in candidate_sequences:
+            candidate_fasta_f.write('>%s\n%s\n' % (s))
+        candidate_fasta_f.close()
+        files_to_remove.append(candidate_fasta_filepath)
+
+    # degap the template alignment for the sequence searching step
+    if type(template_alignment) == str:
+        # template alignment provided as filepath -- load it into
+        # an Alignment object
+        template_alignment = LoadSeqs(template_alignment,moltype=DNA)
+    # degap the alignment, and write it to a temp file
+    template_fasta_filepath = \
+     get_tmp_filename(prefix='pynast_template',suffix='.fasta')
+    template_fasta_f = open(template_fasta_filepath,'w')
+    template_fasta_f.write(template_alignment.degap().toFasta())
+    template_fasta_f.close()
+    files_to_remove.append(template_fasta_filepath)
          
     # Set up logging.  NastLogger object takes precedence over log
     # file path, if both are provided.
@@ -598,187 +676,121 @@ def pynast_seq(candidate_sequence,template_alignment,\
         logger = NastLogger(log_fp)
     else:
         logger = NastLogger()
-        
-    degapped_template_alignment = degapped_template_alignment or\
-     template_alignment.degap()
-
-    candidate_fasta_filepath = \
-        get_tmp_filename(prefix='pynast_candidate',suffix='.fasta')
-    open(candidate_fasta_filepath,'w').write(candidate_sequence.toFasta())
-    template_fasta_filepath = \
-        get_tmp_filename(prefix='pynast_template',suffix='.fasta')
-    open(template_fasta_filepath,'w').write(degapped_template_alignment.toFasta())
-    files_to_remove = [candidate_fasta_filepath, template_fasta_filepath]
     
     min_pct /= 100.
     # uclust_search_and_align_from_fasta_filepath is an interator,
     # but since only one sequence is passed here, explicitly grab 
     # the first result
-    try:
-        candidate_seq_id, template_seq_id, pw_aligned_candidate,\
-         pw_aligned_template, pct_identity = \
-         list(uclust_search_and_align_from_fasta_filepath(
+    # apply uclust and get an iterator back
+    pw_alignment_iterator = uclust_search_and_align_from_fasta_filepath(
             candidate_fasta_filepath,
             template_fasta_filepath,
             percent_ID=min_pct,
-            enable_rev_strand_matching=True))[0]
-    except IndexError:
-        raise UnalignableSequenceError, "No search results."
+            enable_rev_strand_matching=True)
+
+    try:
+        current_result = pw_alignment_iterator.next()
+    except StopIteration:
+        current_result = None
+        
+    for seq_id, seq in MinimalFastaParser(open(candidate_fasta_filepath)):
+        seq_len = len(seq)
+        if '-' in seq:
+            raise ValueError, "Candidate sequence contains gaps. This is not supported."
+        
+        try:
+            candidate_seq_id, template_seq_id, pw_aligned_candidate,\
+             pw_aligned_template, pct_identity = current_result
+        except TypeError:
+            pass
+        
+        if not current_result or seq_id.split()[0] != candidate_seq_id.split()[0]:
+            # a suitable match was not found - don't align the sequence
+            # log the failure
+            logger.record(
+                seq_id, # input sequence identifier
+                len(seq), # input sequence length
+                "No search results.")
+            # yield the unaligned sequence and failure code
+            yield DNA.makeSequence(seq,Name=seq_id), 1
+        else:
+            # this sequence was aligned
+            if align_unaligned_seqs_f:
+                # if an alternate pairwise aligner was specified, unalign
+                # and re-align the sequences.
+                pw_aligned_template, pw_aligned_candidate =\
+                 align_two_seqs(pw_aligned_candidate.replace('-',''),
+                                pw_aligned_template.replace('-',''),
+                                align_unaligned_seqs_f)
     
-    if align_unaligned_seqs_f:
-        # if an alternate pairwise aligner was specified, unalign
-        # and re-align the sequences.
-        pw_aligned_template, pw_aligned_candidate =\
-         align_two_seqs(pw_aligned_candidate.replace('-',''),
-                        pw_aligned_template.replace('-',''),
-                        align_unaligned_seqs_f)
+            # Cast the pairwise alignments to DNA sequence objects
+            pw_aligned_candidate = \
+             DNA.makeSequence(pw_aligned_candidate,Name=candidate_seq_id)
+            pw_aligned_template = \
+             DNA.makeSequence(pw_aligned_template,Name=template_seq_id)
     
-    # Cast the pairwise alignments to DNA sequence objects
-    pw_aligned_candidate = \
-     DNA.makeSequence(pw_aligned_candidate,Name=candidate_seq_id)
-    pw_aligned_template = \
-     DNA.makeSequence(pw_aligned_template,Name=template_seq_id)
+            # Remove any terminal gaps that were introduced into the template
+            # sequence
+            pw_aligned_candidate, pw_aligned_template = \
+                remove_template_terminal_gaps(
+                pw_aligned_candidate, pw_aligned_template)
+            candidate_seq_id = pw_aligned_candidate.Name
     
-    # Remove any terminal gaps that were introduced into the template
-    # sequence
-    pw_aligned_candidate, pw_aligned_template = \
-        remove_template_terminal_gaps(pw_aligned_candidate, pw_aligned_template)
-    candidate_seq_id = pw_aligned_candidate.Name
+            # get the aligned template sequence from the template alignment
+            template_aligned_seq = \
+             template_alignment.getGappedSeq(template_seq_id)
     
-    # get the aligned template sequence from the template alignment
-    template_aligned_seq = template_alignment.getGappedSeq(template_seq_id)
+            # reintroduce the gap spacing from the template alignment
+            pw_aligned_template, pw_aligned_candidate, new_gaps =\
+              reintroduce_template_spacing(template_aligned_seq,\
+              pw_aligned_template,pw_aligned_candidate)
     
-    # reintroduce the gap spacing from the template alignment
-    pw_aligned_template, pw_aligned_candidate, new_gaps =\
-      reintroduce_template_spacing(template_aligned_seq,\
-      pw_aligned_template,pw_aligned_candidate)
-    
-    # delete any new gaps that were introduced during the pairwise alignment
-    # step
-    pw_aligned_template, pw_aligned_candidate = adjust_alignment(\
-     pw_aligned_template,pw_aligned_candidate,new_gaps)
+            # delete any new gaps that were introduced during the 
+            # pairwise alignment step
+            pw_aligned_template, pw_aligned_candidate = adjust_alignment(\
+             pw_aligned_template,pw_aligned_candidate,new_gaps)
      
-    # reintroduce any terminal gaps that were present in the template
-    result = introduce_terminal_gaps(\
-        template_aligned_seq,pw_aligned_template,pw_aligned_candidate)
-     
+            # reintroduce any terminal gaps that were present in the template
+            result = introduce_terminal_gaps(\
+                template_aligned_seq,pw_aligned_template,pw_aligned_candidate)
+        
+            unaligned_length = len(result.degap())
+            if unaligned_length < min_len:
+                # alignment is too short - log this as a failure
+                error = "Alignment does not meet minimum length "+\
+                            "requirement for alignment (%d < %d)"\
+                             % (seq_len,min_len)
+                logger.record(
+                    seq_id, # input sequence identifier
+                    len(seq), # input sequence length
+                    "No search results.")
+                # yield the unaligned sequence and failure code
+                yield DNA.makeSequence(seq,Name=seq_id), 2
+            else:        
+                # log the alignment
+                logger.record(
+                    seq_id, # input sequence identifier
+                    len(seq), # input sequence length
+                    '',                  # Errors
+                    template_seq_id, # best template match id
+                    '%3.2f' % pct_identity, # pct id to template
+                    unaligned_length, # post alignment sequence length
+                    )
+
+                # yield the aligned sequence and sucess code
+                yield DNA.makeSequence(result,Name=candidate_seq_id), 0
+                
+            # get the next alignment
+            try:
+                current_result = pw_alignment_iterator.next()
+            except StopIteration:
+                # end of the input fasta file indicates completion,
+                # not end of the aligned sequences
+                continue
+            
     # clean-up temporary blast database files if any were created
     remove_files(files_to_remove,error_on_missing=False)
 
-    # log the alignment
-    # TODO: Fill in or remove missing fields
-    logger.record(
-        candidate_seq_id.split()[0],
-        len(candidate_sequence),
-        '',                  # Errors
-        template_seq_id,
-        '%3.2f' % pct_identity,
-        len(result.degap()), # Candidate Sequence length post-Nast
-        )
-
-    # return the id of the best blast hit and the aligned candidate sequence
-    return template_seq_id, DNA.makeSequence(result,Name=candidate_seq_id)
-
-def ipynast_seqs(candidate_sequences,template_alignment,\
-    blast_db=None,max_hits=30,\
-    max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
-    align_unaligned_seqs_f=None, log_fp=None,\
-    logger=None):
-    """Iterator that yields results of pynast_seq on candidate_sequences
-    
-    This function yields the sequence and exit status of the alignment step,
-     as (sequence, exit status) tuples.
-     Status values can be:
-       0 : indicates a sucessful alignment, in which case the sequence will be
-            aligned
-       1 : indicates unsucessful alignment (i.e., an UnalignableSequenceError
-            was caught), in which case the sequence will be unaligned
-            
-     Statuses are returned as ints (rather than bools) to support new statuses
-      in the future. 0 is used to indicate success because there is only one
-      way the call can result in a sucessful alignment, but we may want to
-      allow for alternate failure types in the future.
-     All sequences are returned as DNA sequence objects.
-    
-    candidate_sequences
-        an iterable object (e.g., a list) containing tuples of
-        (seq_id, sequence) pairs (e.g., as returned by MinimalFastaParser)
-    template_alignment
-        a PyCogent alignment object containing the template alignment
-    blast_db
-      Database to BLAST against (default: derived from template)
-    max_hits
-      Maximum number of BLAST hits to return (passed to 
-      cogent.app.blast.blastn())
-    max_e_value
-      expectation value passed to BLAST application controller
-    addl_blast_params
-      additional parameters to pass to the BLAST application controller 
-      (see documentation for cogent.app.blast.blastn()) 
-    min_pct
-      minimum % identity for BLAST hit
-    min_len
-      minimum length of match for BLAST hit      
-    align_unaligned_seqs_f
-      Function to align sequences. Must be of the form:
-       align_unaligned_seqs(seqs, moltype, params=None)
-       see cogent.app.muscle.align_unaligned_seqs
-    log_fp
-      Optional path to log file
-    logger
-      Optional NastLogger object, takes precedence over log_fp
-    """
-    
-    # Set up logging.  NastLogger object takes precedence over log
-    # file path, if both are provided.
-    if logger is not None:
-        logger = logger
-    elif log_fp is not None:
-        logger = NastLogger(log_fp)
-    else:
-        logger = NastLogger()
-    
-    # if a blast database was not passed in, create one from the
-    # (degapped) template alignment
-    if not blast_db:
-        blast_db, db_files_to_remove = \
-         build_blast_db_from_seqs(template_alignment,output_dir='/tmp/')
-    else:
-        db_files_to_remove = []
-        
-    # cache a copy of the degapped template alignment
-    degapped_template_alignment = template_alignment.degap()
-    
-    # iterate over the candidate sequences
-    for seq_id, seq in candidate_sequences:
-        candidate_sequence = DNA.makeSequence(seq,Name=seq_id)
-        try:
-            # align the candidate sequence to the template alignment
-            # and store the best blast hit id and aligned sequence
-            template_seq_id, aligned_seq = \
-             pynast_seq(candidate_sequence,template_alignment,\
-             degapped_template_alignment=degapped_template_alignment,\
-             blast_db=blast_db,max_hits=max_hits,max_e_value=max_e_value,\
-             addl_blast_params=addl_blast_params,min_pct=min_pct,\
-             min_len=min_len,align_unaligned_seqs_f=align_unaligned_seqs_f,\
-             logger=logger)
-            yield aligned_seq, 0
-            
-        except UnalignableSequenceError,e:
-            # if the sequence could not be aligned, store the sequence
-            # in the failures list
-            yield DNA.makeSequence(seq,Name=seq_id), 1
-            logger.record(seq_id, len(seq), e)
-            
-        except ValueError,e:
-            # clean-up temporary blast database files if any were created
-            remove_files(db_files_to_remove,error_on_missing=False)
-            # Re-raise the error
-            e = str(e) + "\nseq_id:%s\nseq:%s\n" % (seq_id, seq)
-            raise ValueError, e
-
-    # clean-up temporary blast database files if any were created
-    remove_files(db_files_to_remove,error_on_missing=False)
 
 def null_status_callback_f(x):
     """Dummy function to pass as default status_callback_f"""

@@ -315,8 +315,8 @@ class PyNastTests(TestCase):
          
         # all fail when min_len restricts matches
         expected = [\
-         (DNA.makeSequence('ACGAACGTTAATACCCTGGAAGT',Name='1'),1),\
-         (DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='2'),1),\
+         (DNA.makeSequence('ACGAACGTTAATACCCTGGAAGT',Name='1'),2),\
+         (DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='2'),2),\
          (DNA.makeSequence('AA',Name='3'),1)]
         
         actual = list(ipynast_seqs(\
@@ -352,7 +352,6 @@ class PyNastTests(TestCase):
     def test_ipynast_seqs_real_data(self):
         """ipynast_seqs_real_data: sanity check with real data
         """
-        
         actual = list(ipynast_seqs(\
          self.full_length_test2_input_seqs.items(),\
          self.full_length_test2_template_aln,\
@@ -1639,11 +1638,11 @@ GAGTTTGATCATGGCTCAGGACGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAG-------------CGAATGACA
 
 expected_logfile_contents = \
 """1\t23\t\t5\t100.00\t23
-2\t2\tSequence does not meet minimum length requirement for alignment (2 < 5)
+2\t2\tNo search results.
 """
 
 expected_stringent_logfile_contents = \
-"""1\t23\tSequence does not meet minimum length requirement for alignment (23 < 500)
+"""1\t23\tNo search results.
 """
 
 expected_help_message = \

@@ -48,9 +48,6 @@ def parse_command_line_parameters():
     parser.add_option('-p','--min_pct_id',action='store',\
           type='float',default=75.0,help='minimum percent sequence '+\
           ' identity to consider a sequence a match [default: %default]')
-    parser.add_option('-e','--max_e_value',action='store',\
-          type='float',default=1e-1,help='max_e_value to consider '+\
-          'a blast hit [default: %default]')
     parser.add_option('-l','--min_len',action='store',\
           type='int',default=1000,help='minimum sequence length '+\
           'to include in NAST alignment [default: %default]')
@@ -59,10 +56,6 @@ def parse_command_line_parameters():
           'for performing pairwise alignment ' +\
           '[default: %default]')
           
-    parser.add_option('-d','--blast_db',action='store',\
-          type='string',dest='blast_db',\
-          help='database to blast against ' +\
-          '[default: Constructed on-the-fly from degapped template alignment]')
     parser.add_option('-a','--fasta_out_fp',action='store',\
           type='string',dest='fasta_out_fp',help='path to store '+\
           'resulting alignment file ' +\
@@ -155,10 +148,7 @@ def main():
     pynast_iterator = ipynast_seqs(\
       candidate_sequences,\
       template_alignment,\
-      blast_db=opts.blast_db,\
       max_hits=30,\
-      max_e_value=opts.max_e_value,\
-      addl_blast_params={},\
       min_pct=min_pct_id,\
       min_len=min_len,\
       align_unaligned_seqs_f=align_unaligned_seqs_f,\
