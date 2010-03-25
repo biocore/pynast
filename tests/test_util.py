@@ -269,26 +269,41 @@ class PyNastTests(TestCase):
     def test_pynast_seqs_simple_alt_pairwise(self):
         """pynast_seqs: fns with alt pairwise aligner
         """
-        # create a fake aligner which alters the sequence so
-        # it's obvious that it was applied
-        def fake_aligner(seqs,moltype,params={}):
-            return LoadSeqs(data=[('candidate','AGGGGGTTTT'), 
-                                  ('template', 'ACCCCCTTTT')],moltype=DNA)
-        
-        candidate_seqs = [('1','ACCCCCTTTT')]
-         
+        # tests that the order of the returned sequences is correct
+        # as this is easy to screw up
+        candidate_seqs = [('1','AGCCCCTTTT')]
         template_aln = LoadSeqs(data=dict([
             ('2','ACCC-----CCTTTT')]),\
             moltype=DNA,aligned=DenseAlignment)
-         
-        expected_aln = [DNA.makeSequence('AGGG-----GGTTTT',Name='1')]
+        expected_aln = [DNA.makeSequence('AGCC-----CCTTTT',Name='1')]
         expected_fail = []
         
         actual = pynast_seqs(candidate_seqs,template_aln,
-                             min_len=5,min_pct=75.0,\
-                             align_unaligned_seqs_f=fake_aligner)
+                     min_len=5,min_pct=75.0,\
+                     align_unaligned_seqs_f=pair_hmm_align_unaligned_seqs)
         self.assertEqual(actual,(expected_aln,expected_fail))
         
+        
+        # tests that the aligner was actually applied, as it's
+        # nearly impossible to get different alignments with
+        # different aligners on these short test sequences --
+        # therefore test with a fake aligner that alters the sequence
+        def fake_aligner(seqs,moltype,params={}):
+            return LoadSeqs(data=[('candidate','AGGGGGTTTT'),
+                                   ('template', 'ACCCCCTTTT')],moltype=DNA)
+
+        candidate_seqs = [('1','ACCCCCTTTT')]
+        template_aln = LoadSeqs(data=dict([
+             ('2','ACCC-----CCTTTT')]),\
+             moltype=DNA,aligned=DenseAlignment)
+        expected_aln = [DNA.makeSequence('AGGG-----GGTTTT',Name='1')]
+        expected_fail = []
+        actual = pynast_seqs(candidate_seqs,template_aln,
+                              min_len=5,min_pct=75.0,\
+                              align_unaligned_seqs_f=fake_aligner)
+        self.assertEqual(actual,(expected_aln,expected_fail))
+
+       
     def test_ipynast_seqs_simple(self):
         """ipynast_seqs: fns with simple test data
         """

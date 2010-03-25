@@ -631,10 +631,10 @@ def ipynast_seqs(candidate_sequences, template_alignment,
                 # if an alternate pairwise aligner was specified, unalign
                 # and re-align the sequences.
                 pw_aligned_template, pw_aligned_candidate =\
-                 align_two_seqs(pw_aligned_candidate.replace('-',''),
-                                pw_aligned_template.replace('-',''),
+                 align_two_seqs(pw_aligned_template.replace('-',''),
+                                pw_aligned_candidate.replace('-',''),
                                 align_unaligned_seqs_f)
-    
+                                    
             # Cast the pairwise alignments to DNA sequence objects
             pw_aligned_candidate = \
              DNA.makeSequence(pw_aligned_candidate,Name=candidate_seq_id)
