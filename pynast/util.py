@@ -193,123 +193,7 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
               (subject_id,subject_seq)]
     
     return LoadSeqs(data=result,moltype=moltype)
-     
 
-def blast_sequence(candidate_sequence,blast_db,max_hits,\
-    max_e_value=1e-1,addl_blast_params={}):
- 
-    # set default blast parameters
-    params = {
-        # max procs
-        "-a":"1",
-        # do not filter query sequences
-        "-F":"F",
-        # mismatch penalty
-        "-q":"-1"}
-    # override blast params with any additional passed params
-    params.update(addl_blast_params)
-    if not(exists(blast_db + ".nsq")):
-        raise IOError, \
-         "BLAST database: '%s' probably does not exist." % blast_db
-    # blast sequence
-    
-    result = blastn(\
-        ['>query_%s' % candidate_sequence.Name,str(candidate_sequence)],\
-        blast_db=blast_db,
-        e_value=str(max_e_value), 
-        max_hits=max_hits, working_dir="/tmp/", blast_mat_root=None, 
-        extra_params=params)
-    return result
-    
-def process_blast_result(blast_res, templ_align, templ_align_seq, cur_seq, 
-    min_len, min_pct, num_hits=30):
-    """ Post process blast results 
-     Originally derived from nast_farm.py
-    """
-    # if no hits, bail out
-    if not (blast_res and blast_res.keys() != ['']):
-        raise UnalignableSequenceError, "No blast results."
-    # if hits for multiple queries, bail out
-    if len(blast_res) > 1: 
-        raise ValueError,\
-         "Blast results must processed one query at a time. "+\
-         "Results provided for multiple queries: %s " \
-         % ' '.join(blast_res.keys())
-        
-    ## variables to track best hit
-    # will store the best blast hit list
-    best_hit = None
-    # will store the best % idnetity score
-    best_pct_identity = None
-    # will store the id of the best blast hit sequence
-    best_templ_id = None
-    # will store the number of aligned query positions for the
-    # best blast hit
-    best_aligned_positions = None
-    # will store the alignment length of the best hit
-    best_aln_len = None
-    
-    # find the best hit that meets threshold values 
-    for query_id, hits in blast_res.bestHitsByQuery(n=num_hits):
-        
-        for hit in hits:
-            # check current hit
-            cur_pct_identity = float(hit[BlastResult.PERCENT_IDENTITY])
-            cur_aln_len = int(hit[BlastResult.ALIGNMENT_LENGTH])
-            # count the number of positions which are aligned --
-            # this is used to identify the best blast hit in original
-            # NAST, may want to parameterize how that is determined
-            cur_aligned_positions = \
-             int(hit[BlastResult.QUERY_END]) - \
-             int(hit[BlastResult.QUERY_START]) + 1
-            # check if current hit is the best blast hit
-            if (best_aligned_positions is None) or \
-                    (cur_aligned_positions > best_aligned_positions) or\
-                    (cur_aligned_positions == best_aligned_positions \
-                         and cur_pct_identity > best_pct_identity):
-                best_pct_identity = cur_pct_identity 
-                best_aln_len = cur_aln_len
-                best_templ_id = hit[BlastResult.SUBJECT_ID] 
-                best_hit = hit
-                best_aligned_positions = cur_aligned_positions
-
-    # raise error if best hit does not meet user specified criteria 
-    if best_pct_identity < min_pct or best_aln_len < min_len:
-        raise UnalignableSequenceError,\
-         ''.join(["Best alignment did not meet user requirements. ",
-            "Length: %d " % best_aln_len,
-            "Percent Indentity: %.2f " % best_pct_identity,
-            "Template: %s" % best_templ_id])
-  
-    # get ids
-    query_id = best_hit[BlastResult.QUERY_ID]
-    subj_id = best_hit[BlastResult.SUBJECT_ID]
-    q_start = int(best_hit[BlastResult.QUERY_START])
-    q_end = int(best_hit[BlastResult.QUERY_END])
-    s_start = int(best_hit[BlastResult.SUBJECT_START])
-    s_end = int(best_hit[BlastResult.SUBJECT_END])
-    
-    # check orientation of blast results
-    query_rev = False
-    if  s_start > s_end:
-        templ_seq = templ_align_seq.getSeq(subj_id)
-        len_cur_seq = len(cur_seq)
-        cur_seq = DNA.makeSequence(cur_seq[q_start-1:q_end].rc(),\
-         Name='%s RC:%s..%s' %\
-          (cur_seq.Name,str(len_cur_seq-q_end+1),str(len_cur_seq-q_start+1)))
-    elif q_start > q_end:
-        # is it possible to get here???
-        raise NotImplementedError,\
-         "Seqs match is to a rc of database seq."
-    else:
-        # no orientation adjustments are necessary
-        templ_seq = templ_align_seq.getSeq(subj_id)
-        cur_seq = DNA.makeSequence(cur_seq[q_start-1:q_end],\
-            Name='%s %s..%s' % (cur_seq.Name,str(q_start),str(q_end)))
-
-    pct_identity = best_hit[BlastResult.PERCENT_IDENTITY]
-
-    return templ_seq, cur_seq, pct_identity
 
 def align_two_seqs(template, candidate,\
     align_unaligned_seqs_f=muscle_align_unaligned_seqs,\
@@ -573,7 +457,6 @@ def remove_template_terminal_gaps(candidate,template):
     return DNA.makeSequence(candidate,Name=candidate_name), template
 
 def pynast_seq(candidate_sequence, template_alignment,
-    blast_db=None,max_e_value=None,addl_blast_params={},
     max_hits=30, min_pct=75.0,min_len=1000,
     align_unaligned_seqs_f=None, log_fp=None, logger=None):
     
@@ -600,7 +483,6 @@ def pynast_seq(candidate_sequence, template_alignment,
         raise UnalignableSequenceError, l.Data[2]
 
 def ipynast_seqs(candidate_sequences, template_alignment,
-    blast_db=None,max_e_value=None,addl_blast_params={},
     max_hits=30, min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None,
     log_fp=None, logger=None):
     """Iterator that yields results of pynast on candidate_sequences
@@ -796,35 +678,28 @@ def null_status_callback_f(x):
     """Dummy function to pass as default status_callback_f"""
     pass
 
-def pynast_seqs(candidate_sequences,template_alignment,blast_db=None,max_hits=30,\
-    max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
-    align_unaligned_seqs_f=None, log_fp=None,\
+def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
+    min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None, log_fp=None,
     logger=None, status_callback_f=null_status_callback_f):
     """Function which runs pynast_seq on candidate_sequences.
     
     Results are returned as a tuple of lists:
      (aligned_sequences, failed_to_align_sequences)
      where all sequences are DNA sequence objects.
-    
+   
     candidate_sequences
         an iterable object (e.g., a list) containing tuples of
         (seq_id, sequence) pairs (e.g., as returned by MinimalFastaParser)
+        or a fasta filepath
     template_alignment
         a PyCogent alignment object containing the template alignment
-    blast_db
-      Database to BLAST against (default: derived from template)
+        or a fasta filepath
     max_hits
-      Maximum number of BLAST hits to return (passed to 
-      cogent.app.blast.blastn())
-    max_e_value
-      expectation value passed to BLAST application controller
-    addl_blast_params
-      additional parameters to pass to the BLAST application controller 
-      (see documentation for cogent.app.blast.blastn()) 
+      Maximum number of uclust hits to return
     min_pct
-      minimum % identity for BLAST hit
+      minimum % identity for best database match
     min_len
-      minimum length of match for BLAST hit      
+      minimum length of match for alignment     
     align_unaligned_seqs_f
       Function to align sequences. Must be of the form:
        align_unaligned_seqs(seqs, moltype, params=None)
@@ -833,7 +708,7 @@ def pynast_seqs(candidate_sequences,template_alignment,blast_db=None,max_hits=30
       Optional path to log file
     logger
       Optional NastLogger object, takes precedence over log_fp
-     status_callback_f:
+    status_callback_f:
       Callback function to provide status updates to callers of pynast_seqs.
       This function must take a single parameter.
     """
@@ -843,11 +718,10 @@ def pynast_seqs(candidate_sequences,template_alignment,blast_db=None,max_hits=30
     aligned = []
     failed_to_align = []
     
-    pynast_iterator = ipynast_seqs(\
-     candidate_sequences,template_alignment,blast_db=blast_db,\
-     max_hits=max_hits,max_e_value=max_e_value,\
-     addl_blast_params=addl_blast_params,min_pct=min_pct,min_len=min_len,\
-     align_unaligned_seqs_f=align_unaligned_seqs_f, log_fp=log_fp,\
+    pynast_iterator = ipynast_seqs(
+     candidate_sequences, template_alignment,
+     max_hits=max_hits, min_pct=min_pct, min_len=min_len,
+     align_unaligned_seqs_f=align_unaligned_seqs_f, log_fp=log_fp,
      logger=logger)
     
     for seq, status in pynast_iterator:

@@ -13,12 +13,11 @@ from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
 from cogent.parse.fasta import MinimalFastaParser
 from cogent.util.unit_test import TestCase, main
-from pynast.util import blast_sequence, process_blast_result,\
- align_two_seqs, reintroduce_template_spacing, adjust_alignment,\
- nearest_gap, pynast_seq,\
- introduce_terminal_gaps, UnalignableSequenceError, pynast_seqs,\
- pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs, ipynast_seqs,\
- remove_template_terminal_gaps
+from pynast.util import (align_two_seqs, reintroduce_template_spacing, 
+ adjust_alignment, nearest_gap, pynast_seq,
+ introduce_terminal_gaps, UnalignableSequenceError, pynast_seqs,
+ pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs, ipynast_seqs,
+ remove_template_terminal_gaps)
 from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
@@ -397,8 +396,8 @@ class PyNastTests(TestCase):
         """
         candidate_sequence =\
          DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='input')
-        actual = pynast_seq(candidate_sequence,db_aln2,blast_db=None,\
-         max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
+        actual = pynast_seq(candidate_sequence,db_aln2,
+         max_hits=30,min_pct=75.0,
          min_len=5,align_unaligned_seqs_f=None)
         
         # check individual components of result object
@@ -424,8 +423,8 @@ class PyNastTests(TestCase):
         # same result is returned
         candidate_sequence =\
          DNA.makeSequence('ACTACCAGGGTATTAACGTACGT',Name='input')
-        actual = pynast_seq(candidate_sequence,db_aln2,blast_db=None,\
-         max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
+        actual = pynast_seq(candidate_sequence,db_aln2,
+         max_hits=30,min_pct=75.0,
          min_len=5,align_unaligned_seqs_f=None)
         
         # check individual components of result object
@@ -442,32 +441,6 @@ class PyNastTests(TestCase):
          DNA.makeSequence('ACGTACGT-TA--ATA-C-----CC-T-G-GTA-G-T---',\
          Name='input RC:1..23')) 
         self.assertEqual(actual,expected)        
-
-
-    def test_pynast_seq_existing_blast_db(self):
-        """pynast_seq: fns as exp with existing blast db
-        """
-        candidate_sequence =\
-         DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='input')
-        actual = pynast_seq(candidate_sequence,db_aln2,blast_db=self.blast_db2,\
-         max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
-         min_len=5,align_unaligned_seqs_f=None)
-        
-        # check individual components of result object
-        expected_template_hit = '5'
-        expected_aligned_seq = 'ACGTACGT-TA--ATA-C-----CC-T-G-GTA-G-T---'
-        expected_aligned_seq_id = 'input 1..23'
-        
-        self.assertEqual(actual[0],expected_template_hit)
-        self.assertEqual(str(actual[1]),expected_aligned_seq)
-        self.assertEqual(actual[1].Name,expected_aligned_seq_id)
-        
-        # check full result object
-        expected = ('5',\
-         DNA.makeSequence('ACGTACGT-TA--ATA-C-----CC-T-G-GTA-G-T---',\
-         Name='input 1..23')) 
-        self.assertEqual(actual,expected)
-        
     
     def test_pynast_seq_10116(self):
         """pynast_seq: real seq that introduces 5' gaps in pw aligned template
@@ -486,8 +459,7 @@ class PyNastTests(TestCase):
         template_aln = self.full_length_test1_template_aln
         
         actual = pynast_seq(candidate_sequence,template_aln,\
-         blast_db=None,max_hits=30,\
-         max_e_value=1e-1,addl_blast_params={},min_pct=70.0,min_len=150,\
+         max_hits=30,min_pct=70.0,min_len=150,\
          align_unaligned_seqs_f=None)
          
         self.assertEqual(len(actual[1]),len(template_aln))
@@ -505,9 +477,8 @@ class PyNastTests(TestCase):
         expected = ('14990_5_and_3_prime_lost_four_bases_each',\
          template_aln.getGappedSeq('14990_5_and_3_prime_lost_four_bases_each'))
         
-        actual = pynast_seq(candidate_sequence,template_aln,\
-         blast_db=None,max_hits=30,\
-         max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
+        actual = pynast_seq(candidate_sequence,template_aln,
+         max_hits=30,min_pct=75.0,min_len=1000,
          align_unaligned_seqs_f=None)
          
         # put handles on result parts for easier access
@@ -530,25 +501,7 @@ class PyNastTests(TestCase):
         
         # aligned seqs are equal
         self.assertEqual(actual_seq,expected_seq)
-        
-    def test_blast_sequence(self):
-        """ blast_sequence: result matches blastall command line output
-        """
-        # expected derived from following command:
-        # blastall -p blastn -q -1 -a 1 -F F -M BLOSUM62 -i <seq> 
-        # -d <DB> -W 7 -v 1 -e 1e-5 -b 1
-        # where db is based on degapped db_aln2 and seq is the following
-        # candidate_sequence
-        candidate_sequence = DNA.makeSequence('ACGTACGTACATACCCTGGTAGT',Name='0')
-        actual = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=1,max_e_value=1e-5,addl_blast_params={})
-        expected = {'query_0':[[{'MISMATCHES': '0', 'ALIGNMENT LENGTH': '23',\
-         'Q. END': '23', 'BIT SCORE': '38.0', '% IDENTITY': '100.00', \
-         'Q. START': '1', 'S. START': '1', 'S. END':'23', 'GAP OPENINGS':'0',\
-         'QUERY ID': 'query_0','E-VALUE': '4e-09', 'SUBJECT ID': '1'}]]}
-        self.assertEqual(actual,expected)
-
-         
+    
     def test_pynast_seq_error_on_gap(self):
         """ pynast_seq: raises ValueError on gap in candidate sequence
         """
@@ -556,237 +509,14 @@ class PyNastTests(TestCase):
             # error when gap(s) in seq
             cs = DNA.makeSequence(seq,Name=seq_id)
             self.assertRaises(ValueError,pynast_seq,cs,db_aln2,\
-             blast_db=None,max_hits=1,max_e_value=1e-1,\
-             addl_blast_params={},min_pct=75.0,min_len=5,\
-             align_unaligned_seqs_f=None)
+             max_hits=1,min_pct=75.0,min_len=5,align_unaligned_seqs_f=None)
              
             seq = seq.replace('-','').replace('.','')
             # no error when no gaps in seq
             cs = DNA.makeSequence(seq,Name=seq_id)
             r = pynast_seq(cs,db_aln2,\
-             blast_db=None,max_hits=1,max_e_value=1e-1,\
-             addl_blast_params={},min_pct=70.0,min_len=5,\
-             align_unaligned_seqs_f=None)
+             max_hits=1,min_pct=70.0,min_len=5,align_unaligned_seqs_f=None)
              
-
-            
-    def test_blast_sequence_errors_on_missing_blast_db(self):
-        """ blast_sequence: IOError on missing blast_db
-        """
-        candidate_sequence = DNA.makeSequence('ACGTACGTACATACCCTGGTAGT')
-        
-        self.assertRaises(IOError,blast_sequence,\
-             candidate_sequence,"fake_blast_db",\
-             max_hits=3,addl_blast_params={})
-             
-    
-    def test_process_blast_bad_sequence(self):
-        """ process_blast_result: handles violations to min seq parameters
-        """
-        candidate_sequence = DNA.makeSequence('ACGTACGTACATACGCTGGTAGT')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-            
-        # sequence length is less than min_length
-        self.assertRaises(UnalignableSequenceError,process_blast_result,\
-         blast_result,db_aln2,db_aln2.degap(),candidate_sequence,5000,75.0)
-         
-        # sequence identity is less than min_pct
-        self.assertRaises(UnalignableSequenceError,process_blast_result,\
-         blast_result,db_aln2,db_aln2.degap(),candidate_sequence,5,100.0)
-            
-        # no blast results
-        self.assertRaises(UnalignableSequenceError,process_blast_result,\
-         {},db_aln2,db_aln2.degap(),candidate_sequence,5,75.0)
-        
-             
-    def test_process_blast_result_full_seq(self):
-        """ process_blast_result: functions with full sequence match
-        """
-        candidate_sequence = DNA.makeSequence('ACGTACGTACATACCCTGGTAGT')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        
-    def test_process_blast_result_partial_seq(self):
-        """ process_blast_result: functions with partial seq match
-        """
-        # 3' bases truncated
-        candidate_sequence = DNA.makeSequence('ACGTACGTACATACCCT')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        # 3' bases extended
-        candidate_sequence = DNA.makeSequence('ACGTACGTACATACCCTGGTAGTTT')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        
-        # 5' bases truncated
-        candidate_sequence = DNA.makeSequence('CGTACGTACATACCCTGGTAGT')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('CGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        # 5' bases extended
-        candidate_sequence = DNA.makeSequence('TTACGTACGTACATACCCTGGTAGT')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        
-        # 5' and 3' bases truncated
-        candidate_sequence = DNA.makeSequence('CGTACGTACATACCCTGGTAG')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('CGTACGTACATACCCTGGTAG'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        # 5' and 3' bases extended
-        candidate_sequence = DNA.makeSequence('TTACGTACGTACATACCCTGGTAGTAA')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        
-    def test_process_blast_result_on_candidate_rc_full_match(self):
-        """ process_blast_result: handles partial match of candidate rc to db
-        """
-        # full match
-        candidate_sequence = DNA.makeSequence('ACTACCAGGGTATGTACGTACGT',Name='s')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        self.assertEqual(actual[1].Name,'s RC:1..23')
-        
-    def test_process_blast_result_on_candidate_rc_partial_seq(self):
-        """ process_blast_result: handles partial match of candidate rc to db
-        """
-        # 3' bases truncated
-        candidate_sequence = DNA.makeSequence('AGGGTATGTACGTACGT','s')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCT',Name='s RC:1..17'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        self.assertEqual(actual[1].Name,'s RC:1..17')
-        # 3' bases extended
-        candidate_sequence = \
-         DNA.makeSequence('AAACTACCAGGGTATGTACGTACGT',Name='s')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        self.assertEqual(actual[1].Name,'s RC:1..23')
-        
-        # 5' bases truncated
-        candidate_sequence = \
-         DNA.makeSequence('ACTACCAGGGTATGTACGTACG',Name='s')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence( 'CGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        self.assertEqual(actual[1].Name,'s RC:1..22')
-        
-        # 5' bases extended
-        candidate_sequence = \
-         DNA.makeSequence('ACTACCAGGGTATGTACGTACGTAA',Name='s')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        self.assertEqual(actual[1].Name,'s RC:3..25')
-        
-        # 5' and 3' bases truncated
-        candidate_sequence = \
-         DNA.makeSequence('CTACCAGGGTATGTACGTACG',Name='s')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence( 'CGTACGTACATACCCTGGTAG'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        self.assertEqual(actual[1].Name,'s RC:1..21')
-        # 5' and 3' bases extended
-        candidate_sequence = \
-         DNA.makeSequence('TTACTACCAGGGTATGTACGTACGTAA',Name='s')
-        blast_result = blast_sequence(candidate_sequence,self.blast_db2,\
-            max_hits=42,max_e_value=1e-1,\
-            addl_blast_params={})
-        actual = process_blast_result(blast_result,db_aln2,\
-         db_aln2.degap(), candidate_sequence,5,75.0)
-        expected = (DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    DNA.makeSequence('ACGTACGTACATACCCTGGTAGT'),\
-                    '100.00')
-        self.assertEqual(actual,expected)
-        self.assertEqual(actual[1].Name,'s RC:3..25')
-        
         
     def test_align_two_seqs_with_muscle(self):
         """ align_two_seqs: fns for simple alignments with muscle
