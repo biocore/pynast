@@ -30,23 +30,27 @@ __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
 __status__ = "Production"
 
-""" PyNAST is a complete rewrite of the NAST algorithm written in python. 
- The dependencies are PyCogent, NumPy, Python, and BLAST. The versions 
+""" PyNAST is a complete rewrite of the NAST algorithm written in python.
+ While PyNAST 1.0 strived to exactly match the results of the original 
+ NAST algorithm, the later version (beginning with the post-1.0 development
+ code) no longer exactly matches the the original NAST algorithm, hopefully
+ in favor of better results.
+ 
+ PyNAST depends on PyCogent, NumPy, Python, and uclust. The versions 
  used for development are:
  
  PyCogent 1.4.0
  NumPy 1.3.0
  Python 2.5.1
- blastall v2.2.20
+ uclust 1.1.572
  
-The NAST algorithm, reimplemented here, works as follows:
+The PyNAST algorithm works as follows:
 
-    (1) Using BLAST, identify the closest match to a sequence in a template
+    (1) Using uclust, identify the closest match to a sequence in a template
      alignment. 
-    (2) Trim the candidate sequence to the beginning and end points of the 
-     best BLAST hit. 
-    (3) Perform a pairwise alignment between the candidate sequence and
-     template alignment.
+    (2) Pairwise align the candidate sequence and template match identified
+     in step 1 (default uses the uclust result, but users can specify an
+     alternative pairwise aligner).
     (3) Reintroduce gap pattern from the template sequence.
     (4) Identify insertions which expand the template length. For each 
      'template-expanding' insertion, find the nearest gap character in the
@@ -83,10 +87,9 @@ def pair_hmm_align_unaligned_seqs(seqs,moltype,params={}):
     except KeyError:
         score_matrix = make_dna_scoring_dict(\
          match=1,transition=-1,transversion=-1)
-        
-        
+    
     return global_pairwise(s1,s2,score_matrix,gap_open,gap_extend)
-       
+
 def blast_align_unaligned_seqs(seqs,moltype,params={}):
     """ Pairwise align two seqs using bl2seq
     
@@ -195,8 +198,8 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
     return LoadSeqs(data=result,moltype=moltype)
 
 
-def align_two_seqs(template, candidate,\
-    align_unaligned_seqs_f=muscle_align_unaligned_seqs,\
+def align_two_seqs(template, candidate,
+    align_unaligned_seqs_f=muscle_align_unaligned_seqs,
     params={},moltype=DNA):
     """ Align the two sequences with an arbitrary aligner function
     
@@ -215,7 +218,7 @@ def align_two_seqs(template, candidate,\
     # Extract the sequences from the alignment object and return them
     return aln.getGappedSeq('template'), aln.getGappedSeq('candidate')
  
-def reintroduce_template_spacing(template,\
+def reintroduce_template_spacing(template,
     pw_aligned_template,pw_aligned_candidate):
     """ reintroduce template gap spacing into pairwise aligned sequences
     """
@@ -456,11 +459,36 @@ def remove_template_terminal_gaps(candidate,template):
     
     return DNA.makeSequence(candidate,Name=candidate_name), template
 
+def depreciation_warning(d):
+    if d:
+        print "Unsupported or depreciated options "+\
+         "passed to pynast: %s\n" % ' '.join(d.keys()) +\
+         "  blast_db, max_e_value, and addl_blast_params are depreciated " +\
+         "and will be removed in PyNAST 1.2."
+
 def pynast_seq(candidate_sequence, template_alignment,
-    max_hits=30, min_pct=75.0,min_len=1000,
-    align_unaligned_seqs_f=None, log_fp=None, logger=None):
+    max_hits=30, min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None,
+    **kwargs):
+    """ Apply PyNAST to a single sequence 
     
-    class logger(object):
+    candidate_sequence
+        a single DNA sequence object
+    template_alignment
+        a PyCogent alignment object containing the template alignment
+        or a fasta filepath
+    max_hits
+      Maximum number of uclust hits to return
+    min_pct
+      minimum % identity for best database match
+    min_len
+      minimum length of match for alignment     
+    align_unaligned_seqs_f
+      Function to align sequences. Must be of the form:
+       align_unaligned_seqs(seqs, moltype, params=None)
+       see cogent.app.muscle.align_unaligned_seqs
+    """
+    depreciation_warning(kwargs)
+    class SingleSeqLogger(object):
         """ A simple object to store results of a single pynast run """
         
         def setUp(self):
@@ -469,7 +497,7 @@ def pynast_seq(candidate_sequence, template_alignment,
         def record(self,*args):
             self.Data = tuple(args)
     
-    l = logger()
+    l = SingleSeqLogger()
     candidate_sequences = [(candidate_sequence.Name,str(candidate_sequence))]
     
     aligned_seq, exit_status = list(ipynast_seqs(candidate_sequences,
@@ -484,7 +512,7 @@ def pynast_seq(candidate_sequence, template_alignment,
 
 def ipynast_seqs(candidate_sequences, template_alignment,
     max_hits=30, min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None,
-    log_fp=None, logger=None):
+    log_fp=None, logger=None,**kwargs):
     """Iterator that yields results of pynast on candidate_sequences
     
     This function yields the sequence and exit status of the alignment step,
@@ -522,6 +550,8 @@ def ipynast_seqs(candidate_sequences, template_alignment,
       Optional NastLogger object, takes precedence over log_fp
       
     """
+    depreciation_warning(kwargs)
+    
     files_to_remove = []
     if type(candidate_sequences) == str:
         # filepath provided for candidate sequences
@@ -680,7 +710,7 @@ def null_status_callback_f(x):
 
 def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
     min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None, log_fp=None,
-    logger=None, status_callback_f=null_status_callback_f):
+    logger=None, status_callback_f=null_status_callback_f,**kwargs):
     """Function which runs pynast_seq on candidate_sequences.
     
     Results are returned as a tuple of lists:
@@ -712,7 +742,7 @@ def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
       Callback function to provide status updates to callers of pynast_seqs.
       This function must take a single parameter.
     """
-
+    depreciation_warning(kwargs)
     # create lists to keep track of the aligned candidate sequences 
     # and the sequences which fail to align
     aligned = []

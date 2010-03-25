@@ -69,7 +69,21 @@ def parse_command_line_parameters():
           'file of seqs which fail to align ' +\
           '[default: derived from input filepath]')
           
+    parser.add_option('-e','--max_e_value',
+          type='float',default=None,
+          help='Depreciated. Will be removed in PyNAST 1.2')
+    parser.add_option('-d','--blast_db',\
+          default=None,help='Depreciated. Will be removed in PyNAST 1.2')
+          
     opts,args = parser.parse_args()
+    
+    if opts.max_e_value:
+        print "Depreciation Warning: max_e_value no longer used "+\
+        "as database search now uses uclust. "
+        
+    if opts.blast_db:
+        print "Depreciation Warning: blast_db no longer used "+\
+        "as database search now uses uclust. "
     
     if args:
         parser.error('All parameters must be passed as options.'+\

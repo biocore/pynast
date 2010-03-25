@@ -6,8 +6,6 @@ from cogent import LoadSeqs, DNA
 from cogent.util.misc import remove_files
 from cogent.core.alignment import DenseAlignment
 from cogent.app.util import get_tmp_filename
-from cogent.app.formatdb import build_blast_db_from_seqs, \
- build_blast_db_from_fasta_path
 from cogent.app.muscle import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
@@ -53,9 +51,8 @@ class PyNastTests(TestCase):
         
         self.input_seqs_gaps = input_seqs_gaps.split('\n')
         
-        self.blast_db2, self.files_to_remove = \
-         build_blast_db_from_seqs(db_aln2,output_dir='/tmp/')
-         
+        self.files_to_remove = []
+        
         self.log_filename = \
             get_tmp_filename(prefix='PyNastTest', suffix='.log')
         self.files_to_remove.append(self.log_filename)
@@ -391,8 +388,8 @@ class PyNastTests(TestCase):
         
         self.assertEqual(st.completed_seqs_count,3)
 
-    def test_pynast_seq_on_the_fly_blast_db(self):
-        """pynast_seq: fns as exp when building blast db on-the-fly
+    def test_pynast_seq_simple(self):
+        """pynast_seq: fns as exp with simple example
         """
         candidate_sequence =\
          DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='input')
@@ -415,11 +412,11 @@ class PyNastTests(TestCase):
          Name='input 1..23')) 
         self.assertEqual(actual,expected)
         
-    def test_pynast_seq_on_the_fly_blast_db_candidate_rc(self):
-        """pynast_seq: fns as exp with rc candidate
+    def test_pynast_seq_simple_rc(self):
+        """pynast_seq: fns as exp with simple rc example
         """
         # This sequence is the rev-complement of the sequence used in 
-        # test_pynast_seq_on_the_fly_blast_db -- this test checks that the 
+        # test_pynast_seq_simple -- this test checks that the 
         # same result is returned
         candidate_sequence =\
          DNA.makeSequence('ACTACCAGGGTATTAACGTACGT',Name='input')
@@ -1375,16 +1372,6 @@ expected_stringent_logfile_contents = \
 """1\t23\tNo search results.
 """
 
-expected_help_message = \
-"Usage: util.py [options] seq_filepath\n\nOptions:\n  --version             show program's version number and exit\n  -h, --help            show this help message and exit\n  -v, --verbose         Print information during execution -- useful for\n                        debugging [default: False]\n  -p MIN_PCT_ID, --min_pct_id=MIN_PCT_ID\n                        minimum percent sequence  identity to consider a\n                        sequence a match [default: 75.0]\n  -e MAX_E_VALUE, --max_e_value=MAX_E_VALUE\n                        max_e_value to consider a blast hit [default: 0.1]\n  -l MIN_LEN, --min_len=MIN_LEN\n                        minimum sequence length to include in NAST alignment\n                        [default: 1000]\n  -t TEMPLATE_FP, --template_fp=TEMPLATE_FP\n                        path to template alignment file[default: /usr/local/ap\n                        p/blast/data/core_set_aligned.fasta.imputed_13_4_07_no\n                        _dots.fasta]\n  -b BLAST_DB, --blast_db=BLAST_DB\n                        database to blast against[default: none]\n  -a FASTA_OUT_FP, --fasta_out_fp=FASTA_OUT_FP\n                        path to store resulting alignment file [default:\n                        derived from input filepath]\n  -g LOG_FP, --log_fp=LOG_FP\n                        path to store log file [default: derived from input\n                        filepath]\n  -f FAILURE_FP, --failure_fp=FAILURE_FP\n                        path to store file of seqs which fail to align\n                        [default: derived from input filepath]\n"
-
-expected_verbose_message = """Input file              : %s
-Template alignment      : %s
-Output alignment        : %s
-Log file                : %s
-Failure file            : %s
-"""
-
 pynast_test_template_fasta1 = """>128618
 ----------------------------------------------------------------------------------------------------------GGAGAGTTT-GA--T-CC-T-G-GCTC-AG-GA-CGAA-C-GC--TGG-C--G-GC-G-TG--C----C-T--AATACA-T-GC-A-AGT-CGA-G-CGG---------A-C---CG-A----------------------------CGGG---AG----------------------------------------------------CTT-G----------------------------------------------------------------------------------CTC-TCT-------------------TA--G--GT--C--AG-C-GGCG-G--A--C-------------GGG-TGAGT-A--AC-AC-G-T-G-GG---TAA--C-CTGC--C-T--GT--AA-G------------------------------------------------------------------A-CT----GGG-AT-AA-CTC-------------------------C-G-G-----------------------GAA-A---CCG-GGG-CTAATAC---CG-G----AT-G---------------------------------C-TT-G-A--T--T----------------GAA---CC-------------------------------------------------------------------------------------------------------------------------G-CA-T--------------------------------------------------------------------------------------------------------------------------------------G-G-T--TCC---------------A--A--TC-A-T-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------AAAA--G-G-T-GG-----C-----T----------------------------------------------------------------------------------------------------------------------TTCA--------------------------------------------------------------------------------------------------------------------------G--C--TA--C---C-A--------------C----T-T---A-CA-G---AT---G-G-----A-CCC-GCG--G-CGC--A------TT--A--G-CT-A----G---TTGG-T-G-AG-G-T----AAC-GG-C-T-C-ACCA--A-GG-C-G--A-CG-A------------TGC-G-T------AG-CC-G-A-CCT-G-AG----A--GG-GT--G-AT-C-GG-CCAC-A-CTGGG--A-C-TG-A-GA-C-AC-G-G-CCCAGA-CTCC-TAC-G--G-G-A-G-GC-A-GC-A-G-TA---GG-G-A-ATC-TTCCG-C-AA-T-GG--AC-GA-A----A-G-TC-T-GA-CG-GA-GCAA-CGCC-G-CG-T---G-A-G--T--GA-T-G--A--A-G-G-TT-----TT-CG---------G-A-T-C-G-T--A---AA-A-CTC--------TG-TT-G-T--T-AGG----GA-A--G---AACAAGT---ACCG-TT----C--G--AA-T---A----G-----GG-C-GGT-ACC-TT-GA-CG-GT-A-C-CT-A-AC-C---------AG-----------AAAGC-CAC-GG-C-TAA---C--T-ACGT--GCCA--G-C---A--GCCG---C-GG--TA-AT--AC---GT-AG-GTG-GCA-A-G-CG-TTGT-C-CGG-AA-TT-A--T-T--GGGC-GTA----AA-GCGC-GC--G-CA-G-G-C-G------------G--T-TT-C-T-T-AA----G-T-C-T---G-ATG-TG-A-AA-GC--CC-CCG-G--------------------------------------------------------------------CT-C-AA-------------------------------------------------------------------------CC-G-G-GG-AG------G-GTC-A-T-T--------G--GA-A-A-C-T-G-GGG--A-A-C---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------T-T-G-A-G-T-G-----C-AG--AA-G-A------------G-GA-G-AG-T----GG--AATT-CCA-C-GT--GT-A-GCG-GTGAAA-TG-CGT-AGAG-A-TG-T-GGA--GG-A-AC-A-CC-AG--T--G--GC-GAA-G--G-C---G----A--C-T-CTCTG------G-TC-TG--------------------------------------------------------------TA-A-C-T--GA--CG-----CT-GA-GG--C-G-CGA--AA-G-C--------------G-TGGG-GAG-C-G-AACA--GG-ATTA-G-ATA-C-----CC-T-G-GTA-G-T----C-CA--C-G-CCG-T-AAA--C-GATG-AG--TG-CT---------A-AG--T--G-T-TA-G-AG-G--G--T------------------------------------------------------------------------------------TT-CC----------------------------------------------------------------------------------------------------------------------------------------------G---C-C-C-TT--T-A-G-T-GC-T------GC--A----GC-AAA--CG-C-A-T--T--AA-GC--A----C-TCC-GCC-T-G-GG-GAG-TA---CGG-----T-C--G-C-A-A-GAC-T--GAA-ACTC-AAA---------GGAA-TTG-ACGGG-G-G-CCCG----C-A--C-A-A-GCG-GT-G--G--AG-CA-T--GT-GGT-TT-AATT-C-G-AAG-CAAC-G-CG-A-AG-A-A-CC-TT-A-CC-AGGTC-TT-G-AC-A-T-C--------------CTC-T-G-------------A-CA-A-C-C--CT--A-GA-G-A-T--A-G-G--G-C-T-T--C-C-----CC-------------------------------------T--TC-G------------------------------------------GG----G----G---CA-GAG---T--GA---------------------------------------------------C-A-G-G-T-GGTG-CA-TGG-TT--GTC-GTC-A-GC-TC---G-TG-TC-G--TGA-GA-TGT-T-GG-G-TT-AA-GT-CCCGC-AA--------C-GAG-CGC-A-ACC-C-T-TG--AT--C-TTAG--T-T-G-C-C---AG-C-A--T----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------TCAG----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------T----T-G------------G----G---C-A--CT---------------C-T-A-A-G-GT-G--AC-T-G-CCG--G-T------------------------------------G-A---CAA----------------------------------A-C-C-G--G-A-GG-A--AGG-T--GGGG-A-TGAC-GTC--AAAT-C---ATC-A-T-G-C-C-C-CTT----AT-G--AC-C-T-GG-GC-TA-CAC-ACGTG-C--TA--CAATG---G-GCAG-A-A--C-AAA-GG-GC--------------------------------------------------------------------------------------------------A-G-C-G-A--A-GCCG-C--G---------------------------------------A-GG-C-T-----------A--A-G-CC---A----------A--TCC-C------A-C-AAATC-TG-T-T-C-T-CAG-TTC--------GGA-T-CGCAG-TC--T-GCAA-CT-C-------------------------------------------------------------------------------------------------G-ACTGC-G-T-G-AA-G-CT-GGAAT-CG-C-TA--G-TA-AT-C-G-C----GGA-TC-A-G-C-------AT--GCC-GC-G-GT-G-AAT-ACGT-T-CCCGGGCCT-TGTA----CACACCG-CCC-GTC-----A---CA--CCA-CG-AG-A--G---TTT-G-TA-AC-ACC--C-GAA------G--T-CGG-TG-A-G-G-T-AA-C-C-T-----------------------------------------------------------T-TT--------------------------------------------------------------------------------------------------------GG-A-G-C-C--A---GC-CGC--CG--AAG-G----T-GGG-AC-AGA------------------------TG--ATT-GGGG-TG-AAG-TCGTAACAA-GGTAG-CCGT-ATCGGAA-GGTG-CGGC-TGGATCACCTCCTTTCT--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 >81187
@@ -1430,19 +1417,6 @@ input_seqs1_fail_fasta = """>FAKE1 here is some desc.73602 tag1;tag2, tag3:tag4
 AGGCGGCTACCTGGACCAACACTGACACTGAGGCACGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCCTAAACGATGCGAACTGGATGTTGGGTGCAATTTGGCACGCAGTATCGAAGCTAACGCGTTAAGTTCGCCGCCTGGGGAGTACGGTCGCAAGACTTAAACTCAAAGGAATTGACGGGGGCCCGCACAAGCGGTGGAGTATGTGGTTTAATTCGATGCAACGCGAAGAACCTTACCTGGTCTTGACATCCACGGAACTTTCCATAGATGGATTGGTGCCTTCGGGAACCGTGAGACAGGTGCTGCATGGCTGTCGTCAGCTCGTGTCGTGAGATGTTGGGTTAAGTCCCGCAACGAGCGCAACCCTTGTCCTTAGTTGCCAGCACGTAATGGTGGGAACTCTAAGGAGACCGCCGGTGACAAACCGGAGGAAGGTGGGGATGACGTCAAGTCATCATGGCCCTTAGGGGACCAGGGCTACACACGTACTACAATGGTAGGGACAGAGGGCTGCAAACCCGCGAGGGCAAGCCAATCCCAGAAACCCTATCTCAGTCCGGATTGGAGTTTGCAACTCGACTCCATGAAGTCGGAATCGCTAGTAATCGCAGATCAGCATTGCTGCGGTGAATACGTTCCCGGGCCTTGTACACACCGCCCGTCACACCATGGGAGTTTGTTGCACCAGAAGCAGGTAGCTTAACCTTCGGGAGGGCGCTCACGGTGTGGCCGATGACTGGGGTGAAGTCGTAACAAGGTAGCCGTATCGGAAGGTGCGGCTGGATCACCTCCTTTTGAGCATGACGTCATCGTCCTGTCGGGCGTCCTCACAAATTACCTGCATTCAGAGATGCGTATCGGCACAGGCCGGTATGCGAAAGTCCCATCATGGGGCCTTAGCTCAGCTGGGAGAGCACCTGCTTTGCAAGCAGGGGGTCGTCGGTTCGATCCCGACAGGCTCCACCATTTGAGTGAAACGACTTTGGGTCTGTAGCTCAGGTGGTTAGAGCGCACCCCTGATAAGGGTGAGGTCGGTGGTTCGAGTCCTCCCAGACCCACCACTCTGAATGTAGTGCACACTTAAGAATTTATATGGCTCAGCGTTGAGGCTGAGACATGTTCTTTTATAACTTGTGACGTAGCGAGCGTTTGAGATATCTATCTAAACGTGTCGTTGAGGCTAAGGCGGGGACTTCGAGTCCCTAAATAATTGAGTCGTATGTTCGCGTTGGTGGCTTTGTACCCCACACAACACGGCGTATGGCCCCGAGGCAACTTGGGGTTATATGGTCAAGCGAATAAGCGCACACGGTGGATGCCTAGGCGGTCAGAGGCGATGAAGGACGTGGTAGCCTGCGAAAAGTGTCGGGGAGCTGGCAACAAGCTTTGATCCGGCAATATCCGAATGGGGAAACCCGG
 """
 
-input_seqs1_log_txt = """candidate sequence ID	candidate nucleotide count	errors	template ID	BLAST percent identity to template	longest insertion relative to template	candidate span aligned	candidate nucleotide count post-NAST	unaligned length	count of single nucelotide 7mers or longer Nmers	non-ACGT nucleotide count	non-ACGT nucleotide percent
-FAKE1	1440	Best alignment did not meet user requirements. Length:816 Percent Indentity:96.46 Template:152244
-AKIW1129_fasta.screen.Contig1	1507		128618	91.73	1	1..1507	7682	1507	0	0	0
-AKIW521_fasta.screen.Contig1	1488		81187	90.60	1	1..1488	7682	1488	0	0	0
-modified_AKIW1129_both_ends_extended	1539		128618	91.73	1	16..1523	7682	1508	0	0	0
-modified_AKIW1129_5_prime_end_extended	1523		128618	91.73	1	16..1523	7682	1508	0	0	0
-modified_AKIW1129_3_prime_end_extended	1530		58677	88.60	1	12..1520	7682	1509	0	0	0
-NastAligner parameters:
-Algorithm:NAST
-Application:NAST: run_parallel.pl
-min_len:1000
-min_pct:75.0
-template_filepath:/var/scratch/blast/nast/core_set_aligned.fasta_11_8_07"""
 
 input_seqs2_fasta = """>2855189 SLEpi20M_15561395
 TACGAAAGATCCAAGCGTTATTCGAAATGATTGGGCNTAAANAGTTTGTAGGCGGTATTTGTACTCACTTCTAAAAAACTAAGATTATCTCTTAGTATGG
