@@ -17,7 +17,8 @@ from pynast.util import blast_sequence, process_blast_result,\
  align_two_seqs, reintroduce_template_spacing, adjust_alignment,\
  nearest_gap, pynast_seq,\
  introduce_terminal_gaps, UnalignableSequenceError, pynast_seqs,\
- pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs, ipynast_seqs
+ pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs, ipynast_seqs,\
+ remove_template_terminal_gaps
 from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
@@ -129,7 +130,7 @@ class PyNastTests(TestCase):
             expected_seqs.append(\
              DNA.makeSequence(\
               str(template_aln.getGappedSeq(n)),\
-              Name='%s 1..%d' % (n, len(template_aln.getSeq(n).degap()))))
+              Name='%s 1..%d' % (n,len(template_aln.getSeq(n).degap()))))
           
         expected_aln = LoadSeqs(data=expected_seqs,\
             moltype=DNA,aligned=DenseAlignment) 
@@ -139,7 +140,7 @@ class PyNastTests(TestCase):
         actual = pynast_seqs(input_seqs.todict().items(),\
          template_aln,\
          min_len=1000,min_pct=75.0,\
-         align_unaligned_seqs_f=blast_align_unaligned_seqs)
+         align_unaligned_seqs_f=None)
         
         # Load the result into an alignment object
         actual_aln = LoadSeqs(data=actual[0],moltype=DNA,\
@@ -176,7 +177,18 @@ class PyNastTests(TestCase):
         self.assertEqual(actual[1],[])
 
     def test_pynast_seqs_aligned_full_length(self):
-        """ pynast_seqs: pynast results match command line NAST results
+        """ pynast_seqs: pynast results at least 95% identical to NAST results
+        
+            A note on this test: In the initial versions of PyNAST, I
+            wanted the alignments to be exactly like those resulting from
+            NAST (e.g., in PyNAST 1.0). I've since abandoned that, in favor
+            of getting improved alignments. This test was modified after 
+            PyNAST 1.0, and I'm now only testing that the alignments
+            are similar to those derived from NAST. This test may be
+            of little use, but it is a nice test of the code on 
+            full-length sequences, so I hesitate to delete it. 
+            -Greg (24 Mar 2010)
+        
         """
         template_aln = self.full_length_test1_template_aln
         expected_aln = self.full_length_test1_expected_aln
@@ -184,26 +196,44 @@ class PyNastTests(TestCase):
         actual = pynast_seqs(\
          MinimalFastaParser(self.full_length_test1_input_seqs_lines),\
          template_aln,\
-         align_unaligned_seqs_f=blast_align_unaligned_seqs) 
+         align_unaligned_seqs_f=None) 
 
         # Build the expected result object, which is a list of 
         # dna sequence objects where names include the aligned span
         expected_seqs = []
         for n in expected_aln.Names:
             expected_seqs.append(\
-             DNA.makeSequence(str(expected_aln.getGappedSeq(n))))
+             DNA.makeSequence(str(expected_aln.getGappedSeq(n)),Name=n))
              
         actual_aln = LoadSeqs(data=actual[0],moltype=DNA,\
          aligned=DenseAlignment)    
                 
-        # resulting list of dna sequence objects is as expected
+        # Resulting list of dna sequence objects is as expected
         # (this would take care of some of the above tests, but testing
         # aspects individually makes it easier to diagnose failures)
-        actual[0].sort()
-        expected_seqs.sort()
-        self.assertEqual(actual[0],expected_seqs)
+        # Only look at the unique id porition of the sequence description,
+        # as NAST and PyNAST now handle terminal bases different. NAST
+        # does local alignments, so sometimes loses terminal bases. PyNAST
+        # does global alignments, so the candidate only lose terminal bases
+        # if they introduce terminal gaps in the template alignments.
+        a_list = [(a.Name.split()[0], a) for a in actual[0]]
+        e_list = [(e.Name.split()[0], e) for e in expected_seqs]
+        a_list.sort()
+        e_list.sort()
         
-         
+        for a,e in zip(a_list,e_list):
+            # first component of names are equal
+            self.assertEqual(a[0],e[0])
+            a_seq = a[1]
+            e_seq = e[1]
+            count_same = 0
+            for i in range(len(a_seq)):
+                if a_seq[i] == e_seq[i]: count_same += 1
+            percent_same = count_same/len(a_seq)
+            self.assertTrue(percent_same >= 0.95,
+             "PyNAST and NAST alignments of %s are " % a[0] +\
+             "less than 95%% identical")
+    
     def test_pynast_seqs_error_on_gap(self):
         """ pynast_seqs: raises ValueError on gap in candidate sequence
         """
@@ -226,8 +256,8 @@ class PyNastTests(TestCase):
         expected_fail = [DNA.makeSequence('AA',Name='3')]
         
         actual = pynast_seqs(candidate_seqs,db_aln2,min_len=5,min_pct=75.0)
-        
         self.assertEqual(actual,(expected_aln,expected_fail))
+        
          
         # all fail when min_len restricts matches
         expected_aln = []
@@ -238,6 +268,29 @@ class PyNastTests(TestCase):
         
         actual = pynast_seqs(candidate_seqs,db_aln2,min_len=5000,min_pct=75.0)
         
+        self.assertEqual(actual,(expected_aln,expected_fail))
+    
+    def test_pynast_seqs_simple_alt_pairwise(self):
+        """pynast_seqs: fns with alt pairwise aligner
+        """
+        # create a fake aligner which alters the sequence so
+        # it's obvious that it was applied
+        def fake_aligner(seqs,moltype,params={}):
+            return LoadSeqs(data=[('candidate','AGGGGGTTTT'), 
+                                  ('template', 'ACCCCCTTTT')],moltype=DNA)
+        
+        candidate_seqs = [('1','ACCCCCTTTT')]
+         
+        template_aln = LoadSeqs(data=dict([
+            ('2','ACCC-----CCTTTT')]),\
+            moltype=DNA,aligned=DenseAlignment)
+         
+        expected_aln = [DNA.makeSequence('AGGG-----GGTTTT',Name='1')]
+        expected_fail = []
+        
+        actual = pynast_seqs(candidate_seqs,template_aln,
+                             min_len=5,min_pct=75.0,\
+                             align_unaligned_seqs_f=fake_aligner)
         self.assertEqual(actual,(expected_aln,expected_fail))
         
     def test_ipynast_seqs_simple(self):
@@ -347,7 +400,7 @@ class PyNastTests(TestCase):
          DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='input')
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=None,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
-         min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
+         min_len=5,align_unaligned_seqs_f=None)
         
         # check individual components of result object
         expected_template_hit = '5'
@@ -374,7 +427,7 @@ class PyNastTests(TestCase):
          DNA.makeSequence('ACTACCAGGGTATTAACGTACGT',Name='input')
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=None,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
-         min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
+         min_len=5,align_unaligned_seqs_f=None)
         
         # check individual components of result object
         expected_template_hit = '5'
@@ -399,7 +452,7 @@ class PyNastTests(TestCase):
          DNA.makeSequence('ACGTACGTTAATACCCTGGTAGT',Name='input')
         actual = pynast_seq(candidate_sequence,db_aln2,blast_db=self.blast_db2,\
          max_hits=30,max_e_value=1e-1,addl_blast_params={},min_pct=75.0,\
-         min_len=5,align_unaligned_seqs_f=blast_align_unaligned_seqs)
+         min_len=5,align_unaligned_seqs_f=None)
         
         # check individual components of result object
         expected_template_hit = '5'
@@ -436,7 +489,7 @@ class PyNastTests(TestCase):
         actual = pynast_seq(candidate_sequence,template_aln,\
          blast_db=None,max_hits=30,\
          max_e_value=1e-1,addl_blast_params={},min_pct=70.0,min_len=150,\
-         align_unaligned_seqs_f=blast_align_unaligned_seqs)
+         align_unaligned_seqs_f=None)
          
         self.assertEqual(len(actual[1]),len(template_aln))
     
@@ -456,7 +509,7 @@ class PyNastTests(TestCase):
         actual = pynast_seq(candidate_sequence,template_aln,\
          blast_db=None,max_hits=30,\
          max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
-         align_unaligned_seqs_f=blast_align_unaligned_seqs)
+         align_unaligned_seqs_f=None)
          
         # put handles on result parts for easier access
         actual_seq_id, actual_seq = map(str,actual)
@@ -506,15 +559,15 @@ class PyNastTests(TestCase):
             self.assertRaises(ValueError,pynast_seq,cs,db_aln2,\
              blast_db=None,max_hits=1,max_e_value=1e-1,\
              addl_blast_params={},min_pct=75.0,min_len=5,\
-             align_unaligned_seqs_f=blast_align_unaligned_seqs)
+             align_unaligned_seqs_f=None)
              
             seq = seq.replace('-','').replace('.','')
             # no error when no gaps in seq
             cs = DNA.makeSequence(seq,Name=seq_id)
-            pynast_seq(cs,db_aln2,\
+            r = pynast_seq(cs,db_aln2,\
              blast_db=None,max_hits=1,max_e_value=1e-1,\
-             addl_blast_params={},min_pct=75.0,min_len=5,\
-             align_unaligned_seqs_f=blast_align_unaligned_seqs)
+             addl_blast_params={},min_pct=70.0,min_len=5,\
+             align_unaligned_seqs_f=None)
              
 
             
@@ -1464,6 +1517,90 @@ class PyNastTests(TestCase):
             template,aligned_template,aligned_candidate)
         expected = DNA.makeSequence('-GCA-AT--',Name='ac')
         self.assertEqual(actual,expected)
+        
+    def test_remove_template_terminal_gaps(self):
+        """ removing terminal gaps functions as expected """
+        # no template terminal gaps
+        candidate = DNA.makeSequence('--CGTTGG-',Name='c')
+        template  = DNA.makeSequence('ACCGT-GGA',Name='t')
+        actual = remove_template_terminal_gaps(candidate,template)
+        expected = (DNA.makeSequence('--CGTTGG-',Name='c 1..6'),template)
+        self.assertEqual(actual[0].Name,expected[0].Name)
+        self.assertEqual(actual[1].Name,expected[1].Name)
+        self.assertEqual(actual,expected)
+        
+        candidate = DNA.makeSequence('',Name='c')
+        template  = DNA.makeSequence('',Name='t')
+        actual = remove_template_terminal_gaps(candidate,template)
+        expected = (candidate,template)
+        self.assertEqual(actual[0].Name,expected[0].Name)
+        self.assertEqual(actual[1].Name,expected[1].Name)
+        self.assertEqual(actual,expected)
+        
+        # 5' template terminal gaps
+        candidate = DNA.makeSequence('ACCGTTGGA',Name='c')
+        template  = DNA.makeSequence('--CGT-GGA',Name='t')
+        actual = remove_template_terminal_gaps(candidate,template)
+        expected = (DNA.makeSequence('CGTTGGA',Name='c 3..9'),
+                    DNA.makeSequence('CGT-GGA',Name='t'))
+        self.assertEqual(actual[0].Name,expected[0].Name)
+        self.assertEqual(actual[1].Name,expected[1].Name)
+        self.assertEqual(actual,expected)
+        
+        candidate = DNA.makeSequence('ACCGTTGGA',Name='c')
+        template  = DNA.makeSequence('-CCGT-GGA',Name='t')
+        actual = remove_template_terminal_gaps(candidate,template)
+        expected = (DNA.makeSequence('CCGTTGGA',Name='c 2..9'),
+                    DNA.makeSequence('CCGT-GGA',Name='t'))
+        self.assertEqual(actual[0].Name,expected[0].Name)
+        self.assertEqual(actual[1].Name,expected[1].Name)
+        self.assertEqual(actual,expected)
+        
+        # 3' template terminal gaps
+        candidate = DNA.makeSequence('ACCGTTGGA',Name='c')
+        template  = DNA.makeSequence('ACCGT-GG-',Name='t')
+        actual = remove_template_terminal_gaps(candidate,template)
+        expected = (DNA.makeSequence('ACCGTTGG',Name='c 1..8'),
+                    DNA.makeSequence('ACCGT-GG',Name='t'))
+        self.assertEqual(actual[0].Name,expected[0].Name)
+        self.assertEqual(actual[1].Name,expected[1].Name)
+        self.assertEqual(actual,expected)
+        
+        candidate = DNA.makeSequence('ACCGTTGGA',Name='c')
+        template  = DNA.makeSequence('ACCGT-G--',Name='t')
+        actual = remove_template_terminal_gaps(candidate,template)
+        expected = (DNA.makeSequence('ACCGTTG',Name='c 1..7'),
+                    DNA.makeSequence('ACCGT-G',Name='t'))
+        self.assertEqual(actual[0].Name,expected[0].Name)
+        self.assertEqual(actual[1].Name,expected[1].Name)
+        self.assertEqual(actual,expected)
+        
+        # 5' and 3' template terminal gaps
+        candidate = DNA.makeSequence('ACCGTTGGA',Name='c')
+        template  = DNA.makeSequence('--CGT-GG-',Name='t')
+        actual = remove_template_terminal_gaps(candidate,template)
+        expected = (DNA.makeSequence('CGTTGG',Name='c 3..8'),
+                    DNA.makeSequence('CGT-GG',Name='t'))
+        self.assertEqual(actual[0].Name,expected[0].Name)
+        self.assertEqual(actual[1].Name,expected[1].Name)
+        self.assertEqual(actual,expected)
+        
+        # name constructed correctly when contains RC
+        candidate = DNA.makeSequence('ACCGTTGGA',Name='c RC')
+        template  = DNA.makeSequence('--CGT-GG-',Name='t')
+        actual = remove_template_terminal_gaps(candidate,template)
+        expected = (DNA.makeSequence('CGTTGG',Name='c RC:3..8'),
+                    DNA.makeSequence('CGT-GG',Name='t'))
+        self.assertEqual(actual[0].Name,expected[0].Name)
+        self.assertEqual(actual[1].Name,expected[1].Name)
+        self.assertEqual(actual,expected)
+        
+        # ValueError on unaligned seqs
+        candidate = DNA.makeSequence('ACCGTTGGA',Name='c')
+        template  = DNA.makeSequence('-CGT-GG-',Name='ct')
+        self.assertRaises(ValueError,\
+         remove_template_terminal_gaps,candidate,template)
+
 
 db_aln2 = LoadSeqs(data=dict([
 ('1','ACGT--ACGTAC-ATA-C-----CC-T-G-GTA-G-T---'),
@@ -1501,12 +1638,12 @@ GAGTTTGATCATGGCTCAGGACGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAG-------------CGAATGACA
 """
 
 expected_logfile_contents = \
-"""1 1..23\t23\t\t5\t100.00\t23
-2\t2\tNo blast results.
+"""1\t23\t\t5\t100.00\t23
+2\t2\tSequence does not meet minimum length requirement for alignment (2 < 5)
 """
 
 expected_stringent_logfile_contents = \
-"""1\t23\tBest alignment did not meet user requirements. Length: 23 Percent Indentity: 100.00 Template: 5
+"""1\t23\tSequence does not meet minimum length requirement for alignment (23 < 500)
 """
 
 expected_help_message = \

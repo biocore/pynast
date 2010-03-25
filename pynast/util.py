@@ -19,6 +19,7 @@ from cogent.app.util import get_tmp_filename
 from cogent.parse.blast import BlastResult
 from cogent.parse.fasta import MinimalFastaParser
 from pynast.logger import NastLogger
+from pynast.pycogent_backports.uclust import uclust_search_and_align_from_fasta_filepath
 
 __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
@@ -30,14 +31,13 @@ __email__ = "gregcaporaso@gmail.com"
 __status__ = "Production"
 
 """ PyNAST is a complete rewrite of the NAST algorithm written in python. 
- The dependencies are PyCogent, NumPy, Python, BLAST, and muscle. The versions 
+ The dependencies are PyCogent, NumPy, Python, and BLAST. The versions 
  used for development are:
  
- PyCogent 1.4.0.dev
+ PyCogent 1.4.0
  NumPy 1.3.0
  Python 2.5.1
  blastall v2.2.20
- muscle v3.6
  
 The NAST algorithm, reimplemented here, works as follows:
 
@@ -535,16 +535,60 @@ def introduce_terminal_gaps(template,aligned_template,aligned_candidate):
      '-'*three_prime_gaps_to_add]),\
      Name=aligned_candidate.Name)
     
+def remove_template_terminal_gaps(candidate,template):
+    """Remove template terminal gaps and corresponding bases in candidate 
+    """
+    if len(template) != len(candidate):
+        raise ValueError, \
+         "Sequences must be aligned, but their "+\
+         "lengths aren't equal. %d != %d" % (len(candidate),len(template))
+         
+    if len(template) == 0:
+        return candidate, template
+    
+    degapped_candidate_len = len(candidate.degap())
+    
+    candidate = DNA.makeSequence(candidate)
+    template = DNA.makeSequence(template)
+    
+    template_gap_vector = template.gapVector()
+    first_non_gap = template_gap_vector.index(False)
+    num_three_prime_gaps = template_gap_vector[::-1].index(False)
+    last_non_gap = len(template_gap_vector) - num_three_prime_gaps
+    
+    # Construct the candidate name, which will include the range of bases
+    # from the original sequence
+    candidate = candidate[first_non_gap:last_non_gap]
+    template = template[first_non_gap:last_non_gap]
+    candidate_start_pos = first_non_gap + 1
+    candidate_end_pos = degapped_candidate_len - num_three_prime_gaps
+    candidate_name = candidate.Name
+    if candidate_name.endswith('RC'):
+        name_delimiter = ':'
+    else:
+        name_delimiter = ' '
+    candidate_name = '%s%s%d..%d' %\
+     (candidate_name,name_delimiter,candidate_start_pos,candidate_end_pos)
+    
+    return DNA.makeSequence(candidate,Name=candidate_name), template
+    
 def pynast_seq(candidate_sequence,template_alignment,\
     degapped_template_alignment=None,blast_db=None,max_hits=30,\
     max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
-    align_unaligned_seqs_f=blast_align_unaligned_seqs, log_fp=None, logger=None):
+    align_unaligned_seqs_f=None, log_fp=None, logger=None):
     """ align candidate sequence to template aln, preserving the aln length
     """
     if candidate_sequence.isGapped():
         raise ValueError,\
          "Candidate sequence cannot contain gap characters: %s"\
          % candidate_sequence.Name
+    
+    candidate_sequence_len = len(candidate_sequence)
+    if candidate_sequence_len < min_len:
+        raise UnalignableSequenceError,\
+         "Sequence does not meet minimum length "+\
+         "requirement for alignment (%d < %d)"\
+          % (candidate_sequence_len,min_len)
          
     # Set up logging.  NastLogger object takes precedence over log
     # file path, if both are provided.
@@ -558,37 +602,51 @@ def pynast_seq(candidate_sequence,template_alignment,\
     degapped_template_alignment = degapped_template_alignment or\
      template_alignment.degap()
 
-    # if a blast_db wasn't passed, create one from the (degapped) 
-    # template alignment
-    if not blast_db:
-        blast_db, db_files_to_remove = \
-         build_blast_db_from_seqs(template_alignment,output_dir='/tmp/')
-    else:
-        db_files_to_remove = []
-        
-    # blast the candidate sequence against blast_db
-    blast_result = \
-     blast_sequence(candidate_sequence,blast_db,max_hits,\
-     max_e_value,addl_blast_params)
+    candidate_fasta_filepath = \
+        get_tmp_filename(prefix='pynast_candidate',suffix='.fasta')
+    open(candidate_fasta_filepath,'w').write(candidate_sequence.toFasta())
+    template_fasta_filepath = \
+        get_tmp_filename(prefix='pynast_template',suffix='.fasta')
+    open(template_fasta_filepath,'w').write(degapped_template_alignment.toFasta())
+    files_to_remove = [candidate_fasta_filepath, template_fasta_filepath]
     
-    # get the unaligned template sequence (of the best blast hit) and 
-    # candidate sequence trimmed to only contain the bases which aligned to
-    # the template sequence
-    template_seq, candidate_seq, pct_identity = \
-     process_blast_result(blast_result,template_alignment,\
-      degapped_template_alignment, candidate_sequence,\
-      min_len=min_len, min_pct=min_pct, num_hits=max_hits)
-    candidate_seq_id = candidate_seq.Name
+    min_pct /= 100.
+    # uclust_search_and_align_from_fasta_filepath is an interator,
+    # but since only one sequence is passed here, explicitly grab 
+    # the first result
+    try:
+        candidate_seq_id, template_seq_id, pw_aligned_candidate,\
+         pw_aligned_template, pct_identity = \
+         list(uclust_search_and_align_from_fasta_filepath(
+            candidate_fasta_filepath,
+            template_fasta_filepath,
+            percent_ID=min_pct,
+            enable_rev_strand_matching=True))[0]
+    except IndexError:
+        raise UnalignableSequenceError, "No search results."
     
-    # store the id of the best blast hit
-    template_seq_id = template_seq.Name
+    if align_unaligned_seqs_f:
+        # if an alternate pairwise aligner was specified, unalign
+        # and re-align the sequences.
+        pw_aligned_template, pw_aligned_candidate =\
+         align_two_seqs(pw_aligned_candidate.replace('-',''),
+                        pw_aligned_template.replace('-',''),
+                        align_unaligned_seqs_f)
+    
+    # Cast the pairwise alignments to DNA sequence objects
+    pw_aligned_candidate = \
+     DNA.makeSequence(pw_aligned_candidate,Name=candidate_seq_id)
+    pw_aligned_template = \
+     DNA.makeSequence(pw_aligned_template,Name=template_seq_id)
+    
+    # Remove any terminal gaps that were introduced into the template
+    # sequence
+    pw_aligned_candidate, pw_aligned_template = \
+        remove_template_terminal_gaps(pw_aligned_candidate, pw_aligned_template)
+    candidate_seq_id = pw_aligned_candidate.Name
     
     # get the aligned template sequence from the template alignment
     template_aligned_seq = template_alignment.getGappedSeq(template_seq_id)
-        
-    # aligned template_seq and candidate_seq
-    pw_aligned_template, pw_aligned_candidate = \
-     align_two_seqs(template_seq, candidate_seq, align_unaligned_seqs_f)
     
     # reintroduce the gap spacing from the template alignment
     pw_aligned_template, pw_aligned_candidate, new_gaps =\
@@ -605,27 +663,26 @@ def pynast_seq(candidate_sequence,template_alignment,\
         template_aligned_seq,pw_aligned_template,pw_aligned_candidate)
      
     # clean-up temporary blast database files if any were created
-    remove_files(db_files_to_remove,error_on_missing=False)
+    remove_files(files_to_remove,error_on_missing=False)
 
     # log the alignment
     # TODO: Fill in or remove missing fields
     logger.record(
-        candidate_seq.Name,
-        len(candidate_seq),
+        candidate_seq_id.split()[0],
+        len(candidate_sequence),
         '',                  # Errors
         template_seq_id,
-        pct_identity,
+        '%3.2f' % pct_identity,
         len(result.degap()), # Candidate Sequence length post-Nast
         )
 
     # return the id of the best blast hit and the aligned candidate sequence
-    result = DNA.makeSequence(result,Name=candidate_seq_id)
-    return template_seq_id, result
+    return template_seq_id, DNA.makeSequence(result,Name=candidate_seq_id)
 
 def ipynast_seqs(candidate_sequences,template_alignment,\
     blast_db=None,max_hits=30,\
     max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
-    align_unaligned_seqs_f=blast_align_unaligned_seqs, log_fp=None,\
+    align_unaligned_seqs_f=None, log_fp=None,\
     logger=None):
     """Iterator that yields results of pynast_seq on candidate_sequences
     
@@ -729,7 +786,7 @@ def null_status_callback_f(x):
 
 def pynast_seqs(candidate_sequences,template_alignment,blast_db=None,max_hits=30,\
     max_e_value=1e-1,addl_blast_params={},min_pct=75.0,min_len=1000,\
-    align_unaligned_seqs_f=blast_align_unaligned_seqs, log_fp=None,\
+    align_unaligned_seqs_f=None, log_fp=None,\
     logger=None, status_callback_f=null_status_callback_f):
     """Function which runs pynast_seq on candidate_sequences.
     
@@ -796,4 +853,5 @@ pairwise_alignment_methods = {\
      'mafft':mafft_align_unaligned_seqs,\
      'clustal':clustal_align_unaligned_seqs,\
      'blast':blast_align_unaligned_seqs,\
-     'pair_hmm':pair_hmm_align_unaligned_seqs}
+     'pair_hmm':pair_hmm_align_unaligned_seqs,\
+     'uclust':None}

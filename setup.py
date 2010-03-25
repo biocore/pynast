@@ -45,4 +45,4 @@ setup(name='PyNAST',
       packages=['pynast'],
       scripts=['scripts/pynast'],
       long_description=long_description,
-    )
+)
