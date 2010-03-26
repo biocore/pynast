@@ -56,7 +56,7 @@ for unittest_name in unittest_names:
 # resulting stdout does not being with the Usage text, that is an 
 # indicator of something being wrong with the script. Issues that would
 # cause that are bad import statements in the script, SyntaxErrors, or 
-# other failures prior to running qiime.util.parse_command_line_parameters.
+# other failures prior to running parse_command_line_parameters.
 
 script_names = []
 script_names = glob('%s/*' % scripts_dir)
