@@ -6,6 +6,7 @@ test_uclust.py : provides unit tests for the uclust.py module
 Modified from Daniel McDonald's test_cd_hit.py code on Feb-4-2010 """
 
 from os import getcwd, rmdir, remove
+from subprocess import Popen, PIPE, STDOUT
 from os.path import isfile
 from cogent.util.misc import remove_files
 from cogent.core.moltype import DNA
@@ -461,6 +462,20 @@ class UclustSupporingModules(TestCase):
          self.search_align_query1_fp,self.search_align_template1_fp,
          enable_rev_strand_matching=False))
         self.assertEqual(actual,self.search_align_out1_expected[:2])
+        
+    def test_uclust_supported_version(self):
+        """uclust version is supported """
+        command = 'uclust --version'
+        proc = Popen(command,shell=True,universal_newlines=True,\
+                         stdout=PIPE,stderr=STDOUT)
+        stdout = proc.stdout.read()
+        version_string = stdout.strip().split('v')[-1]
+        version = tuple(map(int,version_string.split('.')))
+        self.assertTrue(version >= (1,1,577),\
+         "Unsupported uclust version. 1.1.577 or later "+\
+         "is required, but running %s." % version_string)
+            
+        
 
 raw_dna_seqs = ['>uclust_test_seqs_0\n',
 'ACGGTGGCTACAAGACGTCCCATCCAACGGGTTGGATACTTAAGGCACATCACGTCAGTTTTGTGTCAGAGCT\n',
