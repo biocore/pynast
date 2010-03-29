@@ -16,8 +16,9 @@ from pynast.pycogent_backports.uclust import (UclustFastaSort,
  UclustCreateClusterFile, uclust_cluster_from_sorted_fasta_filepath,
  UclustConvertToCdhit, uclust_convert_uc_to_cdhit_from_filepath,
  parse_uclust_clstr_file, get_output_filepaths,
- get_clusters_from_fasta_filepath, process_uclust_blast_result,
- uclust_search_and_align_from_fasta_filepath)
+ get_clusters_from_fasta_filepath,
+ uclust_search_and_align_from_fasta_filepath,
+ process_uclust_pw_alignment_results)
 
 __author__ = "William Walters"
 __copyright__ = "Copyright 2007-2009, The Cogent Project"
@@ -301,7 +302,6 @@ class UclustSupporingModules(TestCase):
         self.tmp_clstr_filepath = \
          get_tmp_filename(prefix = "uclust_test", suffix = "clstr")
         
-        self.search_align_out1 = search_align_out1
         self.search_align_out1_expected = search_align_out1_expected
         self.search_align_query1_fp = \
          get_tmp_filename(prefix = "uclust_test", suffix = "clstr")
@@ -309,6 +309,9 @@ class UclustSupporingModules(TestCase):
         self.search_align_template1_fp = \
          get_tmp_filename(prefix = "uclust_test", suffix = "clstr")
         open(self.search_align_template1_fp,'w').write(search_align_template1)
+        
+        self.search_align_out_uc1 = search_align_out_uc1
+        self.search_align_out_fasta_pairs1 = search_align_out_fasta_pairs1
         
     def tearDown(self):
         if isfile(self.tmp_unsorted_fasta_filepath):
@@ -432,10 +435,18 @@ class UclustSupporingModules(TestCase):
 
         self.assertEqual(clusters_res, expected_cluster_list)
         
-    def test_process_uclust_blast_result(self):
-        """parsing of pairwise alignments functions as expected """
-        actual = list(process_uclust_blast_result(self.search_align_out1))
+    def test_process_uclust_pw_alignment_results(self):
+        """parsing of pairwise alignment fasta pairs file functions as expected
+        """
+        actual = list(process_uclust_pw_alignment_results(\
+         self.search_align_out_fasta_pairs1,self.search_align_out_uc1))
         expected = self.search_align_out1_expected
+        
+        # iterate over results so error output will highlight the bad match
+        for a,e in zip(actual,expected):
+            self.assertEqual(a,e)
+        
+        # make sure the full result objects are the same
         self.assertEqual(actual,expected)
         
     def test_uclust_search_and_align_from_fasta_filepath(self):
@@ -577,47 +588,38 @@ AGAAAGGAGGTGATCCAGCCGCACCTTCCGATACGGCTACCTTGTTACGACTTCACCCCAATCATTTGTTCCACCTTCGA
 AGCCCAAATCATAAGGGGCATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGGGATGGCAACTAAGCTTAAGGGTTGCGCT
 """
 
-search_align_out1 = """# uclust --input sm_query.fasta --lib sm_template.fasta --id 0.75 --libonly --rev --maxaccepts 0 --blastout s_bl_out.txt --blast_termgaps
-# version=1.1.572
+search_align_out_fasta_pairs1 = """>1_like
+-------------------------------TACGGCTACCTTGTTACGACTTCATCCCAATCATTTGTTCCACCTTCGACGGCTA------------------------------------------
+>1+
+AGAAAGGAGGTGATCCAGCCGCACCTTCCGATACGGCTACCTTGTTACGACTTCACCCCAATCATTTGTTCCACCTTCGACGGCTAGCTCCAAATGGTTACTCCACCGGCTTCGGGTGTTACAAACTC
 
-Query  >1_like
-Target >1
+>2_like
+-------------------ATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGGGATGGCAACTAAG---------------
+>2+
+AGCCCAAATCATAAGGGGCATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGGGATGGCAACTAAGCTTAAGGGTTGCGCT
 
-  1 + -------------------------------TACGGCTACCTTGTTACGACTTCATCCCAATCA 33
-                                     |||||||||||||||||||||||| ||||||||
-  1 + AGAAAGGAGGTGATCCAGCCGCACCTTCCGATACGGCTACCTTGTTACGACTTCACCCCAATCA 64
+>2_like_rc
+---------------CTTAGTTGCCATCCCGGTGACAAACCGGAGGAAGGTGGGGATGACGTCAAATCATCAT-------------------
+>2-
+AGCGCAACCCTTAAGCTTAGTTGCCATCCCGGTGACAAACCGGAGGAAGGTGGGGATGACGTCAAATCATCATGCCCCTTATGATTTGGGCT
+""".split('\n')
 
- 34 + TTTGTTCCACCTTCGACGGCTA------------------------------------------ 55
-      ||||||||||||||||||||||                                          
- 65 + TTTGTTCCACCTTCGACGGCTAGCTCCAAATGGTTACTCCACCGGCTTCGGGTGTTACAAACTC 128
-
-Identities 54/55 (98.2%), gaps 73/128 (57.0%), Id 54/55 (98.2%)
-
-Query  >2_like
-Target >2
-
- 1 + -------------------ATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGG 45
-                        |||||||||||||||||||||||||||||||||||||||||||||
- 1 + AGCCCAAATCATAAGGGGCATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGG 64
-
-46 + GATGGCAACTAAG--------------- 58
-     |||||||||||||               
-65 + GATGGCAACTAAGCTTAAGGGTTGCGCT 92
-
-Identities 58/58 (100.0%), gaps 34/92 (37.0%), Id 58/58 (100.0%)
-
-Query  >2_like_rc
-Target >2
-
- 1 + ---------------CTTAGTTGCCATCCCGGTGACAAACCGGAGGAAGGTGGGGATGACGTCA 49
-                    |||||||||||||||||||||||||||||||||||||||||||||||||
-92 - AGCGCAACCCTTAAGCTTAGTTGCCATCCCGGTGACAAACCGGAGGAAGGTGGGGATGACGTCA 29
-
-50 + AATCATCAT------------------- 58
-     |||||||||                   
-28 - AATCATCATGCCCCTTATGATTTGGGCT 1
-
-Identities 58/58 (100.0%), gaps 34/92 (37.0%), Id 58/58 (100.0%)
+search_align_out_uc1 = """# uclust --input sm_query.fasta --lib sm_template.fasta --id 0.75 --libonly --rev --maxaccepts 8 --maxrejects 32 --fastapairs sm_pw.fasta --uc sm_result.uc
+# version=1.1.577
+# Tab-separated fields:
+# 1=Type, 2=ClusterNr, 3=SeqLength or ClusterSize, 4=PctId, 5=Strand, 6=QueryStart, 7=SeedStart, 8=Alignment, 9=QueryLabel, 10=TargetLabel
+# Record types (field 1): L=LibSeed, S=NewSeed, H=Hit, R=Reject, D=LibCluster, C=NewCluster, N=NoHit
+# For C and D types, PctId is average id with seed.
+# QueryStart and SeedStart are zero-based relative to start of sequence.
+# If minus strand, SeedStart is relative to reverse-complemented seed.
+L	0	128	*	*	*	*	*	1	*
+H	0	55	98.2	+	0	0	31I55M42I	1_like	1
+L	1	92	*	*	*	*	*	2	*
+H	1	58	100.0	+	0	0	19I58M15I	2_like	2
+H	1	58	100.0	-	0	0	15I58M19I	2_like_rc	2
+N	*	74	*	*	*	*	*	rand	*
+D	0	2	*	*	*	*	98.2	1	*
+D	1	3	*	*	*	*	100.0	2	*
 """.split('\n')
 
 search_align_out1_expected = [
@@ -626,6 +628,7 @@ search_align_out1_expected = [
          ('2_like','2','-------------------ATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGGGATGGCAACTAAG---------------','AGCCCAAATCATAAGGGGCATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGGGATGGCAACTAAGCTTAAGGGTTGCGCT',100.0),\
          
          ('2_like_rc RC','2','-------------------ATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGGGATGGCAACTAAG---------------','AGCCCAAATCATAAGGGGCATGATGATTTGACGTCATCCCCACCTTCCTCCGGTTTGTCACCGGGATGGCAACTAAGCTTAAGGGTTGCGCT',100.0)]
+
          
 if __name__ == '__main__':
     main()
