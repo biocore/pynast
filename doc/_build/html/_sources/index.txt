@@ -12,7 +12,14 @@ PyNAST documentation (version 1.1-dev)
 
 Downloading PyNAST
 ==================
-You can download `PyNAST 1.0 here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download>`_ and the `PyNAST OS X GUI here <https://sourceforge.net/projects/pynast/files/PyNAST.app.zip/download>`_.
+You can download `PyNAST 1.1 here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.1.tar.gz/download>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://sourceforge.net/projects/pynast/files/PyNAST.app.zip/download>`_.
+
+
+Stay up-to-date on PyNAST news
+==============================
+Subscribing to the PyNAST blog_ is the best way to keep up-to-date on news related to PyNAST. You can subscribe via RSS or e-mail on the front page of the blog. This is a very low traffic list, with currently around one e-mail per month. 
+
+The PyNAST blog is the primary means by which we will communicate information on bugs, new releases, and news to our users, so we highly recommend subscribing. We won't share subscriber information with anyone ever.
 
 About PyNAST
 ==================
@@ -22,6 +29,7 @@ PyNAST_ is a reimplementation of the NAST_ sequence aligner, which has become a 
 Given a set of sequences and a template alignment, PyNAST_ will align the input sequences against the template alignment, and return a multiple sequence alignment which contains the same number of positions (or columns) as the template alignment. This facilitates the analysis of new sequences in the context of existing alignments, and additional data derived from existing alignments such as phylogenetic trees. Because any protein or nucleic acid sequences and template alignments can be provided, PyNAST_ is not limited to the analysis of 16s rDNA sequences.
 
 PyNAST_ is presented in an open access `Bioinformatics Applications Note <http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btp636>`_. 
+
 
 Citing PyNAST
 ==============
@@ -35,4 +43,5 @@ For PyNAST_ support, you can contact `Greg Caporaso <gregcaporaso@gmail.com>`_.
 
 
 .. _PyNAST: http://pynast.sourceforge.net
+.. _blog: http://pynast.wordpress.com
 .. _NAST: http://nar.oxfordjournals.org/cgi/content/full/34/suppl_2/W394
