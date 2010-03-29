@@ -110,7 +110,6 @@ Powered by <a href="http://feed.informer.com/">RSS Feed Informer</a></noscript><
 <h1>Installing and using the PyNAST command line application<a class="headerlink" href="#installing-and-using-the-pynast-command-line-application" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="downloading-pynast">
 <h2>Downloading PyNAST<a class="headerlink" href="#downloading-pynast" title="Permalink to this headline">¶</a></h2>
-<p>THIS DOCUMENTATION REFERS ONLY TO THE SVN VERSION OF PYNAST. SEE <a class="reference external" href="http://pynast.sourceforge.net">http://pynast.sourceforge.net</a> FOR THE 1.0 DOCUMENTATION.</p>
 <p>You can download the latest development branch of PyNAST here with the command:</p>
 <blockquote>
 <div class="highlight-python"><pre>svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST</pre>
@@ -119,18 +118,18 @@ Powered by <a href="http://feed.informer.com/">RSS Feed Informer</a></noscript><
 </div>
 <div class="section" id="required-software">
 <h2>Required software<a class="headerlink" href="#required-software" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is built on the <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> package, and uses NCBI&#8217;s <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> software. You must have <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> 1.4.0 and <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> 2.2.22 installed to run <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>.</p>
+<p><a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is built on the <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> package, and uses <a class="reference external" href="http://www.drive5.com/uclust/">uclust</a>. You must have <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> 1.4.0 and <a class="reference external" href="http://www.drive5.com/uclust/">uclust</a> v1.1.577 installed to run <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>.</p>
 </div>
 <div class="section" id="optional-software">
 <h2>Optional software<a class="headerlink" href="#optional-software" title="Permalink to this headline">¶</a></h2>
-<p>If you&#8217;d like to perform pairwise alignments using <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a>, <a class="reference external" href="http://align.bmr.kyushu-u.ac.jp/mafft/online/server/">MAFFT</a>, or <a class="reference external" href="http://www.ebi.ac.uk/Tools/clustalw2/index.html">ClustalW</a>, you must have those programs installed on your machine and in your system path. Currently tested versions are <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a> v3.6, MAFFT v6.602b, and ClustalW 1.81.</p>
+<p>If you&#8217;d like to perform pairwise alignments using <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a>, <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a>, <a class="reference external" href="http://align.bmr.kyushu-u.ac.jp/mafft/online/server/">MAFFT</a>, or <a class="reference external" href="http://www.ebi.ac.uk/Tools/clustalw2/index.html">ClustalW</a>, you must have those programs installed on your machine and in your system path. Currently tested versions are <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> 2.2.22, <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a> v3.6, MAFFT v6.602b, and ClustalW 1.81. Note that PyNAST makes use of the legacy BLAST software, not BLAST+.</p>
 </div>
 <div class="section" id="installation-steps">
 <h2>Installation steps<a class="headerlink" href="#installation-steps" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic">
-<li><p class="first">Download <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> 1.4.0 and its dependencies, <a class="reference external" href="http://www.python.org">Python</a> 2.5.1 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.</p>
+<li><p class="first">Download <a class="reference external" href="http://pycogent.sourceforge.net">PyCogent</a> 1.4.0 and its dependencies, <a class="reference external" href="http://www.python.org">Python</a> 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.</p>
 </li>
-<li><p class="first">Install <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a>. Versions 2.2.16 through 2.2.21 have been tested extensively with <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>, but other versions should work. (Note: we&#8217;ve had trouble with <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a> installed via package managers, so it may be best to download directly from NCBI and install per their instructions.)</p>
+<li><p class="first">Download and install <a class="reference external" href="http://www.drive5.com/uclust/">uclust</a>. Binaries are available, or you can install from source.</p>
 </li>
 <li><dl class="first docutils">
 <dt>From your command terminal on an OS X or Linux system, change to the directory where you wish to install <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a>. You can either download <a class="reference external" href="https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download">PyNAST 1.1 from here</a>, or if you want the latest development version you can checkout the latest version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> from the SVN repository with the command:</dt>
@@ -158,9 +157,8 @@ python setup.py install</pre>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>Run the following commands. All tests should pass, unless you don&#8217;t have <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a>, <a class="reference external" href="http://align.bmr.kyushu-u.ac.jp/mafft/online/server/">MAFFT</a>, and/or <a class="reference external" href="http://www.ebi.ac.uk/Tools/clustalw2/index.html">ClustalW</a> installed. These are optional external software packages, and you will get one test failure per missing software package. You can ignore test failures which indicate that these programs cannot be found.</dt>
-<dd><div class="first last highlight-python"><pre>python test_logger.py
-python test_util.py</pre>
+<dt>Run the test suite with the following command. All tests should pass, unless you don&#8217;t have <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/">BLAST</a>, <a class="reference external" href="http://www.drive5.com/muscle/">MUSCLE</a>, <a class="reference external" href="http://align.bmr.kyushu-u.ac.jp/mafft/online/server/">MAFFT</a>, and/or <a class="reference external" href="http://www.ebi.ac.uk/Tools/clustalw2/index.html">ClustalW</a> installed. These are optional external software packages, and you will get one test failure per missing software package. You can ignore test failures which indicate that these programs cannot be found.</dt>
+<dd><div class="first last highlight-python"><pre>python all_tests.py</pre>
 </div>
 </dd>
 </dl>

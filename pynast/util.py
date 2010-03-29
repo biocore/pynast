@@ -39,7 +39,7 @@ __status__ = "Production"
  PyNAST depends on PyCogent, NumPy, Python, and uclust. The versions 
  used for development are:
  
- PyCogent 1.4.0
+ PyCogent 1.4.1
  NumPy 1.3.0
  Python 2.5.1
  uclust 1.1.572

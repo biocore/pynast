@@ -14,7 +14,7 @@ You can download the latest development branch of PyNAST here with the command:
 
 Required software
 =================
-PyNAST_ is built on the PyCogent_ package, and uses uclust_. You must have PyCogent_ 1.4.0 and uclust_ v1.1.577 installed to run PyNAST_.
+PyNAST_ is built on the PyCogent_ package, and uses uclust_. You must have PyCogent_ 1.4.1 and uclust_ v1.1.577 installed to run PyNAST_.
 
 Optional software
 =================
@@ -22,7 +22,7 @@ If you'd like to perform pairwise alignments using BLAST_, MUSCLE_, MAFFT_, or C
 
 Installation steps
 ==================
-#. Download PyCogent_ 1.4.0 and its dependencies, Python_ 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.
+#. Download PyCogent_ 1.4.1 and its dependencies, Python_ 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.
 
 #. Download and install uclust_. Binaries are available, or you can install from source.
 
