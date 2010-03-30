@@ -12,10 +12,10 @@ from cogent.util.misc import remove_files
 from cogent.core.moltype import DNA
 from cogent.util.unit_test import TestCase, main
 from cogent.app.util import get_tmp_filename, ApplicationError
-from pynast.pycogent_backports.uclust import (UclustFastaSort, 
+from pynast.pycogent_backports.uclust import (Uclust, 
  uclust_fasta_sort_from_filepath,
- UclustCreateClusterFile, uclust_cluster_from_sorted_fasta_filepath,
- UclustConvertToCdhit, uclust_convert_uc_to_cdhit_from_filepath,
+ uclust_cluster_from_sorted_fasta_filepath,
+ uclust_convert_uc_to_cdhit_from_filepath,
  parse_uclust_clstr_file, get_output_filepaths,
  get_clusters_from_fasta_filepath,
  uclust_search_and_align_from_fasta_filepath,
@@ -30,56 +30,31 @@ __maintainer__ = "William Walters"
 __email__ = "William.A.Walters@colorado.edu"
 __status__ = "Development"
 
-class UclustFastaSort_Tests(TestCase):
-    """ Tests for UclustFastaSort application controller"""
-    
+class UclustTests(TestCase):
+
     def setUp(self):
         
         self.tmp_unsorted_fasta_filepath = \
-         get_tmp_filename(prefix="uclust_test", suffix="fasta")
-        self.tmp_sorted_fasta_filepath = get_tmp_filename(prefix="uclust_test",\
-         suffix="fasta")
+         get_tmp_filename(prefix="uclust_test", suffix=".fasta")
+        self.tmp_sorted_fasta_filepath = \
+         get_tmp_filename(prefix = "uclust_test", suffix = "fasta")
+        self.tmp_uc_filepath = \
+         get_tmp_filename(prefix = "uclust_test", suffix = "uc")
+        self.tmp_clstr_filepath = \
+         get_tmp_filename(prefix = "uclust_test", suffix = ".clstr")
+         
         self.WorkingDir = '/tmp/uclust_test'
         self.tmpdir = '/tmp/'
         
-    def tearDown(self):
-        if isfile(self.tmp_unsorted_fasta_filepath):
-            remove(self.tmp_unsorted_fasta_filepath)
-        if isfile(self.tmp_sorted_fasta_filepath):
-            remove(self.tmp_sorted_fasta_filepath)
-
+        self.files_to_remove = [self.tmp_unsorted_fasta_filepath,
+                                self.tmp_sorted_fasta_filepath,
+                                self.tmp_uc_filepath,
+                                self.tmp_clstr_filepath]
     
-    def test_base_command(self):
-        """ UclustFastaSort should return the correct BaseCommand """
-        c = UclustFastaSort()
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "',getcwd(),'/"; ','uclust']))
-        c.Parameters['--mergesort'].on('seq.txt')
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "',getcwd(),'/"; ','uclust --mergesort "seq.txt"']))
-        c.Parameters['--output'].on('sorted_output.fasta')
-        c.Parameters['--tmpdir'].on(self.tmpdir)
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "',getcwd(),'/"; ','uclust --mergesort "seq.txt" '+\
-         '--output "sorted_output.fasta" --tmpdir "/tmp/"']))
-
-    def test_changing_working_dir(self):
-        """ UclustFastaSort BaseCommand should change according to WorkingDir"""
+    def tearDown(self):
+        remove_files(self.files_to_remove,error_on_missing=False)
         
-        c = UclustFastaSort(WorkingDir=self.WorkingDir)
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "','/tmp/uclust_test','/"; ','uclust']))
-        c = UclustFastaSort()
-        c.WorkingDir = '/tmp/uclust_test2'
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "','/tmp/uclust_test2','/"; ','uclust']))
-         
-        #removing the dirs is proof that they were created at the same time
-        #if the dirs are not there, an OSError will be raised
-        rmdir('/tmp/uclust_test')
-        rmdir('/tmp/uclust_test2')
-        
-    def test_sort_fasta_from_fasta_filepath(self):
+    def test_fasta_sorting(self):
         """ Should sort fasta seqs from largest to smallest in outfile 
         
         Since a fasta file has to be passed to the app controller for uclust,
@@ -96,15 +71,14 @@ class UclustFastaSort_Tests(TestCase):
 
         tmp_unsorted_fasta.close()
 
-        test_app = UclustFastaSort()
+        test_app = Uclust({'--tmpdir':self.tmpdir})
 
         
         test_app_res = test_app(data = \
          {'--mergesort':self.tmp_unsorted_fasta_filepath,\
-         '--output':self.tmp_sorted_fasta_filepath,\
-         '--tmpdir':self.tmpdir})
+         '--output':self.tmp_sorted_fasta_filepath})
 
-        sorted_fasta = open(test_app_res['SortedFasta'].name,"U")
+        sorted_fasta = open(test_app_res['Output'].name,"U")
         sorted_fasta_res = []
         for line in sorted_fasta:
             sorted_fasta_res.append(line)
@@ -113,63 +87,7 @@ class UclustFastaSort_Tests(TestCase):
         
         test_app_res.cleanUp()
 
-class UclustCreateClusterFile_Tests(TestCase):
-    """ Tests for UclustCreateClusterFile app controller """
-    
-    def setUp(self):
-        
-        self.tmp_sorted_fasta_filepath = \
-         get_tmp_filename(prefix = "uclust_test", suffix = "fasta")
-        self.tmp_uc_filepath = \
-         get_tmp_filename(prefix = "uclust_test", suffix = "uc")
-        
-    def tearDown(self):
-        if isfile(self.tmp_sorted_fasta_filepath):
-            remove(self.tmp_sorted_fasta_filepath)
-        if isfile(self.tmp_uc_filepath):
-            remove(self.tmp_uc_filepath)
-    
-    def test_base_command(self):
-        """ UclustCreateClusterFile should return the correct BaseCommand """
-        c = UclustCreateClusterFile()
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "',getcwd(),'/"; ','uclust']))
-        c.Parameters['--input'].on('seq.txt')
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "',getcwd(),'/"; ','uclust --input "seq.txt"']))
-        c.Parameters['--uc'].on('sorted_output.fasta')
-        # can't test against specific parameter order here, since 
-        # params are written based on dict -- therefore just check
-        # that changes to the parameter settings affect the base command
-        # in the expected way
-        c.Parameters['--id'].on(0.9)
-        self.assertTrue('--id 0.9' in c.BaseCommand)
-        c.Parameters['--rev'].on()
-        self.assertTrue('--rev' in c.BaseCommand)
-        c.Parameters['--rev'].off()
-        self.assertFalse('--rev' in c.BaseCommand)
-
-        
-
-    def test_changing_working_dir(self):
-        """ UclustCreateClusterFile BaseCommand should change dir
-        
-        Should change dir according to WorkingDir"""
-        
-        c = UclustCreateClusterFile(WorkingDir='/tmp/uclust_test')
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "','/tmp/uclust_test','/"; ','uclust']))
-        c = UclustCreateClusterFile()
-        c.WorkingDir = '/tmp/uclust_test2'
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "','/tmp/uclust_test2','/"; ','uclust']))
-         
-        #removing the dirs is proof that they were created at the same time
-        #if the dirs are not there, an OSError will be raised
-        rmdir('/tmp/uclust_test')
-        rmdir('/tmp/uclust_test2')
-        
-    def test_clusters_from_fasta_filepath(self):
+    def test_clustering_fasta_filepath(self):
         """ Should create clusters in uclust format from sorted fasta file 
         
         Since a fasta file has to be passed to the app controller for uclust,
@@ -181,18 +99,16 @@ class UclustCreateClusterFile_Tests(TestCase):
         
         
         tmp_sorted_fasta = open(self.tmp_sorted_fasta_filepath,"w")
-        for line in sorted_dna_seqs:
-            tmp_sorted_fasta.write(line)
-
+        tmp_sorted_fasta.write(''.join(sorted_dna_seqs))
         tmp_sorted_fasta.close()
 
-        test_app = UclustCreateClusterFile()
+        test_app = Uclust({'--id':0.9},HALT_EXEC=False)
         test_app_res = test_app(data = \
          {'--input':self.tmp_sorted_fasta_filepath,\
-         '--uc':self.tmp_uc_filepath, '--id':0.9})
+         '--uc':self.tmp_uc_filepath})
 
         
-        uc_file = open(test_app_res['ClusterFilepath'].name,"U")
+        uc_file = open(test_app_res['ClusterFile'].name,"U")
         uc_file_res = []
         # Not appending comment lines of file, since the source data files
         # will change with each run, actual results are what we are 
@@ -207,53 +123,7 @@ class UclustCreateClusterFile_Tests(TestCase):
         self.assertEqual(uc_file_res, uc_dna_clusters)
     
         test_app_res.cleanUp()
-    
-class UclustConvertToCdhit_Tests(TestCase):
-    """ Tests for UclustConvertToCdhit app controller """
-    
-    def setUp(self):
-        
-        self.tmp_uc_filepath = \
-         get_tmp_filename(prefix = "uclust_test", suffix = ".uc")
-        self.tmp_clstr_filepath = \
-         get_tmp_filename(prefix = "uclust_test", suffix = ".clstr")
-        
-    def tearDown(self):
-        if isfile(self.tmp_uc_filepath):
-            remove(self.tmp_uc_filepath)
-        if isfile(self.tmp_clstr_filepath):
-            remove(self.tmp_clstr_filepath)
-    
-    
-    def test_base_command(self):
-        """ UclustConvertToCdhit should return the correct BaseCommand """
-        c = UclustConvertToCdhit()
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "',getcwd(),'/"; ','uclust']))
-        c.Parameters['--uc2clstr'].on('seq.txt')
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "',getcwd(),'/"; ','uclust --uc2clstr "seq.txt"']))
-        c.Parameters['--output'].on('sorted_output.clstr')
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "',getcwd(),'/"; ','uclust --uc2clstr "seq.txt" '+\
-         '--output "sorted_output.clstr"']))
 
-    def test_changing_working_dir(self):
-        """ UclustConvertToCdhit BaseCommand should change WorkingDir"""
-        
-        c = UclustConvertToCdhit(WorkingDir='/tmp/uclust_test')
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "','/tmp/uclust_test','/"; ','uclust']))
-        c = UclustConvertToCdhit()
-        c.WorkingDir = '/tmp/uclust_test2'
-        self.assertEqual(c.BaseCommand,\
-         ''.join(['cd "','/tmp/uclust_test2','/"; ','uclust']))
-         
-        #removing the dirs is proof that they were created at the same time
-        #if the dirs are not there, an OSError will be raised
-        rmdir('/tmp/uclust_test')
-        rmdir('/tmp/uclust_test2')
-        
     def test_convert_to_cdhit_from_uc_filepath(self):
         """ Should convert given uclust (.uc) file to cdhit (.clstr) format 
         
@@ -272,15 +142,12 @@ class UclustConvertToCdhit_Tests(TestCase):
 
         tmp_uc.close()
 
-        test_app = UclustConvertToCdhit()
-        
-        
+        test_app = Uclust()
         
         test_app_res = test_app(data = \
            {'--uc2clstr':self.tmp_uc_filepath,'--output':self.tmp_clstr_filepath})
 
-        
-        clstr_file = open(test_app_res['CdhitFilepath'].name,"U")
+        clstr_file = open(test_app_res['Output'].name,"U")
         clstr_res = []
         for line in clstr_file:
             clstr_res.append(line.replace('\t',''))
@@ -289,8 +156,8 @@ class UclustConvertToCdhit_Tests(TestCase):
    
         test_app_res.cleanUp()
     
-class UclustSupporingModules(TestCase):
-    """ Unit tests for supporting modules of uclust app controllers """
+class UclustConvenienceWrappers(TestCase):
+    """ Unit tests for uclust convenience wrappers """
 
     def setUp(self):
         
@@ -314,16 +181,16 @@ class UclustSupporingModules(TestCase):
         self.search_align_out_uc1 = search_align_out_uc1
         self.search_align_out_fasta_pairs1 = search_align_out_fasta_pairs1
         
+        self.files_to_remove = [self.tmp_unsorted_fasta_filepath,
+                                self.tmp_sorted_fasta_filepath,
+                                self.tmp_uc_filepath,
+                                self.tmp_clstr_filepath,
+                                self.search_align_query1_fp,
+                                self.search_align_template1_fp]
+        
     def tearDown(self):
-        if isfile(self.tmp_unsorted_fasta_filepath):
-            remove(self.tmp_unsorted_fasta_filepath)
-        if isfile(self.tmp_sorted_fasta_filepath):
-            remove(self.tmp_sorted_fasta_filepath)
-        if isfile(self.tmp_uc_filepath):
-            remove(self.tmp_uc_filepath)
-        remove(self.search_align_template1_fp)
-        remove(self.search_align_query1_fp)
-            
+        remove_files(self.files_to_remove,error_on_missing=False)
+
 
     def test_uclust_fasta_sort_from_filepath(self):
         """ Given an unsorted fasta filepath, will return sorted file """
@@ -337,7 +204,7 @@ class UclustSupporingModules(TestCase):
         app_res = \
          uclust_fasta_sort_from_filepath(self.tmp_unsorted_fasta_filepath)
         
-        sorted_fasta = open(app_res['SortedFasta'].name,"U")
+        sorted_fasta = open(app_res['Output'].name,"U")
         sorted_fasta_res = []
         for line in sorted_fasta:
             sorted_fasta_res.append(line)
@@ -357,10 +224,10 @@ class UclustSupporingModules(TestCase):
 
         app_res = \
          uclust_cluster_from_sorted_fasta_filepath(self.tmp_sorted_fasta_filepath, \
-         percent_ID = 0.90)
+         percent_ID = 0.90,HALT_EXEC=False)
 
         
-        uc_file = open(app_res['ClusterFilepath'].name,"U")
+        uc_file = open(app_res['ClusterFile'].name,"U")
         uc_file_res = []
         # Not appending comment lines of file, since the source data files
         # will change with each run, actual results are what we are 
@@ -388,7 +255,7 @@ class UclustSupporingModules(TestCase):
         app_res = uclust_convert_uc_to_cdhit_from_filepath(self.tmp_uc_filepath)
 
         
-        clstr_file = open(app_res['CdhitFilepath'].name,"U")
+        clstr_file = open(app_res['Output'].name,"U")
         clstr_res = []
         for line in clstr_file:
             clstr_res.append(line.replace('\t',''))
