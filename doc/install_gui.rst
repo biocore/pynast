@@ -18,8 +18,8 @@ Optional for the PyNAST GUI
     * MUSCLE_ installed in ``/usr/bin/``, ``/usr/local/bin/``, or ``$HOME/bin`` if you want to use that for pairwise aligning.
     * ClustalW_ installed in ``/usr/bin/``, ``/usr/local/bin/``, or ``$HOME/bin`` if you want to use that for pairwise aligning. 
 
-Limitations in the draft release of the PyNAST GUI (to be fixed before official release)
-========================================================================================
+Limitations in the draft release of the PyNAST GUI
+==================================================
 
     * Not all pairwise aligners are available. Missing options are pair_hmm and MAFFT.
     * Users must place external executables in specific locations for PyNAST_ to find them, rather than PyNAST_ looking in user-defined locations. This will be addressed by adding a preferences box where users can define where these executables are stored.

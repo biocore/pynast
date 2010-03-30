@@ -5,14 +5,22 @@ PyNAST documentation (version 1.1-dev)
 ======================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    install.rst
    install_gui.rst
 
-Downloading PyNAST
-==================
-You can download `PyNAST 1.1 here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.1.tar.gz/download>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://sourceforge.net/projects/pynast/files/PyNAST.app.zip/download>`_.
+Downloading PyNAST: Latest stable release
+=========================================
+You can download the latest stable release of `PyNAST 1.1 here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.1.tar.gz/download>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://sourceforge.net/projects/pynast/files/PyNAST.app.zip/download>`_.
+
+Downloading PyNAST: Development version
+=========================================
+If you want access to the latest-and-greatest features of PyNAST and can tolerate some instability we recommend that you check out the latest version from svn. You can do that with the command:
+
+::
+	
+	svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST
 
 
 Stay up-to-date on PyNAST news
