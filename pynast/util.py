@@ -16,10 +16,10 @@ from cogent.app.muscle import align_unaligned_seqs as muscle_align_unaligned_seq
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
 from cogent.app.util import get_tmp_filename
+from cogent.app.uclust import uclust_search_and_align_from_fasta_filepath
 from cogent.parse.blast import BlastResult
 from cogent.parse.fasta import MinimalFastaParser
 from pynast.logger import NastLogger
-from pynast.pycogent_backports.uclust import uclust_search_and_align_from_fasta_filepath
 
 __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
@@ -42,7 +42,7 @@ __status__ = "Production"
  PyCogent 1.4.1
  NumPy 1.3.0
  Python 2.5.1
- uclust 1.1.572
+ uclust 1.1.577
  
 The PyNAST algorithm works as follows:
 
