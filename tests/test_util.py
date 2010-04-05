@@ -338,26 +338,14 @@ class PyNastTests(TestCase):
     def test_ipynast_seqs_simple_value_error(self):
         """ipynast_seqs: handles value error gracefully
         """
-        
-        def align_unaligned_seqs_f(seqs,moltype,params={}):
-            raise ValueError, 'This is a test'
-        
         candidate_seqs = [\
          ('1','ACGTACGTTAATACCCTGGAAGT'),\
-         ('2','ACGTACGTTAATACCCTGGTAGT'),\
+         ('2','ACGTACGTTAATACCCTGGT-AGT'),\
          ('3','AA')]
-         
-        expected = [\
-         (DNA.makeSequence(\
-          'ACGTACGT-TA--ATA-C-----CC-T-G-GAA-G-T---',Name='1'),0),\
-         (DNA.makeSequence(\
-          'ACGTACGT-TA--ATA-C-----CC-T-G-GTA-G-T---',Name='2'),0),\
-         (DNA.makeSequence('AA',Name='3'),1)]
         
         pynast_iterator = ipynast_seqs(\
-         candidate_seqs,db_aln2,min_len=5,min_pct=75.0,\
-         align_unaligned_seqs_f=align_unaligned_seqs_f)
-         
+         candidate_seqs,db_aln2,min_len=5,min_pct=75.0)
+        
         self.assertRaises(ValueError,list,pynast_iterator)
         
     def test_ipynast_seqs_real_data(self):

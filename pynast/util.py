@@ -590,10 +590,7 @@ def ipynast_seqs(candidate_sequences, template_alignment,
         logger = NastLogger()
     
     min_pct /= 100.
-    # uclust_search_and_align_from_fasta_filepath is an interator,
-    # but since only one sequence is passed here, explicitly grab 
-    # the first result
-    # apply uclust and get an iterator back
+    # get the alignment iterator
     pw_alignment_iterator = uclust_search_and_align_from_fasta_filepath(
             candidate_fasta_filepath,
             template_fasta_filepath,
@@ -608,6 +605,9 @@ def ipynast_seqs(candidate_sequences, template_alignment,
     for seq_id, seq in MinimalFastaParser(open(candidate_fasta_filepath)):
         seq_len = len(seq)
         if '-' in seq:
+            # clean-up temporary blast database files if any were created
+            pw_alignment_iterator.close()
+            remove_files(files_to_remove,error_on_missing=False)
             raise ValueError, "Candidate sequence contains gaps. This is not supported."
         
         try:
@@ -699,7 +699,7 @@ def ipynast_seqs(candidate_sequences, template_alignment,
                 # end of the input fasta file indicates completion,
                 # not end of the aligned sequences
                 continue
-            
+
     # clean-up temporary blast database files if any were created
     remove_files(files_to_remove,error_on_missing=False)
 
