@@ -149,7 +149,7 @@ python setup.py install</pre>
 </li>
 <li><dl class="first docutils">
 <dt>Change to the PyNAST/tests directory:</dt>
-<dd><div class="first last highlight-python"><pre>cd PyNAST/tests</pre>
+<dd><div class="first last highlight-python"><pre>cd tests</pre>
 </div>
 </dd>
 </dl>
@@ -163,7 +163,8 @@ python setup.py install</pre>
 </li>
 <li><dl class="first docutils">
 <dt>If all tests pass, you can get the usage information for the command line version of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> with the following command anywhere on your system:</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">pynast</span> <span class="o">-</span><span class="n">h</span>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">cd</span>
+<span class="n">pynast</span> <span class="o">-</span><span class="n">h</span>
 </pre></div>
 </div>
 </dd>
@@ -174,15 +175,23 @@ python setup.py install</pre>
 <div class="section" id="customizing-your-installation">
 <span id="id1"></span><h2>Customizing your installation<a class="headerlink" href="#customizing-your-installation" title="Permalink to this headline">¶</a></h2>
 <p>PyNAST consists of library code and a script. By default the script will be installed in <tt class="docutils literal"><span class="pre">/usr/local/bin</span></tt>. This can be customized with the <tt class="docutils literal"><span class="pre">-install_scripts</span></tt> option like:</p>
-<div class="highlight-python"><pre>python setup.py install --install-scripts=/Users/caporaso/bin/</pre>
+<div class="highlight-python"><pre>python setup.py install --install-scripts=/home/pynast_user/bin/</pre>
 </div>
 <p>You can similarly install the library code in an alternate location using the <tt class="docutils literal"><span class="pre">--install-purelib</span></tt> option:</p>
-<div class="highlight-python"><pre>python setup.py install --install-purelib=/Users/caporaso/temp/</pre>
+<div class="highlight-python"><pre>python setup.py install --install-purelib=/home/pynast_user/lib/</pre>
 </div>
 <p>A combination of these options is also possible:</p>
-<div class="highlight-python"><pre>python setup.py install --install-scripts=/Users/caporaso/bin/ --install-purelib=/Users/caporaso/temp/</pre>
+<div class="highlight-python"><pre>python setup.py install --install-scripts=/home/pynast_user/bin/ --install-purelib=/home/pynast_user/lib/</pre>
 </div>
 <p>For a complete discussion of customizations related to the setup.py script, <a class="reference external" href="http://docs.python.org/install/index.html#alternate-installation-the-home-scheme">see this page</a>.</p>
+<p>If you specify an alternate directory for <tt class="docutils literal"><span class="pre">--install-purelib</span></tt>, you&#8217;ll need to ensure that python knows where to look for the pynast module. Following the example above, you would do this with the following commands:</p>
+<div class="highlight-python"><pre>echo "export PYTHONPATH=/home/pynast_user/lib/:$PYTHONPATH" &gt;&gt; /home/pynast_user/.bashrc
+source /home/pynast_user/.bashrc</pre>
+</div>
+<p>Similarly, if you specify an alternate directory for <tt class="docutils literal"><span class="pre">--install-scripts</span></tt>, you&#8217;ll need to ensure that the shell knows where to look for executable files. Following the example above, you would do this with the following commands:</p>
+<div class="highlight-python"><pre>echo "export PATH=/home/pynast_user/bin/:$PATH" &gt;&gt; /home/pynast_user/.bashrc
+source /home/pynast_user/.bashrc</pre>
+</div>
 </div>
 <div class="section" id="using-the-pynast-command-line-application">
 <h2>Using the PyNAST command line application<a class="headerlink" href="#using-the-pynast-command-line-application" title="Permalink to this headline">¶</a></h2>

@@ -42,7 +42,7 @@ If you downloaded from svn, you will have a new folder in the current working di
 #. Change to the PyNAST/tests directory:
 	::
 
-		cd PyNAST/tests
+		cd tests
 
 #. Run the test suite with the following command. All tests should pass, unless you don't have BLAST_, MUSCLE_, MAFFT_, and/or ClustalW_ installed. These are optional external software packages, and you will get one test failure per missing software package. You can ignore test failures which indicate that these programs cannot be found.
 	::
@@ -51,7 +51,8 @@ If you downloaded from svn, you will have a new folder in the current working di
 
 #. If all tests pass, you can get the usage information for the command line version of PyNAST_ with the following command anywhere on your system:
 	::
-	
+		
+		cd
 		pynast -h
 
 .. _customizing_your_installation:
@@ -59,25 +60,32 @@ If you downloaded from svn, you will have a new folder in the current working di
 Customizing your installation
 =============================
 
-PyNAST consists of library code and a script. By default the script will be installed in ``/usr/local/bin``. This can be customized with the ``-install_scripts`` option like:
-
-::
+PyNAST consists of library code and a script. By default the script will be installed in ``/usr/local/bin``. This can be customized with the ``-install_scripts`` option like::
 	
-	python setup.py install --install-scripts=/Users/caporaso/bin/
+	python setup.py install --install-scripts=/home/pynast_user/bin/
 	
-You can similarly install the library code in an alternate location using the ``--install-purelib`` option:
-
-::
+You can similarly install the library code in an alternate location using the ``--install-purelib`` option::
 	
-	python setup.py install --install-purelib=/Users/caporaso/temp/
+	python setup.py install --install-purelib=/home/pynast_user/lib/
 
 
-A combination of these options is also possible:	
-::
+A combination of these options is also possible::
 	
-	python setup.py install --install-scripts=/Users/caporaso/bin/ --install-purelib=/Users/caporaso/temp/
+	python setup.py install --install-scripts=/home/pynast_user/bin/ --install-purelib=/home/pynast_user/lib/
 
 For a complete discussion of customizations related to the setup.py script, `see this page <http://docs.python.org/install/index.html#alternate-installation-the-home-scheme>`_.
+
+If you specify an alternate directory for ``--install-purelib``, you'll need to ensure that python knows where to look for the pynast module. Following the example above, you would do this with the following commands::
+
+	echo "export PYTHONPATH=/home/pynast_user/lib/:$PYTHONPATH" >> /home/pynast_user/.bashrc
+	source /home/pynast_user/.bashrc
+	
+Similarly, if you specify an alternate directory for ``--install-scripts``, you'll need to ensure that the shell knows where to look for executable files. Following the example above, you would do this with the following commands::
+
+	echo "export PATH=/home/pynast_user/bin/:$PATH" >> /home/pynast_user/.bashrc
+	source /home/pynast_user/.bashrc
+	
+	
 
 Using the PyNAST command line application
 =========================================
