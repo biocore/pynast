@@ -42,7 +42,7 @@ __status__ = "Production"
  PyCogent 1.4.1
  NumPy 1.3.0
  Python 2.5.1
- uclust 1.1.577
+ uclust 1.1.579
  
 The PyNAST algorithm works as follows:
 
