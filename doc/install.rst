@@ -14,7 +14,7 @@ You can download the latest development branch of PyNAST here with the command:
 
 Required software
 =================
-PyNAST_ is built on the PyCogent_ package, and uses uclust_. You must have PyCogent_ 1.4.1 and uclust_ v1.1.577 installed to run PyNAST_.
+PyNAST_ is built on the PyCogent_ package, and uses uclust_. You must have PyCogent_ 1.4.1 and uclust `v1.1.579 <http://www.drive5.com/uclust/downloads1_1_579.html>`_ installed to run PyNAST_. You should first obtain these software packages, and install them according to the instructions provided by their authors.
 
 Optional software
 =================
