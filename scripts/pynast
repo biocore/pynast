@@ -13,10 +13,10 @@ __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger"]
 __license__ = "GPL"
-__version__ = "1.1"
+__version__ = "1.1-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Release"
+__status__ = "Development"
 
 
 pynast_usage_string = """usage: %prog [options] {-i input_fp -t template_fp}
