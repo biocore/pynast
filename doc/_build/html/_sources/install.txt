@@ -28,7 +28,7 @@ Installation steps
 
 #. Download and install uclust_. Binaries are available, or you can install from source (`binaries and src <http://www.drive5.com/uclust/downloads1_1_579.html>`_).
 
-#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.1 from here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.0.tar.gz/download>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the SVN repository with the command:
+#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.1 from here <https://sourceforge.net/projects/pynast/files/>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the SVN repository with the command:
 	::
       
 		svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST
