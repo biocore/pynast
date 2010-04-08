@@ -1,18 +1,9 @@
 .. PyNAST documentation master file, created by
    sphinx-quickstart on Mon Jan 25 11:42:17 2010.
 
-PyNAST documentation (version 1.1-dev)
-======================================
-
-.. toctree::
-   :maxdepth: 1
-
-   install.rst
-   install_gui.rst
-
 Downloading PyNAST: Latest stable release
 =========================================
-You can download the latest stable release of `PyNAST 1.1 here <https://sourceforge.net/projects/pynast/files/PyNAST%20releases/PyNAST-1.1.tar.gz/download>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://sourceforge.net/projects/pynast/files/PyNAST.app.zip/download>`_.
+You can download the latest stable release of `PyNAST here <http://sourceforge.net/projects/pynast/files>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://sourceforge.net/projects/pynast/files/PyNAST.app.zip/download>`_.
 
 Downloading PyNAST: Development version
 =========================================
@@ -21,7 +12,12 @@ If you want access to the latest-and-greatest features of PyNAST and can tolerat
 ::
 	
 	svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST
+	
+Installing PyNAST
+=================
+`Notes on installing and using the PyNAST command line application. <install.html>`_
 
+`Notes on installing and using the PyNAST 1.0 Mac OS X GUI. <install_gui.html>`_
 
 Stay up-to-date on PyNAST news
 ==============================
