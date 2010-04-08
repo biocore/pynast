@@ -24,7 +24,7 @@ If you'd like to perform pairwise alignments using BLAST_, MUSCLE_, MAFFT_, or C
 
 Installation steps
 ==================
-#. Download PyCogent_ 1.4.1 (`src <http://sourceforge.net/projects/pycogent/files/>`_) and its dependencies, Python_ 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.
+#. Download PyCogent_ 1.4.1 (`src <http://sourceforge.net/projects/pycogent/files/PyCogent/1.4.1/PyCogent-1.4.1.tgz/download>`_) and its dependencies, Python_ 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.
 
 #. Download and install uclust_. Binaries are available, or you can install from source (`binaries and src <http://www.drive5.com/uclust/downloads1_1_579.html>`_).
 

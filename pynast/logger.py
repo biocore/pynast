@@ -6,10 +6,10 @@ __author__ = "Kyle Bittinger"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger"]
 __license__ = "GPL"
-__version__ = "1.1-dev"
+__version__ = "1.1"
 __maintainer__ = "Kyle Bittinger"
 __email__ = "kylebittinger@gmail.com"
-__status__ = "Production"
+__status__ = "Release"
 
 class NastLogger:
     __LABELS = [
