@@ -30,8 +30,8 @@ except ImportError:
 pycogent_version = tuple([int(v) \
         for v in re.split("[^\d]", cogent.__version__) if v.isdigit()])
         
-if pycogent_version < (1,4,0):
-    print "PyCogent >= 1.4.0 required, but %s is installed." % cogent.__version__
+if pycogent_version < (1,4,1):
+    print "PyCogent >= 1.4.1 required, but %s is installed." % cogent.__version__
     exit(1)
     
 setup(name='PyNAST',
