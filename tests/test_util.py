@@ -33,12 +33,32 @@ class PyNastTests(TestCase):
     
     def setUp(self):
         """ """
-        
+        self.files_to_remove = []
         self.full_length_test1_input_seqs =\
          LoadSeqs(data=input_seqs1_fasta,moltype=DNA,aligned=False)
+         
+        self.full_length_test1_input_seqs_fp = \
+            get_tmp_filename(prefix='PyNastTest', suffix='.fasta')
+        self.files_to_remove.append(self.full_length_test1_input_seqs_fp)
+        full_length_test1_input_seqs_f = \
+            open(self.full_length_test1_input_seqs_fp,'w')
+        full_length_test1_input_seqs_f.write(input_seqs1_fasta)
+        full_length_test1_input_seqs_f.close()
+        
         self.full_length_test1_input_seqs_lines = input_seqs1_fasta.split('\n')
         self.full_length_test1_template_aln = \
          LoadSeqs(data=pynast_test_template_fasta1,moltype=DNA,aligned=DenseAlignment)
+        
+        self.full_length_test1_template_aln_fp = \
+            get_tmp_filename(prefix='PyNastTest', suffix='.fasta',
+                             result_constructor=str) 
+        self.files_to_remove.append(self.full_length_test1_template_aln_fp)
+        full_length_test1_template_aln_f = \
+         open(self.full_length_test1_template_aln_fp,'w')
+        full_length_test1_template_aln_f.write(
+         self.full_length_test1_template_aln.toFasta())
+        full_length_test1_template_aln_f.close()
+        
         self.full_length_test1_expected_aln = \
          LoadSeqs(data=input_seqs1_aligned_fasta,moltype=DNA,aligned=DenseAlignment)
         self.full_length_test1_expected_fail = \
@@ -51,7 +71,6 @@ class PyNastTests(TestCase):
         
         self.input_seqs_gaps = input_seqs_gaps.split('\n')
         
-        self.files_to_remove = []
         
         self.log_filename = \
             get_tmp_filename(prefix='PyNastTest', suffix='.log')
@@ -349,7 +368,7 @@ class PyNastTests(TestCase):
         self.assertRaises(ValueError,list,pynast_iterator)
         
     def test_ipynast_seqs_real_data(self):
-        """ipynast_seqs_real_data: sanity check with real data
+        """ipynast_seqs: sanity check with real data
         """
         actual = list(ipynast_seqs(\
          self.full_length_test2_input_seqs.items(),\
@@ -364,7 +383,16 @@ class PyNastTests(TestCase):
          min_len=5,min_pct=75.0))
         # correct number of results returned
         self.assertEqual(len(actual),6)
-
+        
+    def test_ipynast_seqs_handle_filepath_input(self):
+        """ipynast_seqs: input filepaths handled as expected 
+        """
+        actual = list(ipynast_seqs(\
+         self.full_length_test1_input_seqs.items(),\
+         self.full_length_test1_template_aln_fp,\
+         min_len=5,min_pct=75.0))
+        # correct number of results returned
+        self.assertEqual(len(actual),6)
         
     def test_pynast_seqs_simple_status_callback(self):
         """pynast_seqs: status callback functions as expected

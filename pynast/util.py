@@ -5,7 +5,7 @@ from os import system, remove, popen
 from os.path import exists
 from shutil import copy as copy_file
 from glob import glob
-from cogent import DNA, LoadSeqs
+from cogent import DNA, LoadSeqs, Sequence
 from cogent.util.misc import remove_files
 from cogent.core.alignment import SequenceCollection, DenseAlignment
 from cogent.align.align import make_dna_scoring_dict, global_pairwise
@@ -567,16 +567,27 @@ def ipynast_seqs(candidate_sequences, template_alignment,
         candidate_fasta_f.close()
         files_to_remove.append(candidate_fasta_filepath)
 
-    # degap the template alignment for the sequence searching step
-    if type(template_alignment) == str:
-        # template alignment provided as filepath -- load it into
-        # an Alignment object
-        template_alignment = LoadSeqs(template_alignment,moltype=DNA)
-    # degap the alignment, and write it to a temp file
+    # degap the template alignment for the sequence searching step and
+    # write it to file
     template_fasta_filepath = \
      get_tmp_filename(prefix='pynast_template',suffix='.fasta')
     template_fasta_f = open(template_fasta_filepath,'w')
-    template_fasta_f.write(template_alignment.degap().toFasta())
+    
+    if type(template_alignment) == str:
+        # the template alignment was received as a filepath
+        try:
+            template_alignment_f = open(template_alignment)
+        except IOError:
+            raise IOError,\
+             "Cannot open specified filepath: %s" % template_alignment
+        # template alignment provided as filepath -- process it iteratively
+        # to handle potentially massive template_alignments
+        for seq_id,seq in MinimalFastaParser(template_alignment_f):
+            seq = Sequence(seq=seq,moltype=DNA)
+            template_fasta_f.write('>%s\n%s\n' % (seq_id,seq))
+    else:
+        # the template alignment was received as a filepath
+        template_fasta_f.write(template_alignment.degap().toFasta())
     template_fasta_f.close()
     files_to_remove.append(template_fasta_filepath)
          
