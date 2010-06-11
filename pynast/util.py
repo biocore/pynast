@@ -582,9 +582,11 @@ def ipynast_seqs(candidate_sequences, template_alignment,
              "Cannot open specified filepath: %s" % template_alignment
         # template alignment provided as filepath -- process it iteratively
         # to handle potentially massive template_alignments
+        template_alignment = {}
         for seq_id,seq in MinimalFastaParser(template_alignment_f):
+            template_alignment[seq_id] = seq
             seq = Sequence(seq=seq,moltype=DNA)
-            template_fasta_f.write('>%s\n%s\n' % (seq_id,seq))
+            template_fasta_f.write('>%s\n%s\n' % (seq_id,seq.degap()))
     else:
         # the template alignment was received as a filepath
         template_fasta_f.write(template_alignment.degap().toFasta())
@@ -660,8 +662,12 @@ def ipynast_seqs(candidate_sequences, template_alignment,
             candidate_seq_id = pw_aligned_candidate.Name
     
             # get the aligned template sequence from the template alignment
-            template_aligned_seq = \
-             template_alignment.getGappedSeq(template_seq_id)
+            try:
+                template_aligned_seq = \
+                 template_alignment.getGappedSeq(template_seq_id)
+            except AttributeError:
+                template_aligned_seq = \
+                 Sequence(seq=template_alignment[template_seq_id],moltype=DNA)
     
             # reintroduce the gap spacing from the template alignment
             pw_aligned_template, pw_aligned_candidate, new_gaps =\

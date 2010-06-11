@@ -383,6 +383,8 @@ class PyNastTests(TestCase):
          min_len=5,min_pct=75.0))
         # correct number of results returned
         self.assertEqual(len(actual),6)
+        self.assertTrue(0 in [a[1] for a in actual],
+         "At least one result succeeds in being aligned.")
         
     def test_ipynast_seqs_handle_filepath_input(self):
         """ipynast_seqs: input filepaths handled as expected 
@@ -393,6 +395,8 @@ class PyNastTests(TestCase):
          min_len=5,min_pct=75.0))
         # correct number of results returned
         self.assertEqual(len(actual),6)
+        self.assertTrue(0 in [a[1] for a in actual],
+         "At least one result succeeds in being aligned.")
         
     def test_pynast_seqs_simple_status_callback(self):
         """pynast_seqs: status callback functions as expected
