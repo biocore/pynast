@@ -555,17 +555,19 @@ def ipynast_seqs(candidate_sequences, template_alignment,
     files_to_remove = []
     if type(candidate_sequences) == str:
         # filepath provided for candidate sequences
-        candidate_fasta_filepath = candidate_sequences
-    else:
-        # sequence list provided for candidate sequence -- write 
-        # the seqs to a temp file to pass to uclust
-        candidate_fasta_filepath = \
-         get_tmp_filename(prefix='pynast_candidate',suffix='.fasta')
-        candidate_fasta_f = open(candidate_fasta_filepath,'w')
-        for s in candidate_sequences:
-            candidate_fasta_f.write('>%s\n%s\n' % (s))
-        candidate_fasta_f.close()
-        files_to_remove.append(candidate_fasta_filepath)
+        candidate_sequences = MinimalFastaParser(open(candidate_sequences))
+
+    # sequence list provided for candidate sequence -- write 
+    # the seqs to a temp file to pass to uclust. This is done in all
+    # cases to convert the sequences to uppercase in case they're not already.
+    # The bad handling of upper versus lower-cased sequences is a uclust issue.
+    candidate_fasta_filepath = \
+     get_tmp_filename(prefix='pynast_candidate',suffix='.fasta')
+    candidate_fasta_f = open(candidate_fasta_filepath,'w')
+    for seq_id, seq in candidate_sequences:
+        candidate_fasta_f.write('>%s\n%s\n' % (seq_id,str(seq).upper()))
+    candidate_fasta_f.close()
+    files_to_remove.append(candidate_fasta_filepath)
 
     # degap the template alignment for the sequence searching step and
     # write it to file
