@@ -9,7 +9,7 @@ import re
 
 __author__ = "Rob Knight"
 __copyright__ = "Copyright 2010, The PyNAST Project"
-__credits__ = ["Rob Knight","Greg Caporaso"] 
+__credits__ = ["Rob Knight","Greg Caporaso", "Jai Ram Rideout"]
 __license__ = "GPL"
 __version__ = "1.1-dev"
 __maintainer__ = "Greg Caporaso"
