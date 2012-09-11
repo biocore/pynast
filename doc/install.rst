@@ -16,15 +16,15 @@ You can download the latest development branch of PyNAST here with the command:
 
 Required software
 =================
-PyNAST_ is built on the PyCogent_ package, and uses uclust_. You must have PyCogent `1.4.1 <http://sourceforge.net/projects/pycogent/files/PyCogent/1.4.1/PyCogent-1.4.1.tgz/download>`_ and uclust `v1.1.579 <http://www.drive5.com/uclust/downloads1_1_579.html>`_ installed to run PyNAST_. You should first obtain these software packages, and install them according to the instructions provided by their authors.
+PyNAST_ is built on the PyCogent_ package, and uses uclust_. You must have PyCogent `1.5.2 <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.2/PyCogent-1.5.2.tgz/download>`_ and uclust `v1.1.579 <http://www.drive5.com/uclust/downloads1_1_579.html>`_ installed to run PyNAST_. You should first obtain these software packages, and install them according to the instructions provided by their authors.
 
 Optional software
 =================
-If you'd like to perform pairwise alignments using BLAST_, MUSCLE_, MAFFT_, or ClustalW_, you must have those programs installed on your machine and in your system path. Currently tested versions are BLAST_ 2.2.22, MUSCLE_ v3.6, MAFFT v6.602b, and ClustalW 1.81. Note that PyNAST makes use of the legacy BLAST software, not BLAST+.
+If you'd like to perform pairwise alignments using BLAST_, MUSCLE_, MAFFT_, or ClustalW_, you must have those programs installed on your machine and in your system path. Currently tested versions are BLAST_ 2.2.22, MUSCLE_ v3.8.31, MAFFT v6.602b, and ClustalW 1.81. Note that PyNAST makes use of the legacy BLAST software, not BLAST+.
 
 Installation steps
 ==================
-#. Download PyCogent_ 1.4.1 (`src <http://sourceforge.net/projects/pycogent/files/PyCogent/1.4.1/PyCogent-1.4.1.tgz/download>`_) and its dependencies, Python_ 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.
+#. Download PyCogent_ 1.5.2 (`src <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.2/PyCogent-1.5.2.tgz/download>`_) and its dependencies, Python_ 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater.
 
 #. Download and install uclust_. Binaries are available, or you can install from source (`binaries and src <http://www.drive5.com/uclust/downloads1_1_579.html>`_).
 

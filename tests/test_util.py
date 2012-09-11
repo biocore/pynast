@@ -6,7 +6,7 @@ from cogent import LoadSeqs, DNA
 from cogent.util.misc import remove_files
 from cogent.core.alignment import DenseAlignment
 from cogent.app.util import get_tmp_filename
-from cogent.app.muscle import align_unaligned_seqs as muscle_align_unaligned_seqs
+from cogent.app.muscle_v38 import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
 from cogent.parse.fasta import MinimalFastaParser
@@ -20,7 +20,7 @@ from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
-__credits__ = ["Greg Caporaso", "Kyle Bittinger"]
+__credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
 __license__ = "GPL"
 __version__ = "1.1-dev"
 __maintainer__ = "Greg Caporaso"

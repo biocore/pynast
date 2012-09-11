@@ -12,7 +12,7 @@ from cogent.align.align import make_dna_scoring_dict, global_pairwise
 from cogent.app.blast import blastn
 from cogent.app.formatdb import build_blast_db_from_seqs, \
  build_blast_db_from_fasta_path
-from cogent.app.muscle import align_unaligned_seqs as muscle_align_unaligned_seqs
+from cogent.app.muscle_v38 import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
 from cogent.app.util import get_tmp_filename
@@ -23,7 +23,7 @@ from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
-__credits__ = ["Greg Caporaso", "Kyle Bittinger"]
+__credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
 __license__ = "GPL"
 __version__ = "1.1-dev"
 __maintainer__ = "Greg Caporaso"
@@ -39,7 +39,7 @@ __status__ = "Development"
  PyNAST depends on PyCogent, NumPy, Python, and uclust. The versions 
  used for development are:
  
- PyCogent 1.4.1
+ PyCogent 1.5.2
  NumPy 1.3.0
  Python 2.5.1
  uclust 1.1.579
@@ -485,7 +485,7 @@ def pynast_seq(candidate_sequence, template_alignment,
     align_unaligned_seqs_f
       Function to align sequences. Must be of the form:
        align_unaligned_seqs(seqs, moltype, params=None)
-       see cogent.app.muscle.align_unaligned_seqs
+       see cogent.app.muscle_v38.align_unaligned_seqs
     """
     depreciation_warning(kwargs)
     class SingleSeqLogger(object):
@@ -543,7 +543,7 @@ def ipynast_seqs(candidate_sequences, template_alignment,
     align_unaligned_seqs_f
       Function to align sequences. Must be of the form:
        align_unaligned_seqs(seqs, moltype, params=None)
-       see cogent.app.muscle.align_unaligned_seqs
+       see cogent.app.muscle_v38.align_unaligned_seqs
     log_fp
       Optional path to log file
     logger
@@ -752,7 +752,7 @@ def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
     align_unaligned_seqs_f
       Function to align sequences. Must be of the form:
        align_unaligned_seqs(seqs, moltype, params=None)
-       see cogent.app.muscle.align_unaligned_seqs
+       see cogent.app.muscle_v38.align_unaligned_seqs
     log_fp
       Optional path to log file
     logger
