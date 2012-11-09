@@ -94,12 +94,12 @@
             
   <div class="section" id="downloading-pynast-latest-stable-release">
 <h1>Downloading PyNAST: Latest stable release<a class="headerlink" href="#downloading-pynast-latest-stable-release" title="Permalink to this headline">¶</a></h1>
-<p>You can download the latest stable release of <a class="reference external" href="http://sourceforge.net/projects/pynast/files">PyNAST here</a> and the <a class="reference external" href="https://sourceforge.net/projects/pynast/files/PyNAST.app.zip/download">PyNAST OS X GUI (still PyNAST 1.0) here</a>.</p>
+<p>You can download the latest <a class="reference external" href="https://github.com/downloads/qiime/pynast/PyNAST-1.1.tgz">stable release of PyNAST here</a> and the <a class="reference external" href="https://github.com/downloads/qiime/pynast/PyNAST.app.zip">PyNAST OS X GUI (still PyNAST 1.0) here</a>.</p>
 </div>
 <div class="section" id="downloading-pynast-development-version">
 <h1>Downloading PyNAST: Development version<a class="headerlink" href="#downloading-pynast-development-version" title="Permalink to this headline">¶</a></h1>
-<p>If you want access to the latest-and-greatest features of PyNAST and can tolerate some instability we recommend that you check out the latest version from svn. You can do that with the command:</p>
-<div class="highlight-python"><pre>svn co https://pynast.svn.sourceforge.net/svnroot/pynast PyNAST</pre>
+<p>If you want access to the latest-and-greatest features of PyNAST and can tolerate some instability we recommend that you check out the latest version from GitHub. You can do that with the following command:</p>
+<div class="highlight-python"><pre>git clone git://github.com/qiime/pynast.git PyNAST</pre>
 </div>
 </div>
 <div class="section" id="installing-pynast">
@@ -109,24 +109,24 @@
 </div>
 <div class="section" id="stay-up-to-date-on-pynast-news">
 <h1>Stay up-to-date on PyNAST news<a class="headerlink" href="#stay-up-to-date-on-pynast-news" title="Permalink to this headline">¶</a></h1>
-<p>Subscribing to the PyNAST <a class="reference external" href="http://pynast.wordpress.com">blog</a> is the best way to keep up-to-date on news related to PyNAST. You can subscribe via RSS or e-mail on the front page of the blog. This is a very low traffic list, with currently around one e-mail per month.</p>
+<p>Subscribing to the PyNAST <a class="reference external" href="http://pynast.wordpress.com">blog</a> is the best way to keep up-to-date on news related to PyNAST. You can subscribe via RSS or e-mail on the front page of the blog. This is a very low traffic list, with currently around one e-mail per month or less.</p>
 <p>The PyNAST blog is the primary means by which we will communicate information on bugs, new releases, and news to our users, so we highly recommend subscribing. We won&#8217;t share subscriber information with anyone ever.</p>
 </div>
 <div class="section" id="about-pynast">
 <h1>About PyNAST<a class="headerlink" href="#about-pynast" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is a reimplementation of the <a class="reference external" href="http://nar.oxfordjournals.org/cgi/content/full/34/suppl_2/W394">NAST</a> sequence aligner, which has become a popular tool for adding new 16s rDNA sequences to existing 16s rDNA alignments. This reimplementation is more flexible, faster, and easier to install and maintain than the original NAST implementation. <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is built using the PyCogent Bioinformatics Toolkit.</p>
-<p>The first versions of PyNAST (through PyNAST 1.0) were written to exactly match the results of the original NAST algorithm. Beginning with the post PyNAST 1.0 development code, PyNAST no longer exactly matches the NAST output but is instead focused on getting better alignments. Users who wish to exactly match the results of NAST should download PyNAST 1.0.</p>
-<p>Given a set of sequences and a template alignment, <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> will align the input sequences against the template alignment, and return a multiple sequence alignment which contains the same number of positions (or columns) as the template alignment. This facilitates the analysis of new sequences in the context of existing alignments, and additional data derived from existing alignments such as phylogenetic trees. Because any protein or nucleic acid sequences and template alignments can be provided, <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is not limited to the analysis of 16s rDNA sequences.</p>
-<p><a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> is presented in an open access <a class="reference external" href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btp636">Bioinformatics Applications Note</a>.</p>
+<p><a class="reference external" href="http://qiime.org/pynast">PyNAST</a> is a reimplementation of the <a class="reference external" href="http://nar.oxfordjournals.org/cgi/content/full/34/suppl_2/W394">NAST</a> sequence aligner, which has become a popular tool for adding new 16s rDNA sequences to existing 16s rDNA alignments. This reimplementation is more flexible, faster, and easier to install and maintain than the original NAST implementation. <a class="reference external" href="http://qiime.org/pynast">PyNAST</a> is built using the PyCogent Bioinformatics Toolkit.</p>
+<p>The first versions of PyNAST (through PyNAST 1.0) were written to exactly match the results of the original NAST algorithm. Beginning with the post-PyNAST 1.0 development code, PyNAST no longer exactly matches the NAST output but is instead focused on getting better alignments. Users who wish to exactly match the results of NAST should download PyNAST 1.0.</p>
+<p>Given a set of sequences and a template alignment, <a class="reference external" href="http://qiime.org/pynast">PyNAST</a> will align the input sequences against the template alignment, and return a multiple sequence alignment which contains the same number of positions (or columns) as the template alignment. This facilitates the analysis of new sequences in the context of existing alignments, and additional data derived from existing alignments such as phylogenetic trees. Because any protein or nucleic acid sequences and template alignments can be provided, <a class="reference external" href="http://qiime.org/pynast">PyNAST</a> is not limited to the analysis of 16s rDNA sequences.</p>
+<p><a class="reference external" href="http://qiime.org/pynast">PyNAST</a> is presented in an open access <a class="reference external" href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btp636">Bioinformatics Applications Note</a>.</p>
 </div>
 <div class="section" id="citing-pynast">
 <h1>Citing PyNAST<a class="headerlink" href="#citing-pynast" title="Permalink to this headline">¶</a></h1>
-<p>If you make use of <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> in published work, please cite:</p>
+<p>If you make use of <a class="reference external" href="http://qiime.org/pynast">PyNAST</a> in published work, please cite:</p>
 <p><strong>PyNAST: a flexible tool for aligning sequences to a template alignment.</strong> J. Gregory Caporaso, Kyle Bittinger, Frederic D. Bushman, Todd Z. DeSantis, Gary L. Andersen, and Rob Knight. January 15, 2010, DOI 10.1093/bioinformatics/btp636. Bioinformatics 26: 266-267.</p>
 </div>
 <div class="section" id="need-help">
 <h1>Need help?<a class="headerlink" href="#need-help" title="Permalink to this headline">¶</a></h1>
-<p>For <a class="reference external" href="http://pynast.sourceforge.net">PyNAST</a> support, you can contact <a class="reference external" href="mailto:gregcaporaso&#37;&#52;&#48;gmail&#46;com">Greg Caporaso</a>.</p>
+<p>For <a class="reference external" href="http://qiime.org/pynast">PyNAST</a> support, you can contact <a class="reference external" href="mailto:gregcaporaso&#37;&#52;&#48;gmail&#46;com">Greg Caporaso</a>.</p>
 </div>
 
 
