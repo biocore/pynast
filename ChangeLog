@@ -1,3 +1,6 @@
+PyNAST 1.2-dev (changes since 1.2 go here)
+==========================================
+
 PyNAST 1.2 - (9 Nov 2012)
 =========================
 * Required PyCogent version is now 1.5.3.
@@ -11,5 +14,4 @@ PyNAST 1.1 - (31 Mar 2010)
 
 PyNAST 1.0 - (25 Jan 2010)
 ==========================
-
 * Initial release

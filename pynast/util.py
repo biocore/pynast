@@ -25,7 +25,7 @@ __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
 __license__ = "GPL"
-__version__ = "1.2"
+__version__ = "1.2-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
 __status__ = "Development"
@@ -459,12 +459,12 @@ def remove_template_terminal_gaps(candidate,template):
     
     return DNA.makeSequence(candidate,Name=candidate_name), template
 
-def depreciation_warning(d):
+def deprecation_warning(d):
     if d:
-        print "Unsupported or depreciated options "+\
+        print "Unsupported or deprecated options "+\
          "passed to pynast: %s\n" % ' '.join(d.keys()) +\
-         "  blast_db, max_e_value, and addl_blast_params are depreciated " +\
-         "and will be removed in PyNAST 1.2."
+         "  blast_db, max_e_value, and addl_blast_params are deprecated " +\
+         "and will be removed in PyNAST 1.3."
 
 def pynast_seq(candidate_sequence, template_alignment,
     max_hits=30, min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None,

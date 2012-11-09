@@ -13,7 +13,7 @@ __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger"]
 __license__ = "GPL"
-__version__ = "1.2"
+__version__ = "1.2-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
 __status__ = "Development"
@@ -71,9 +71,9 @@ def parse_command_line_parameters():
           
     parser.add_option('-e','--max_e_value',
           type='float',default=None,
-          help='Depreciated. Will be removed in PyNAST 1.2')
+          help='Deprecated. Will be removed in PyNAST 1.3')
     parser.add_option('-d','--blast_db',\
-          default=None,help='Depreciated. Will be removed in PyNAST 1.2')
+          default=None,help='Deprecated. Will be removed in PyNAST 1.3')
           
     opts,args = parser.parse_args()
     
