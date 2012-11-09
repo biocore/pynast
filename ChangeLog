@@ -1,7 +1,7 @@
-PyNAST 1.1-dev (changes since 1.1 go here)
-==========================================
-* Minimum PyCogent version is now 1.5.3.
-* Minimum muscle version is now 3.8.31.
+PyNAST 1.2 - (9 Nov 2012)
+=========================
+* Required PyCogent version is now 1.5.3.
+* If muscle is installed, required version is now 3.8.31.
 
 PyNAST 1.1 - (31 Mar 2010)
 ==========================

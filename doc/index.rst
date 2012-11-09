@@ -3,7 +3,7 @@
 
 Downloading PyNAST: Latest stable release
 =========================================
-You can download the latest `stable release of PyNAST here <https://github.com/downloads/qiime/pynast/PyNAST-1.1.tgz>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://github.com/downloads/qiime/pynast/PyNAST.app.zip>`_.
+You can download the latest `stable release of PyNAST here <https://github.com/downloads/qiime/pynast/PyNAST-1.2.tar.gz>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://github.com/downloads/qiime/pynast/PyNAST.app.zip>`_.
 
 Downloading PyNAST: Development version
 =======================================

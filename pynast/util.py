@@ -25,7 +25,7 @@ __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
 __license__ = "GPL"
-__version__ = "1.1-dev"
+__version__ = "1.2"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
 __status__ = "Development"
@@ -39,9 +39,9 @@ __status__ = "Development"
  PyNAST depends on PyCogent, NumPy, Python, and uclust. The versions 
  used for development are:
  
- PyCogent 1.5.2
- NumPy 1.3.0
- Python 2.5.1
+ PyCogent 1.5.3
+ NumPy 1.5.1
+ Python 2.7.1
  uclust 1.1.579
  
 The PyNAST algorithm works as follows:

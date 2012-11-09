@@ -6,7 +6,7 @@ Installing and using the PyNAST command line application
 
 Downloading PyNAST
 ==================
-You can download the latest stable release of PyNAST `here <https://github.com/downloads/qiime/pynast/PyNAST-1.1.tgz>`_.
+You can download the latest stable release of PyNAST `here <https://github.com/downloads/qiime/pynast/PyNAST-1.2.tar.gz>`_.
 
 You can download the latest development version of PyNAST here with the following command: ::
 
@@ -26,11 +26,11 @@ Installation steps
 
 #. Download and install uclust_. Binaries are available, or you can install from source (`uclust v1.1.579 binaries and src <http://www.drive5.com/uclust/downloads1_1_579.html>`_ or `uclust v1.2.22q binaries and src <http://www.drive5.com/uclust/downloads1_2_22q.html>`_).
 
-#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.1 from here <https://github.com/downloads/qiime/pynast/PyNAST-1.1.tgz>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the GitHub repository with the command: ::
+#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.2 from here <https://github.com/downloads/qiime/pynast/PyNAST-1.2.tar.gz>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the GitHub repository with the command: ::
 
     git clone git://github.com/qiime/pynast.git PyNAST
 
-If you downloaded from GitHub, you will have a new folder in the current working directory called ``PyNAST``. If you downloaded PyNAST-1.1, after untar/unzipping ``PyNAST-1.1.tgz`` will have a new directory named ``PyNAST-1.1``. **For consistency, all instructions below will refer to this directory as** ``PyNAST``. You may choose to rename ``PyNAST-1.1`` as ``PyNAST``.
+If you downloaded from GitHub, you will have a new folder in the current working directory called ``PyNAST``. If you downloaded PyNAST-1.2, after untar/unzipping ``PyNAST-1.2.tar.gz``, you will have a new directory named ``PyNAST-1.2``. **For consistency, all instructions below will refer to this directory as** ``PyNAST``. You may choose to rename ``PyNAST-1.2`` as ``PyNAST``.
 
 #. Run setup.py. You may need to do this as root (see :ref:`customizing_your_installation` below if this is not an option, or if you'd like to install the PyNAST library code and/or scripts in non-default locations): ::
 
