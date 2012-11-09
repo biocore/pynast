@@ -14,7 +14,7 @@ __email__ = "gregcaporaso@gmail.com"
 __status__ = "Development"
  
 long_description = """The Python Nearest Alignment Space Termination tool
-http://pynast.sourceforge.net
+http://qiime.org/pynast
 
 PyNAST: a flexible tool for aligning sequences to a template alignment. 
 J. Gregory Caporaso, Kyle Bittinger, Frederic D. Bushman, Todd Z. DeSantis, Gary L. Andersen, and Rob Knight. 
@@ -26,14 +26,14 @@ try:
 except ImportError:
     print "PyCogent not installed but required. (Is it installed? Is it in the current users $PYTHONPATH or site-packages?) See http://pycogent.sourceforge.net."
     exit(1)
-    
+
 pycogent_version = tuple([int(v) \
         for v in re.split("[^\d]", cogent.__version__) if v.isdigit()])
-        
-if pycogent_version < (1,4,1):
-    print "PyCogent >= 1.4.1 required, but %s is installed." % cogent.__version__
+
+if pycogent_version < (1,5,3):
+    print "PyCogent >= 1.5.3 required, but %s is installed." % cogent.__version__
     exit(1)
-    
+
 setup(name='PyNAST',
       version=__version__,
       description='The Python Nearest Alignment Space Termination tool',
@@ -41,8 +41,8 @@ setup(name='PyNAST',
       author_email=__email__,
       maintainer=__maintainer__,
       maintainer_email=__email__,
-      url='http://pynast.sourceforge.net',
+      url='http://qiime.org/pynast',
       packages=['pynast'],
       scripts=['scripts/pynast'],
-      long_description=long_description,
+      long_description=long_description
 )
