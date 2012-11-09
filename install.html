@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installing and using the PyNAST command line application &mdash; PyNAST 1.1 documentation</title>
+    <title>Installing and using the PyNAST command line application &mdash; PyNAST 1.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1.1',
+        VERSION:     '1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="PyNAST 1.1 documentation" href="index.html" />     
+    <link rel="top" title="PyNAST 1.2 documentation" href="index.html" />     
 <meta http-equiv="Content-Style-Type" content="text/css" />
 <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAdyJBQQABvxRaME0S-wyQoxTmluCkmlcBcOZMfdDozzndIHJ6lxRpv5opdXpr1SRwPuMUtSSFwWiDgw"></script>
 <script type="text/javascript" src="_static/google_feed.js"></script>
@@ -98,7 +98,7 @@
 <h1>Installing and using the PyNAST command line application<a class="headerlink" href="#installing-and-using-the-pynast-command-line-application" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="downloading-pynast">
 <h2>Downloading PyNAST<a class="headerlink" href="#downloading-pynast" title="Permalink to this headline">¶</a></h2>
-<p>You can download the latest stable release of PyNAST <a class="reference external" href="https://github.com/downloads/qiime/pynast/PyNAST-1.1.tgz">here</a>.</p>
+<p>You can download the latest stable release of PyNAST <a class="reference external" href="https://github.com/downloads/qiime/pynast/PyNAST-1.2.tar.gz">here</a>.</p>
 <p>You can download the latest development version of PyNAST here with the following command:</p>
 <div class="highlight-python"><pre>git clone git://github.com/qiime/pynast.git PyNAST</pre>
 </div>
@@ -118,12 +118,12 @@
 </li>
 <li><p class="first">Download and install <a class="reference external" href="http://www.drive5.com/uclust/">uclust</a>. Binaries are available, or you can install from source (<a class="reference external" href="http://www.drive5.com/uclust/downloads1_1_579.html">uclust v1.1.579 binaries and src</a> or <a class="reference external" href="http://www.drive5.com/uclust/downloads1_2_22q.html">uclust v1.2.22q binaries and src</a>).</p>
 </li>
-<li><p class="first">From your command terminal on an OS X or Linux system, change to the directory where you wish to install <a class="reference external" href="http://qiime.org/pynast">PyNAST</a>. You can either download <a class="reference external" href="https://github.com/downloads/qiime/pynast/PyNAST-1.1.tgz">PyNAST 1.1 from here</a>, or if you want the latest development version you can checkout the latest version of <a class="reference external" href="http://qiime.org/pynast">PyNAST</a> from the GitHub repository with the command:</p>
+<li><p class="first">From your command terminal on an OS X or Linux system, change to the directory where you wish to install <a class="reference external" href="http://qiime.org/pynast">PyNAST</a>. You can either download <a class="reference external" href="https://github.com/downloads/qiime/pynast/PyNAST-1.2.tar.gz">PyNAST 1.2 from here</a>, or if you want the latest development version you can checkout the latest version of <a class="reference external" href="http://qiime.org/pynast">PyNAST</a> from the GitHub repository with the command:</p>
 <div class="highlight-python"><pre>git clone git://github.com/qiime/pynast.git PyNAST</pre>
 </div>
 </li>
 </ol>
-<p>If you downloaded from GitHub, you will have a new folder in the current working directory called <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. If you downloaded PyNAST-1.1, after untar/unzipping <tt class="docutils literal"><span class="pre">PyNAST-1.1.tgz</span></tt> will have a new directory named <tt class="docutils literal"><span class="pre">PyNAST-1.1</span></tt>. <strong>For consistency, all instructions below will refer to this directory as</strong> <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. You may choose to rename <tt class="docutils literal"><span class="pre">PyNAST-1.1</span></tt> as <tt class="docutils literal"><span class="pre">PyNAST</span></tt>.</p>
+<p>If you downloaded from GitHub, you will have a new folder in the current working directory called <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. If you downloaded PyNAST-1.2, after untar/unzipping <tt class="docutils literal"><span class="pre">PyNAST-1.2.tar.gz</span></tt>, you will have a new directory named <tt class="docutils literal"><span class="pre">PyNAST-1.2</span></tt>. <strong>For consistency, all instructions below will refer to this directory as</strong> <tt class="docutils literal"><span class="pre">PyNAST</span></tt>. You may choose to rename <tt class="docutils literal"><span class="pre">PyNAST-1.2</span></tt> as <tt class="docutils literal"><span class="pre">PyNAST</span></tt>.</p>
 <ol class="arabic">
 <li><p class="first">Run setup.py. You may need to do this as root (see <a class="reference internal" href="#customizing-your-installation"><em>Customizing your installation</em></a> below if this is not an option, or if you&#8217;d like to install the PyNAST library code and/or scripts in non-default locations):</p>
 <div class="highlight-python"><pre>cd PyNAST
