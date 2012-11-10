@@ -78,11 +78,11 @@ def parse_command_line_parameters():
     opts,args = parser.parse_args()
     
     if opts.max_e_value:
-        print "Depreciation Warning: max_e_value no longer used "+\
+        print "Deprecation Warning: max_e_value no longer used "+\
         "as database search now uses uclust. "
         
     if opts.blast_db:
-        print "Depreciation Warning: blast_db no longer used "+\
+        print "Deprecation Warning: blast_db no longer used "+\
         "as database search now uses uclust. "
     
     if args:

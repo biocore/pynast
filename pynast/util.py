@@ -487,7 +487,7 @@ def pynast_seq(candidate_sequence, template_alignment,
        align_unaligned_seqs(seqs, moltype, params=None)
        see cogent.app.muscle_v38.align_unaligned_seqs
     """
-    depreciation_warning(kwargs)
+    deprecation_warning(kwargs)
     class SingleSeqLogger(object):
         """ A simple object to store results of a single pynast run """
         
@@ -550,7 +550,7 @@ def ipynast_seqs(candidate_sequences, template_alignment,
       Optional NastLogger object, takes precedence over log_fp
       
     """
-    depreciation_warning(kwargs)
+    deprecation_warning(kwargs)
     
     files_to_remove = []
     if type(candidate_sequences) == str:
@@ -761,7 +761,7 @@ def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
       Callback function to provide status updates to callers of pynast_seqs.
       This function must take a single parameter.
     """
-    depreciation_warning(kwargs)
+    deprecation_warning(kwargs)
     # create lists to keep track of the aligned candidate sequences 
     # and the sequences which fail to align
     aligned = []
