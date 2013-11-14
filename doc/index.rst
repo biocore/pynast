@@ -33,6 +33,11 @@ Given a set of sequences and a template alignment, PyNAST_ will align the input 
 
 PyNAST_ is presented in an open access `Bioinformatics Applications Note <http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btp636>`_.
 
+License
+=======
+
+PyNAST is distributed under the terms of the Modified BSD License. The full license is in the file COPYING.txt, distributed with this software.
+
 Citing PyNAST
 =============
 If you make use of PyNAST_ in published work, please cite:
