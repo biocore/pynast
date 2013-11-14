@@ -30,6 +30,10 @@ class NastLoggerTests(TestCase):
     """Tests of the PyNAST logging class"""
 
     def setUp(self):
+        # Note that delete = False here because we don't want these to 
+        # be deleted when they are closed (since we need to pass
+        # the filepaths around after we write and close them). The files
+        # are deleted explicitly at the end of the test.
         self.file = NamedTemporaryFile(prefix='NastLoggerTest',
                                        suffix='.log',
                                        dir=get_pynast_temp_dir(),

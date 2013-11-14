@@ -596,7 +596,7 @@ def ipynast_seqs(candidate_sequences, template_alignment,
     # The bad handling of upper versus lower-cased sequences is a uclust issue.
     # Note that delete = False here because we don't want these to 
     # be deleted when they are closed (since we need to pass
-    # the files to bl2seq after we write and close them). The files
+    # the filepaths around after we write and close them). The files
     # are deleted explicitly at the end of this function.
     candidate_fasta_f = NamedTemporaryFile(prefix='pynast_candidate',
                                            suffix='.fasta',

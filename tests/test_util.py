@@ -45,7 +45,11 @@ class PyNastTests(TestCase):
         self.files_to_remove = []
         self.full_length_test1_input_seqs =\
          LoadSeqs(data=input_seqs1_fasta,moltype=DNA,aligned=False)
-         
+
+        # Note that delete = False here for all temp file creation 
+        # because we don't want these to be deleted when they are closed 
+        # (since we need to pass the filepaths around after we write and 
+        # close them). The files are deleted explicitly at the end of the test.
         full_length_test1_input_seqs_f = \
          NamedTemporaryFile(prefix='PyNastTest',
                             suffix='.fasta',
