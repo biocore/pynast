@@ -6,7 +6,7 @@ from cogent import LoadSeqs, DNA
 from cogent.core.alignment import DenseAlignment
 from cogent.parse.fasta import MinimalFastaParser
 from pynast.util import ipynast_seqs, pairwise_alignment_methods,\
-    null_status_callback_f
+    null_status_callback_f, get_pynast_temp_dir
 from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
@@ -68,6 +68,9 @@ def parse_command_line_parameters():
           type='string',dest='failure_fp',help='path to store '+\
           'file of seqs which fail to align ' +\
           '[default: derived from input filepath]')
+    parser.add_option('--temp_dir',action='store',\
+          help='path to store any temp files that are created'+\
+          ' [default: %default]', default=get_pynast_temp_dir())
           
     parser.add_option('-e','--max_e_value',
           type='float',default=None,
@@ -166,7 +169,8 @@ def main():
       min_pct=min_pct_id,\
       min_len=min_len,\
       align_unaligned_seqs_f=align_unaligned_seqs_f,\
-      logger=logger)
+      logger=logger,
+      temp_dir=temp_dir)
     
     aln_file = open(aln_fp,'w')
     fail_file = open(fail_fp,'w')
