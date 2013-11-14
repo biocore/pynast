@@ -15,7 +15,7 @@ from pynast.util import (align_two_seqs, reintroduce_template_spacing,
  adjust_alignment, nearest_gap, pynast_seq,
  introduce_terminal_gaps, UnalignableSequenceError, pynast_seqs,
  pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs, ipynast_seqs,
- remove_template_terminal_gaps)
+ remove_template_terminal_gaps, get_pynast_temp_dir)
 from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
@@ -38,7 +38,9 @@ class PyNastTests(TestCase):
          LoadSeqs(data=input_seqs1_fasta,moltype=DNA,aligned=False)
          
         self.full_length_test1_input_seqs_fp = \
-            get_tmp_filename(prefix='PyNastTest', suffix='.fasta')
+            get_tmp_filename(tmp_dir=get_pynast_temp_dir(),
+                             prefix='PyNastTest',
+                             suffix='.fasta')
         self.files_to_remove.append(self.full_length_test1_input_seqs_fp)
         full_length_test1_input_seqs_f = \
             open(self.full_length_test1_input_seqs_fp,'w')
@@ -50,7 +52,8 @@ class PyNastTests(TestCase):
          LoadSeqs(data=pynast_test_template_fasta1,moltype=DNA,aligned=DenseAlignment)
         
         self.full_length_test1_template_aln_fp = \
-            get_tmp_filename(prefix='PyNastTest', suffix='.fasta',
+            get_tmp_filename(tmp_dir=get_pynast_temp_dir(),
+                             prefix='PyNastTest', suffix='.fasta',
                              result_constructor=str) 
         self.files_to_remove.append(self.full_length_test1_template_aln_fp)
         full_length_test1_template_aln_f = \
@@ -73,7 +76,8 @@ class PyNastTests(TestCase):
         
         
         self.log_filename = \
-            get_tmp_filename(prefix='PyNastTest', suffix='.log')
+            get_tmp_filename(tmp_dir=get_pynast_temp_dir(),
+                             prefix='PyNastTest', suffix='.log')
         self.files_to_remove.append(self.log_filename)
         # touch the log file, so we don't get an error trying to remove it
         # if a test doesn't create it
