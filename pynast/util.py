@@ -526,7 +526,7 @@ def pynast_seq(candidate_sequence, template_alignment,
 
 def ipynast_seqs(candidate_sequences, template_alignment,
     max_hits=30, min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None,
-    log_fp=None, logger=None,**kwargs):
+    log_fp=None, logger=None, temp_dir=get_pynast_temp_dir(), **kwargs):
     """Iterator that yields results of pynast on candidate_sequences
     
     This function yields the sequence and exit status of the alignment step,
@@ -575,8 +575,9 @@ def ipynast_seqs(candidate_sequences, template_alignment,
     # the seqs to a temp file to pass to uclust. This is done in all
     # cases to convert the sequences to uppercase in case they're not already.
     # The bad handling of upper versus lower-cased sequences is a uclust issue.
-    candidate_fasta_filepath = \
-     get_tmp_filename(prefix='pynast_candidate',suffix='.fasta')
+    candidate_fasta_filepath = get_tmp_filename(tmp_dir=temp_dir,
+                                                prefix='pynast_candidate',
+                                                suffix='.fasta')
     candidate_fasta_f = open(candidate_fasta_filepath,'w')
     for seq_id, seq in candidate_sequences:
         candidate_fasta_f.write('>%s\n%s\n' % (seq_id,str(seq).upper()))
@@ -585,8 +586,9 @@ def ipynast_seqs(candidate_sequences, template_alignment,
 
     # degap the template alignment for the sequence searching step and
     # write it to file
-    template_fasta_filepath = \
-     get_tmp_filename(prefix='pynast_template',suffix='.fasta')
+    template_fasta_filepath = get_tmp_filename(tmp_dir=temp_dir,
+                                               prefix='pynast_template',
+                                               suffix='.fasta')
     template_fasta_f = open(template_fasta_filepath,'w')
     
     if type(template_alignment) == str:
