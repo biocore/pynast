@@ -101,7 +101,10 @@ def pair_hmm_align_unaligned_seqs(seqs,moltype,params={}):
     
     return global_pairwise(s1,s2,score_matrix,gap_open,gap_extend)
 
-def blast_align_unaligned_seqs(seqs,moltype,params={}):
+def blast_align_unaligned_seqs(seqs,
+                               moltype,
+                               params={},
+                               temp_dir=get_pynast_temp_dir()):
     """ Pairwise align two seqs using bl2seq
     
         This needs to be moved to the blast application controller.
@@ -115,12 +118,12 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
         raise ValueError,\
          "Pairwise aligning of seqs with blast requires exactly two seqs."
     
-    in_filepath1 = get_tmp_filename(tmp_dir=get_pynast_temp_dir(),\
+    in_filepath1 = get_tmp_filename(tmp_dir=temp_dir,\
         prefix='bl2seq_input1_',suffix='.fasta')
-    in_filepath2 = get_tmp_filename(tmp_dir=get_pynast_temp_dir(),\
+    in_filepath2 = get_tmp_filename(tmp_dir=temp_dir,\
         prefix='bl2seq_input2_',suffix='.fasta')
     in_filepaths = [in_filepath1,in_filepath2]
-    out_filepath = get_tmp_filename(tmp_dir=get_pynast_temp_dir(),\
+    out_filepath = get_tmp_filename(tmp_dir=temp_dir,\
         prefix='bl2seq_output_',suffix='.fasta')
      
     for n,in_filepath in zip(seq_ids,in_filepaths):
