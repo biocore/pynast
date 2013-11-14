@@ -11,7 +11,7 @@
 __author__ = "The PyNAST Development Team"
 __copyright__ = "Copyright 2010, The QIIME Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger", "Rob Knight"] 
-__license__ = "GPL"
+__license__ = "Modified BSD"
 __version__ = "1.2-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
