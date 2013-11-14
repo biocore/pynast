@@ -3,7 +3,7 @@
 from __future__ import division
 from os import system, remove, popen
 from os.path import exists
-from tempfile import tempdir
+from tempfile import gettempdir
 from shutil import copy as copy_file
 from glob import glob
 from cogent import DNA, LoadSeqs, Sequence
@@ -71,7 +71,7 @@ def get_pynast_temp_dir():
          more complex later if we want to (e.g, allow users to define 
          their own custom temp directory).
     """
-    return tempdir
+    return gettempdir()
 
 def pair_hmm_align_unaligned_seqs(seqs,moltype,params={}):
     """
