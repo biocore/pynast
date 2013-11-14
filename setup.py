@@ -1,5 +1,13 @@
 #!/usr/bin/env python
-# File created on 04 Feb 2010
+
+#-----------------------------------------------------------------------------
+# Copyright (c) 2013, The PyNAST Development Team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file COPYING.txt, distributed with this software.
+#-----------------------------------------------------------------------------
+
 from __future__ import division
 from distutils.core import setup
 import re
