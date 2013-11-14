@@ -24,7 +24,6 @@ from cogent.app.formatdb import build_blast_db_from_seqs, \
 from cogent.app.muscle_v38 import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
-from cogent.app.util import get_tmp_filename
 from cogent.app.uclust import uclust_search_and_align_from_fasta_filepath
 from cogent.parse.blast import BlastResult
 from cogent.parse.fasta import MinimalFastaParser
@@ -595,21 +594,27 @@ def ipynast_seqs(candidate_sequences, template_alignment,
     # the seqs to a temp file to pass to uclust. This is done in all
     # cases to convert the sequences to uppercase in case they're not already.
     # The bad handling of upper versus lower-cased sequences is a uclust issue.
-    candidate_fasta_filepath = get_tmp_filename(tmp_dir=temp_dir,
-                                                prefix='pynast_candidate',
-                                                suffix='.fasta')
-    candidate_fasta_f = open(candidate_fasta_filepath,'w')
+    # Note that delete = False here because we don't want these to 
+    # be deleted when they are closed (since we need to pass
+    # the files to bl2seq after we write and close them). The files
+    # are deleted explicitly at the end of this function.
+    candidate_fasta_f = NamedTemporaryFile(prefix='pynast_candidate',
+                                           suffix='.fasta',
+                                           dir=temp_dir,
+                                           delete=False)
+    candidate_fasta_filepath = candidate_fasta_f.name
     for seq_id, seq in candidate_sequences:
         candidate_fasta_f.write('>%s\n%s\n' % (seq_id,str(seq).upper()))
     candidate_fasta_f.close()
     files_to_remove.append(candidate_fasta_filepath)
 
     # degap the template alignment for the sequence searching step and
-    # write it to file
-    template_fasta_filepath = get_tmp_filename(tmp_dir=temp_dir,
-                                               prefix='pynast_template',
-                                               suffix='.fasta')
-    template_fasta_f = open(template_fasta_filepath,'w')
+    # write it to file. See above comment about delete=False
+    template_fasta_f = NamedTemporaryFile(prefix='pynast_template',
+                                          suffix='.fasta',
+                                          dir=temp_dir,
+                                          delete=False)
+    template_fasta_filepath = template_fasta_f.name
     
     if type(template_alignment) == str:
         # the template alignment was received as a filepath
