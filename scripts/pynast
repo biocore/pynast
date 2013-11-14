@@ -124,6 +124,7 @@ def main():
     min_pct_id = opts.min_pct_id
     min_len = opts.min_len
     template_fp = opts.template_fp
+    temp_dir = opts.temp_dir
 
     align_unaligned_seqs_f =\
      pairwise_alignment_methods[opts.pairwise_alignment_method]
