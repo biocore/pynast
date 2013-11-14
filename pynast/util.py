@@ -745,7 +745,8 @@ def null_status_callback_f(x):
 
 def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
     min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None, log_fp=None,
-    logger=None, status_callback_f=null_status_callback_f,**kwargs):
+    logger=None, temp_dir=get_pynast_temp_dir(), 
+    status_callback_f=null_status_callback_f,**kwargs):
     """Function which runs pynast_seq on candidate_sequences.
     
     Results are returned as a tuple of lists:
@@ -787,7 +788,7 @@ def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
      candidate_sequences, template_alignment,
      max_hits=max_hits, min_pct=min_pct, min_len=min_len,
      align_unaligned_seqs_f=align_unaligned_seqs_f, log_fp=log_fp,
-     logger=logger)
+     logger=logger, temp_dir=temp_dir)
     
     for seq, status in pynast_iterator:
         if status == 0:
