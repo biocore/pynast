@@ -1,8 +1,17 @@
 #!/usr/bin/env python
 
+#-----------------------------------------------------------------------------
+# Copyright (c) 2013, The PyNAST Development Team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file COPYING.txt, distributed with this software.
+#-----------------------------------------------------------------------------
+
 from __future__ import division
 from os import system, remove, popen
 from os.path import exists
+from tempfile import gettempdir, NamedTemporaryFile
 from shutil import copy as copy_file
 from glob import glob
 from cogent import DNA, LoadSeqs, Sequence
@@ -15,7 +24,6 @@ from cogent.app.formatdb import build_blast_db_from_seqs, \
 from cogent.app.muscle_v38 import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
-from cogent.app.util import get_tmp_filename
 from cogent.app.uclust import uclust_search_and_align_from_fasta_filepath
 from cogent.parse.blast import BlastResult
 from cogent.parse.fasta import MinimalFastaParser
@@ -24,7 +32,7 @@ from pynast.logger import NastLogger
 __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
-__license__ = "GPL"
+__license__ = "Modified BSD"
 __version__ = "1.2-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
@@ -62,6 +70,16 @@ The PyNAST algorithm works as follows:
 class UnalignableSequenceError(Exception):
     pass
 
+def get_pynast_temp_dir():
+    """ Returns the directory that should be used for temp file storage
+    
+        Currently this just returns tempfile.gettempdir(), but defining this
+         as a function now so we have the flexibility to do something 
+         more complex later if we want to (e.g, allow users to define 
+         their own custom temp directory).
+    """
+    return gettempdir()
+
 def pair_hmm_align_unaligned_seqs(seqs,moltype,params={}):
     """
         This needs to be moved to cogent.align.align
@@ -90,7 +108,10 @@ def pair_hmm_align_unaligned_seqs(seqs,moltype,params={}):
     
     return global_pairwise(s1,s2,score_matrix,gap_open,gap_extend)
 
-def blast_align_unaligned_seqs(seqs,moltype,params={}):
+def blast_align_unaligned_seqs(seqs,
+                               moltype,
+                               params={},
+                               temp_dir=get_pynast_temp_dir()):
     """ Pairwise align two seqs using bl2seq
     
         This needs to be moved to the blast application controller.
@@ -104,16 +125,28 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
         raise ValueError,\
          "Pairwise aligning of seqs with blast requires exactly two seqs."
     
-    in_filepath1 = get_tmp_filename(tmp_dir='/tmp/',\
-        prefix='bl2seq_input1_',suffix='.fasta')
-    in_filepath2 = get_tmp_filename(tmp_dir='/tmp/',\
-        prefix='bl2seq_input2_',suffix='.fasta')
-    in_filepaths = [in_filepath1,in_filepath2]
-    out_filepath = get_tmp_filename(tmp_dir='/tmp/',\
-        prefix='bl2seq_output_',suffix='.fasta')
+    # Create temporary input and output files. Note that 
+    # delete = False here because we don't want these to 
+    # be deleted when they are closed (since we need to pass
+    # the files to bl2seq after we write and close them). The files
+    # are deleted explicitly at the end of this function.
+    in_file1 = NamedTemporaryFile(prefix = 'bl2seq_input1_',
+                                  suffix = '.fasta',
+                                  dir = temp_dir,
+                                  delete = False)
+    in_filepath1 = in_file1.name
+    in_file2 = NamedTemporaryFile(prefix = 'bl2seq_input2_',
+                                  suffix = '.fasta',
+                                  dir = temp_dir,
+                                  delete = False)
+    in_filepath2 = in_file2.name
+    out_file = NamedTemporaryFile(prefix = 'bl2seq_output_',
+                                  suffix = '.fasta',
+                                  dir = temp_dir,
+                                  delete = False)
+    out_filepath = out_file.name
      
-    for n,in_filepath in zip(seq_ids,in_filepaths):
-        f = open(in_filepath,'w')
+    for n,f in zip(seq_ids,[in_file1, in_file2]):
         f.write('>%s\n' % n)
         f.write(str(seqs[n]))
         f.write('\n')
@@ -512,7 +545,7 @@ def pynast_seq(candidate_sequence, template_alignment,
 
 def ipynast_seqs(candidate_sequences, template_alignment,
     max_hits=30, min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None,
-    log_fp=None, logger=None,**kwargs):
+    log_fp=None, logger=None, temp_dir=get_pynast_temp_dir(), **kwargs):
     """Iterator that yields results of pynast on candidate_sequences
     
     This function yields the sequence and exit status of the alignment step,
@@ -561,19 +594,27 @@ def ipynast_seqs(candidate_sequences, template_alignment,
     # the seqs to a temp file to pass to uclust. This is done in all
     # cases to convert the sequences to uppercase in case they're not already.
     # The bad handling of upper versus lower-cased sequences is a uclust issue.
-    candidate_fasta_filepath = \
-     get_tmp_filename(prefix='pynast_candidate',suffix='.fasta')
-    candidate_fasta_f = open(candidate_fasta_filepath,'w')
+    # Note that delete = False here because we don't want these to 
+    # be deleted when they are closed (since we need to pass
+    # the filepaths around after we write and close them). The files
+    # are deleted explicitly at the end of this function.
+    candidate_fasta_f = NamedTemporaryFile(prefix='pynast_candidate',
+                                           suffix='.fasta',
+                                           dir=temp_dir,
+                                           delete=False)
+    candidate_fasta_filepath = candidate_fasta_f.name
     for seq_id, seq in candidate_sequences:
         candidate_fasta_f.write('>%s\n%s\n' % (seq_id,str(seq).upper()))
     candidate_fasta_f.close()
     files_to_remove.append(candidate_fasta_filepath)
 
     # degap the template alignment for the sequence searching step and
-    # write it to file
-    template_fasta_filepath = \
-     get_tmp_filename(prefix='pynast_template',suffix='.fasta')
-    template_fasta_f = open(template_fasta_filepath,'w')
+    # write it to file. See above comment about delete=False
+    template_fasta_f = NamedTemporaryFile(prefix='pynast_template',
+                                          suffix='.fasta',
+                                          dir=temp_dir,
+                                          delete=False)
+    template_fasta_filepath = template_fasta_f.name
     
     if type(template_alignment) == str:
         # the template alignment was received as a filepath
@@ -729,7 +770,8 @@ def null_status_callback_f(x):
 
 def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
     min_pct=75.0, min_len=1000, align_unaligned_seqs_f=None, log_fp=None,
-    logger=None, status_callback_f=null_status_callback_f,**kwargs):
+    logger=None, temp_dir=get_pynast_temp_dir(), 
+    status_callback_f=null_status_callback_f,**kwargs):
     """Function which runs pynast_seq on candidate_sequences.
     
     Results are returned as a tuple of lists:
@@ -771,7 +813,7 @@ def pynast_seqs(candidate_sequences, template_alignment, max_hits=30,
      candidate_sequences, template_alignment,
      max_hits=max_hits, min_pct=min_pct, min_len=min_len,
      align_unaligned_seqs_f=align_unaligned_seqs_f, log_fp=log_fp,
-     logger=logger)
+     logger=logger, temp_dir=temp_dir)
     
     for seq, status in pynast_iterator:
         if status == 0:

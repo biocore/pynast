@@ -1,6 +1,13 @@
 #!/usr/bin/env python
-"""Run all tests.
-"""
+
+#-----------------------------------------------------------------------------
+# Copyright (c) 2013, The PyNAST Development Team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file COPYING.txt, distributed with this software.
+#-----------------------------------------------------------------------------
+
 from os import walk, environ
 from subprocess import Popen, PIPE, STDOUT
 from os.path import join, abspath, dirname, split
@@ -10,7 +17,7 @@ import re
 __author__ = "Rob Knight"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Rob Knight","Greg Caporaso", "Jai Ram Rideout"]
-__license__ = "GPL"
+__license__ = "Modified BSD"
 __version__ = "1.2-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"

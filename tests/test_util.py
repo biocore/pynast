@@ -1,11 +1,20 @@
 #!/usr/bin/env python
 
+#-----------------------------------------------------------------------------
+# Copyright (c) 2013, The PyNAST Development Team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file COPYING.txt, distributed with this software.
+#-----------------------------------------------------------------------------
+
 from __future__ import division
+from tempfile import NamedTemporaryFile
+from os.path import exists
 import sys
 from cogent import LoadSeqs, DNA
 from cogent.util.misc import remove_files
 from cogent.core.alignment import DenseAlignment
-from cogent.app.util import get_tmp_filename
 from cogent.app.muscle_v38 import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
@@ -15,13 +24,13 @@ from pynast.util import (align_two_seqs, reintroduce_template_spacing,
  adjust_alignment, nearest_gap, pynast_seq,
  introduce_terminal_gaps, UnalignableSequenceError, pynast_seqs,
  pair_hmm_align_unaligned_seqs, blast_align_unaligned_seqs, ipynast_seqs,
- remove_template_terminal_gaps)
+ remove_template_terminal_gaps, get_pynast_temp_dir)
 from pynast.logger import NastLogger
 
 __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
-__license__ = "GPL"
+__license__ = "Modified BSD"
 __version__ = "1.2-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
@@ -36,28 +45,38 @@ class PyNastTests(TestCase):
         self.files_to_remove = []
         self.full_length_test1_input_seqs =\
          LoadSeqs(data=input_seqs1_fasta,moltype=DNA,aligned=False)
-         
-        self.full_length_test1_input_seqs_fp = \
-            get_tmp_filename(prefix='PyNastTest', suffix='.fasta')
-        self.files_to_remove.append(self.full_length_test1_input_seqs_fp)
+
+        # Note that delete = False here for all temp file creation 
+        # because we don't want these to be deleted when they are closed 
+        # (since we need to pass the filepaths around after we write and 
+        # close them). The files are deleted explicitly at the end of the test.
         full_length_test1_input_seqs_f = \
-            open(self.full_length_test1_input_seqs_fp,'w')
+         NamedTemporaryFile(prefix='PyNastTest',
+                            suffix='.fasta',
+                            dir=get_pynast_temp_dir(),
+                            delete=False)
+        self.full_length_test1_input_seqs_fp = \
+         full_length_test1_input_seqs_f.name
         full_length_test1_input_seqs_f.write(input_seqs1_fasta)
         full_length_test1_input_seqs_f.close()
+        self.files_to_remove.append(self.full_length_test1_input_seqs_fp)
         
         self.full_length_test1_input_seqs_lines = input_seqs1_fasta.split('\n')
+        
         self.full_length_test1_template_aln = \
          LoadSeqs(data=pynast_test_template_fasta1,moltype=DNA,aligned=DenseAlignment)
         
-        self.full_length_test1_template_aln_fp = \
-            get_tmp_filename(prefix='PyNastTest', suffix='.fasta',
-                             result_constructor=str) 
-        self.files_to_remove.append(self.full_length_test1_template_aln_fp)
         full_length_test1_template_aln_f = \
-         open(self.full_length_test1_template_aln_fp,'w')
+         NamedTemporaryFile(prefix='PyNastTest',
+                            suffix='.fasta',
+                            dir=get_pynast_temp_dir(),
+                            delete=False)
+        self.full_length_test1_template_aln_fp = \
+         full_length_test1_template_aln_f.name
         full_length_test1_template_aln_f.write(
          self.full_length_test1_template_aln.toFasta())
         full_length_test1_template_aln_f.close()
+        self.files_to_remove.append(self.full_length_test1_template_aln_fp)
         
         self.full_length_test1_expected_aln = \
          LoadSeqs(data=input_seqs1_aligned_fasta,moltype=DNA,aligned=DenseAlignment)
@@ -71,13 +90,12 @@ class PyNastTests(TestCase):
         
         self.input_seqs_gaps = input_seqs_gaps.split('\n')
         
-        
-        self.log_filename = \
-            get_tmp_filename(prefix='PyNastTest', suffix='.log')
+        log_file = NamedTemporaryFile(prefix='PyNastTest',
+                                      suffix='.log',
+                                      dir=get_pynast_temp_dir(),
+                                      delete=False)
+        self.log_filename = log_file.name
         self.files_to_remove.append(self.log_filename)
-        # touch the log file, so we don't get an error trying to remove it
-        # if a test doesn't create it
-        open(self.log_filename,'w').close()
 
     def tearDown(self):
         """ Clean up temporary files created by the tests

@@ -1,17 +1,26 @@
 #!/usr/bin/env python
 
+#-----------------------------------------------------------------------------
+# Copyright (c) 2013, The PyNAST Development Team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file COPYING.txt, distributed with this software.
+#-----------------------------------------------------------------------------
+
 from __future__ import division
+from tempfile import NamedTemporaryFile
 from os import remove
 from cogent import LoadSeqs, DNA
 from cogent.util.unit_test import TestCase, main
-from cogent.app.util import get_tmp_filename
 from cogent.parse.fasta import MinimalFastaParser
 from pynast.logger import NastLogger
+from pynast.util import get_pynast_temp_dir
 
 __author__ = "Kyle Bittinger"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger"]
-__license__ = "GPL"
+__license__ = "Modified BSD"
 __version__ = "1.2-dev"
 __maintainer__ = "Kyle Bittinger"
 __email__ = "kylebittinger@gmail.com"
@@ -21,10 +30,16 @@ class NastLoggerTests(TestCase):
     """Tests of the PyNAST logging class"""
 
     def setUp(self):
-        self.filename = get_tmp_filename(
-            prefix='NastLoggerTest',
-            suffix='.log',
-            )
+        # Note that delete = False here because we don't want these to 
+        # be deleted when they are closed (since we need to pass
+        # the filepaths around after we write and close them). The files
+        # are deleted explicitly at the end of the test.
+        self.file = NamedTemporaryFile(prefix='NastLoggerTest',
+                                       suffix='.log',
+                                       dir=get_pynast_temp_dir(),
+                                       delete=False)
+        self.file.close()
+        self.filename = self.file.name
 
     def tearDown(self):
         try:
@@ -44,9 +59,9 @@ class NastLoggerTests(TestCase):
         """NastLogger.__init__ should write correct header to log file"""
         logger = NastLogger(self.filename)
 
-        file = open(self.filename, 'r')
-        header = file.readline()
-        file.close()
+        f = open(self.filename, 'r')
+        header = f.readline()
+        f.close()
 
         exp_header = (
             'candidate sequence ID\tcandidate nucleotide count\terrors\t'
@@ -61,10 +76,10 @@ class NastLoggerTests(TestCase):
         logger = NastLogger(self.filename)
         logger.record('hello', 'world')
 
-        file = open(self.filename, 'r')
-        obs_header = file.readline()
-        obs_message = file.readline()
-        file.close()
+        f = open(self.filename, 'r')
+        obs_header = f.readline()
+        obs_message = f.readline()
+        f.close()
 
         self.assertEqual(obs_message, 'hello\tworld\n')
         
