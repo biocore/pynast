@@ -11,7 +11,7 @@
 from __future__ import division
 from os import system, remove, popen
 from os.path import exists
-from tempfile import gettempdir
+from tempfile import gettempdir, NamedTemporaryFile
 from shutil import copy as copy_file
 from glob import glob
 from cogent import DNA, LoadSeqs, Sequence
@@ -126,16 +126,28 @@ def blast_align_unaligned_seqs(seqs,
         raise ValueError,\
          "Pairwise aligning of seqs with blast requires exactly two seqs."
     
-    in_filepath1 = get_tmp_filename(tmp_dir=temp_dir,\
-        prefix='bl2seq_input1_',suffix='.fasta')
-    in_filepath2 = get_tmp_filename(tmp_dir=temp_dir,\
-        prefix='bl2seq_input2_',suffix='.fasta')
-    in_filepaths = [in_filepath1,in_filepath2]
-    out_filepath = get_tmp_filename(tmp_dir=temp_dir,\
-        prefix='bl2seq_output_',suffix='.fasta')
+    # Create temporary input and output files. Note that 
+    # delete = False here because we don't want these to 
+    # be deleted when they are closed (since we need to pass
+    # the files to bl2seq after we write and close them). The files
+    # are deleted explicitly at the end of this function.
+    in_file1 = NamedTemporaryFile(prefix = 'bl2seq_input1_',
+                                  suffix = '.fasta',
+                                  dir = temp_dir,
+                                  delete = False)
+    in_filepath1 = in_file1.name
+    in_file2 = NamedTemporaryFile(prefix = 'bl2seq_input2_',
+                                  suffix = '.fasta',
+                                  dir = temp_dir,
+                                  delete = False)
+    in_filepath2 = in_file2.name
+    out_file = NamedTemporaryFile(prefix = 'bl2seq_output_',
+                                  suffix = '.fasta',
+                                  dir = temp_dir,
+                                  delete = False)
+    out_filepath = out_file.name
      
-    for n,in_filepath in zip(seq_ids,in_filepaths):
-        f = open(in_filepath,'w')
+    for n,f in zip(seq_ids,[in_file1, in_file2]):
         f.write('>%s\n' % n)
         f.write(str(seqs[n]))
         f.write('\n')
