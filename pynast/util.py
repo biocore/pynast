@@ -66,7 +66,7 @@ class UnalignableSequenceError(Exception):
 def get_pynast_temp_dir():
     """ Returns the directory that should be used for temp file storage
     
-        Currently this just returns tempfile.tempdir, but defining this
+        Currently this just returns tempfile.gettempdir(), but defining this
          as a function now so we have the flexibility to do something 
          more complex later if we want to (e.g, allow users to define 
          their own custom temp directory).
