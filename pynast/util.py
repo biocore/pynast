@@ -3,6 +3,7 @@
 from __future__ import division
 from os import system, remove, popen
 from os.path import exists
+from tempfile import tempdir
 from shutil import copy as copy_file
 from glob import glob
 from cogent import DNA, LoadSeqs, Sequence
@@ -62,6 +63,16 @@ The PyNAST algorithm works as follows:
 class UnalignableSequenceError(Exception):
     pass
 
+def get_pynast_temp_dir():
+    """ Returns the directory that should be used for temp file storage
+    
+        Currently this just returns tempfile.tempdir, but defining this
+         as a function now so we have the flexibility to do something 
+         more complex later if we want to (e.g, allow users to define 
+         their own custom temp directory).
+    """
+    return tempdir
+
 def pair_hmm_align_unaligned_seqs(seqs,moltype,params={}):
     """
         This needs to be moved to cogent.align.align
@@ -104,12 +115,12 @@ def blast_align_unaligned_seqs(seqs,moltype,params={}):
         raise ValueError,\
          "Pairwise aligning of seqs with blast requires exactly two seqs."
     
-    in_filepath1 = get_tmp_filename(tmp_dir='/tmp/',\
+    in_filepath1 = get_tmp_filename(tmp_dir=get_pynast_temp_dir(),\
         prefix='bl2seq_input1_',suffix='.fasta')
-    in_filepath2 = get_tmp_filename(tmp_dir='/tmp/',\
+    in_filepath2 = get_tmp_filename(tmp_dir=get_pynast_temp_dir(),\
         prefix='bl2seq_input2_',suffix='.fasta')
     in_filepaths = [in_filepath1,in_filepath2]
-    out_filepath = get_tmp_filename(tmp_dir='/tmp/',\
+    out_filepath = get_tmp_filename(tmp_dir=get_pynast_temp_dir(),\
         prefix='bl2seq_output_',suffix='.fasta')
      
     for n,in_filepath in zip(seq_ids,in_filepaths):
