@@ -16,7 +16,7 @@ Required software
 =================
 PyNAST_ is built on the PyCogent_ package, and uses uclust_. 
 
-You must have PyCogent `1.5.3 <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.3/PyCogent-1.5.3.tgz/download>`_ and uclust `v1.1.579 <http://www.drive5.com/uclust/downloads1_1_579.html>`_ or uclust `v1.2.22q <http://www.drive5.com/uclust/downloads1_2_22q.html>`_ installed to run PyNAST_. You should first obtain these software packages, and install them according to the instructions provided by their authors.
+You must have PyCogent `1.5.3 <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.3/PyCogent-1.5.3.tgz/download>`_ and uclust `v1.2.22q <http://www.drive5.com/uclust/downloads1_2_22q.html>`_ installed to run PyNAST_. You should first obtain these software packages, and install them according to the instructions provided by their authors.
 
 Optional software
 =================
