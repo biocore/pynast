@@ -32,7 +32,9 @@ Installation steps
 
     git clone git://github.com/qiime/pynast.git pynast
 
-If you downloaded from GitHub, you will have a new folder in the current working directory called ``pynast``. If you downloaded PyNAST-1.2.1, after untar/unzipping ``pynast-1.2.1.tar.gz`, you will have a new directory named ``pynast-1.2.1``. Change to whichever of these directories is relevant for your install procedure.
+#. If you downloaded from GitHub, you will have a new folder in the current working directory called ``pynast``. If you downloaded PyNAST-1.2.1, after untar/unzipping ``pynast-1.2.1.tar.gz``, you will have a new directory named ``pynast-1.2.1``. Change to whichever of these directories is relevant for your install procedure, for example::
+
+    cd pynast-1.2.1
 
 #. Run ``setup.py``. You may need to do this as root (see :ref:`customizing_your_installation` below if this is not an option, or if you'd like to install the PyNAST library code and/or scripts in non-default locations)::
 
