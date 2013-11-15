@@ -29,7 +29,7 @@ PyNAST_ is a reimplementation of the NAST_ sequence aligner, which has become a 
 
 The first versions of PyNAST (through PyNAST 1.0) were written to exactly match the results of the original NAST algorithm. Beginning with the post-PyNAST 1.0 development code, PyNAST no longer exactly matches the NAST output but is instead focused on getting better alignments. Users who wish to exactly match the results of NAST should download PyNAST 1.0.
 
-Given a set of sequences and a template alignment, PyNAST_ will align the input sequences against the template alignment, and return a multiple sequence alignment which contains the same number of positions (or columns) as the template alignment. This facilitates the analysis of new sequences in the context of existing alignments, and additional data derived from existing alignments such as phylogenetic trees. Because any protein or nucleic acid sequences and template alignments can be provided, PyNAST_ is not limited to the analysis of 16s rDNA sequences.
+Given a set of sequences and a template alignment, PyNAST_ will align the input sequences against the template alignment, and return a multiple sequence alignment which contains the same number of positions (or columns) as the template alignment. This facilitates the analysis of new sequences in the context of existing alignments, and additional data derived from existing alignments such as phylogenetic trees. Because any protein or nucleic acid sequences and template alignments can be provided, PyNAST_ is not limited to the analysis of 16s rRNA sequences.
 
 PyNAST_ is presented in an open access `Bioinformatics Applications Note <http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btp636>`_.
 
