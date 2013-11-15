@@ -9,7 +9,7 @@ Requirements for the PyNAST GUI
 ===============================
     * An Intel Mac running OS X 10.5 (Leopard).
     * Python_ 2.5 or greater (but less than Python 3.0) and NumPy_ 1.3.0 or greater.
-    * ``blastall``, ``formatdb``, and ``bl2seq`` installed in ``/usr/bin/``, ``/usr/local/bin/``, or ``$HOME/bin``. These are all part of NCBI's 'legacy' BLAST_ package, *NOT the BLAST+ package*. Versions 2.2.16 through 2.2.21 have been tested extensively with PyNAST_, but other versions should work. (Due to current limitations of the PyNAST_ GUI you need to have the required external software installed in one of these specific locations on your system.)
+    * ``blastall``, ``formatdb``, and ``bl2seq`` installed in ``/usr/bin/``, ``/usr/local/bin/``, or ``$HOME/bin``. These are all part of NCBI's 'legacy' BLAST_ package, *NOT the BLAST+ package*. Versions 2.2.16 through 2.2.21 have been tested extensively with the PyNAST_ GUI, but other versions should work. (Due to current limitations of the PyNAST_ GUI you need to have the required external software installed in one of these specific locations on your system.)
 
 Optional for the PyNAST GUI
 ===========================
