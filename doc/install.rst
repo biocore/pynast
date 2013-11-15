@@ -14,23 +14,19 @@ You can download the latest development version of PyNAST here with the followin
 
 Required software
 =================
-PyNAST_ is built on the PyCogent_ package, and uses uclust_ and BLAST_. 
+PyNAST_ is built on the PyCogent_ package, and uses uclust_. 
 
-You must have PyCogent `1.5.3 <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.3/PyCogent-1.5.3.tgz/download>`_, uclust `v1.2.22q <http://www.drive5.com/uclust/downloads1_2_22q.html>`_, and BLAST_ 2.2.22 installed to run PyNAST_. You should first obtain these software packages, and install them according to the instructions provided by their authors.
-
-Note that PyNAST makes use of the legacy BLAST software, not BLAST+.
+You must have PyCogent `1.5.3 <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.3/PyCogent-1.5.3.tgz/download>`_ and uclust `v1.1.579 <http://www.drive5.com/uclust/downloads1_1_579.html>`_ or uclust `v1.2.22q <http://www.drive5.com/uclust/downloads1_2_22q.html>`_ installed to run PyNAST_. You should first obtain these software packages, and install them according to the instructions provided by their authors.
 
 Optional software
 =================
-If you'd like to perform pairwise alignments using MUSCLE_, MAFFT_, or ClustalW_, you must have those programs installed on your machine and in your system path. Currently tested versions are MUSCLE_ v3.8.31, MAFFT v6.602b (**MAFFT v6.925b is known to NOT work with PyNAST**), and ClustalW 1.81 or 1.83. 
+If you'd like to perform pairwise alignments using BLAST_, MUSCLE_, MAFFT_, or ClustalW_, you must have those programs installed on your machine and in your system path. Currently tested versions are BLAST_ 2.2.22, MUSCLE_ v3.8.31, MAFFT v6.602b (**MAFFT v6.925b is known to NOT work with PyNAST**), and ClustalW 1.81 or 1.83. Note that PyNAST makes use of the legacy BLAST software, not BLAST+.
 
 Installation steps
 ==================
 #. Download PyCogent_ 1.5.3 (`src <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.3/PyCogent-1.5.3.tgz/download>`_) and its dependencies, Python_ 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater. PyNAST was tested with Python 2.7.1 and 2.7.2 and NumPy 1.5.1, though other versions may work as well.
 
 #. Download and install uclust_. Binaries are available (`uclust v1.2.22q binaries <http://www.drive5.com/uclust/downloads1_2_22q.html>`_).
-
-#. Download and install BLAST_. 
 
 #. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.2.1 from here <ftp://thebeast.colorado.edu/pub/pynast-releases/pynast-1.2.1.tar.gz>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the GitHub repository with the command: ::
 
