@@ -28,4 +28,4 @@ Limitations in the draft release of the PyNAST GUI
 .. _MUSCLE: http://www.drive5.com/muscle/
 .. _PyNAST: http://qiime.org/pynast
 .. _ClustalW: http://www.ebi.ac.uk/Tools/clustalw2/index.html
-.. _BLAST: ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/
+.. _BLAST: ftp://ftp.ncbi.nlm.nih.gov/blast/executables/release/2.2.22/
