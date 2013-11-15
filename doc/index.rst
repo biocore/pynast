@@ -50,7 +50,8 @@ If you make use of PyNAST_ in published work, please cite:
 
 Need help?
 ==========
-For PyNAST_ support, you can contact `Greg Caporaso <gregcaporaso@gmail.com>`_.
+Requests for help with PyNAST should be directed to the `QIIME Forum <http://forum.qiime.org>`_.
+
 
 .. _PyNAST: http://qiime.org/pynast
 .. _blog: http://qiime.wordpress.com
