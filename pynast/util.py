@@ -33,10 +33,9 @@ __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
 __license__ = "Modified BSD"
-__version__ = "1.2-dev"
+__version__ = "1.2.1"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Development"
 
 """ PyNAST is a complete rewrite of the NAST algorithm written in python.
  While PyNAST 1.0 strived to exactly match the results of the original 

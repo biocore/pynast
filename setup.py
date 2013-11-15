@@ -16,10 +16,9 @@ __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST project"
 __credits__ = ["Greg Caporaso"]
 __license__ = "Modified BSD"
-__version__ = "1.2-dev"
+__version__ = "1.2.1"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Development"
  
 long_description = """The Python Nearest Alignment Space Termination tool
 http://qiime.org/pynast

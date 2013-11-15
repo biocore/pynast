@@ -14,10 +14,9 @@ __author__ = "Kyle Bittinger"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Greg Caporaso", "Kyle Bittinger"]
 __license__ = "Modified BSD"
-__version__ = "1.2-dev"
+__version__ = "1.2.1"
 __maintainer__ = "Kyle Bittinger"
 __email__ = "kylebittinger@gmail.com"
-__status__ = "Development"
 
 class NastLogger:
     __LABELS = [
