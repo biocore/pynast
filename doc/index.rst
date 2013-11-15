@@ -1,6 +1,10 @@
 .. PyNAST documentation master file, created by
    sphinx-quickstart on Mon Jan 25 11:42:17 2010.
 
+====================
+PyNAST Documentation
+====================
+
 Downloading PyNAST: Latest stable release
 =========================================
 You can download the latest `stable release of PyNAST here <ftp://thebeast.colorado.edu/pub/pynast-releases/pynast-1.2.1.tar.gz>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://github.com/downloads/qiime/pynast/PyNAST.app.zip>`_.
