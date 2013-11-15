@@ -1,6 +1,5 @@
-PyNAST 1.2-dev (changes since 1.2 go here)
-==========================================
-
+PyNAST 1.2.1 - (14 Nov 2013)
+============================
 * PyNAST is now distributed under the terms of the Modified BSD License (previously GPL).
 * Improved handling of temporary files. Previously these were written to /tmp and the user didn't have any control over this. Temporary files are now written to tempfile.gettempdir() by default, which is determined by python on a platform-specific basis, and users can override this value by passing the temp_dir option to blast_align_unaligned_seqs, pynast_seqs, ipynast_seqs and the pynast command line interface.
 
