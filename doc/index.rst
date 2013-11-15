@@ -25,7 +25,7 @@ The QIIME blog_ is the primary means by which we will communicate information on
 
 About PyNAST
 ============
-PyNAST_ is a reimplementation of the NAST_ sequence aligner, which has become a popular tool for adding new 16s rDNA sequences to existing 16s rDNA alignments. This reimplementation is more flexible, faster, and easier to install and maintain than the original NAST implementation. PyNAST_ is built using the PyCogent Bioinformatics Toolkit (PyCogent).
+PyNAST_ is a reimplementation of the NAST_ sequence aligner, which has become a popular tool for adding new 16s rRNA sequences to existing 16s rRNA alignments. This reimplementation is more flexible, faster, and easier to install and maintain than the original NAST implementation. PyNAST_ is built using the PyCogent Bioinformatics Toolkit (PyCogent).
 
 The first versions of PyNAST (through PyNAST 1.0) were written to exactly match the results of the original NAST algorithm. Beginning with the post-PyNAST 1.0 development code, PyNAST no longer exactly matches the NAST output but is instead focused on getting better alignments. Users who wish to exactly match the results of NAST should download PyNAST 1.0.
 
