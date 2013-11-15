@@ -16,7 +16,7 @@ __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST project"
 __credits__ = ["Greg Caporaso"]
 __license__ = "Modified BSD"
-__version__ = "1.2.1"
+__version__ = "1.2.1-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
  

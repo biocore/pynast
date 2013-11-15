@@ -18,7 +18,7 @@ __author__ = "Rob Knight"
 __copyright__ = "Copyright 2010, The PyNAST Project"
 __credits__ = ["Rob Knight","Greg Caporaso", "Jai Ram Rideout"]
 __license__ = "Modified BSD"
-__version__ = "1.2.1"
+__version__ = "1.2.1-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
 
