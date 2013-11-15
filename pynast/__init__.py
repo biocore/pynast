@@ -15,6 +15,5 @@ __license__ = "Modified BSD"
 __version__ = "1.2.1"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Development"
 
 __all__ = ['logger','util']

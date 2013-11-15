@@ -24,7 +24,6 @@ __license__ = "Modified BSD"
 __version__ = "1.2.1"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
-__status__ = "Development"
 
 
 pynast_usage_string = """usage: %prog [options] {-i input_fp -t template_fp}
