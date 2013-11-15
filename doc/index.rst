@@ -3,13 +3,13 @@
 
 Downloading PyNAST: Latest stable release
 =========================================
-You can download the latest `stable release of PyNAST here <https://github.com/downloads/qiime/pynast/PyNAST-1.2.tar.gz>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://github.com/downloads/qiime/pynast/PyNAST.app.zip>`_.
+You can download the latest `stable release of PyNAST here <ftp://thebeast.colorado.edu/pub/pynast-releases/pynast-1.2.1.tar.gz>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://github.com/downloads/qiime/pynast/PyNAST.app.zip>`_.
 
 Downloading PyNAST: Development version
 =======================================
 If you want access to the latest-and-greatest features of PyNAST and can tolerate some instability we recommend that you check out the latest version from GitHub. You can do that with the following command: ::
 
-    git clone git://github.com/qiime/pynast.git PyNAST
+    git clone git://github.com/qiime/pynast.git pynast
 
 Installing PyNAST
 =================
@@ -19,13 +19,13 @@ Installing PyNAST
 
 Stay up-to-date on PyNAST news
 ==============================
-Subscribing to the PyNAST blog_ is the best way to keep up-to-date on news related to PyNAST. You can subscribe via RSS or e-mail on the front page of the blog. This is a very low traffic list, with currently around one e-mail per month or less.
+Subscribing to the QIIME blog_ is the best way to keep up-to-date on news related to PyNAST. You can subscribe via RSS or e-mail on the front page of the blog. This is a very low traffic list, with currently around one e-mail per month or less.
 
-The PyNAST blog is the primary means by which we will communicate information on bugs, new releases, and news to our users, so we highly recommend subscribing. We won't share subscriber information with anyone ever.
+The QIIME blog_ is the primary means by which we will communicate information on bugs, new releases, and news to our users, so we highly recommend subscribing. We won't share subscriber information with anyone ever.
 
 About PyNAST
 ============
-PyNAST_ is a reimplementation of the NAST_ sequence aligner, which has become a popular tool for adding new 16s rDNA sequences to existing 16s rDNA alignments. This reimplementation is more flexible, faster, and easier to install and maintain than the original NAST implementation. PyNAST_ is built using the PyCogent Bioinformatics Toolkit.
+PyNAST_ is a reimplementation of the NAST_ sequence aligner, which has become a popular tool for adding new 16s rDNA sequences to existing 16s rDNA alignments. This reimplementation is more flexible, faster, and easier to install and maintain than the original NAST implementation. PyNAST_ is built using the PyCogent Bioinformatics Toolkit (PyCogent).
 
 The first versions of PyNAST (through PyNAST 1.0) were written to exactly match the results of the original NAST algorithm. Beginning with the post-PyNAST 1.0 development code, PyNAST no longer exactly matches the NAST output but is instead focused on getting better alignments. Users who wish to exactly match the results of NAST should download PyNAST 1.0.
 
@@ -49,5 +49,5 @@ Need help?
 For PyNAST_ support, you can contact `Greg Caporaso <gregcaporaso@gmail.com>`_.
 
 .. _PyNAST: http://qiime.org/pynast
-.. _blog: http://pynast.wordpress.com
+.. _blog: http://qiime.wordpress.com
 .. _NAST: http://nar.oxfordjournals.org/cgi/content/full/34/suppl_2/W394
