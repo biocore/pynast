@@ -97,6 +97,6 @@ To get usage information for the PyNAST_ command line application run: ::
 .. _MUSCLE: http://www.drive5.com/muscle/
 .. _PyNAST: http://qiime.org/pynast
 .. _ClustalW: http://www.ebi.ac.uk/Tools/clustalw2/index.html
-.. _BLAST: ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/
+.. _BLAST: ftp://ftp.ncbi.nlm.nih.gov/blast/executables/release/2.2.22/
 .. _MAFFT: http://align.bmr.kyushu-u.ac.jp/mafft/online/server/
 .. _uclust: http://www.drive5.com/uclust/
