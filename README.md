@@ -17,7 +17,7 @@ Citing PyNAST
 -------------
 If you make use of [PyNAST](http://qiime.org/pynast) in published work, please cite:
 
-**PyNAST: a flexible tool for aligning sequences to a template alignment.** 
+PyNAST: a flexible tool for aligning sequences to a template alignment.
 J. Gregory Caporaso, Kyle Bittinger, Frederic D. Bushman, Todd Z. DeSantis, Gary L. Andersen, and Rob Knight. 
 January 15, 2010, DOI 10.1093/bioinformatics/btp636. Bioinformatics 26: 266-267.
 

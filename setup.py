@@ -45,8 +45,10 @@ if pycogent_version < (1,5,3):
     print "PyCogent >= 1.5.3 required, but %s is installed." % cogent.__version__
     exit(1)
 
-long_description = [line for line in open('README.md').read() 
-                    if not line.startswith("[![Build Status]")]
+# long_despcription should be all of the information from README.md, minus 
+# the jenkins build status line
+long_description = ''.join([line for line in open('README.md')
+                            if not line.startswith("[![Build Status]")])
 
 setup(name='pynast',
       version="1.2.1-dev",
