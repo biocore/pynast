@@ -45,13 +45,13 @@ if pycogent_version < (1,5,3):
     print "PyCogent >= 1.5.3 required, but %s is installed." % cogent.__version__
     exit(1)
 
-setup(name='PyNAST',
+setup(name='pynast',
       version="1.2.1-dev",
       description='The Python Nearest Alignment Space Termination tool',
-      author=__maintainer__,
-      author_email=__email__,
-      maintainer=__maintainer__,
-      maintainer_email=__email__,
+      author="Greg Caporaso",
+      author_email="gregcaporaso@gmail.com",
+      maintainer="Greg Caporaso",
+      maintainer_email="gregcaporaso@gmail.com",
       url='http://qiime.org/pynast',
       packages=['pynast'],
       scripts=['scripts/pynast'],
