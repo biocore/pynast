@@ -45,6 +45,9 @@ if pycogent_version < (1,5,3):
     print "PyCogent >= 1.5.3 required, but %s is installed." % cogent.__version__
     exit(1)
 
+long_description = [line for line in open('README.md').read() 
+                    if not line.startswith("[![Build Status]")]
+
 setup(name='pynast',
       version="1.2.1-dev",
       description='The Python Nearest Alignment Space Termination tool',
@@ -55,7 +58,7 @@ setup(name='pynast',
       url='http://qiime.org/pynast',
       packages=['pynast'],
       scripts=['scripts/pynast'],
-      long_description=open('README.md').read(),
+      long_description=long_description,
       install_requires=["cogent >= 1.5.3"],
       extras_require={'test':["nose >= 0.10.1",
                               "tox >= 1.6.1"],
