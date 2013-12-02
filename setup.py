@@ -19,19 +19,31 @@ __license__ = "Modified BSD"
 __version__ = "1.2.1-dev"
 __maintainer__ = "Greg Caporaso"
 __email__ = "gregcaporaso@gmail.com"
- 
-long_description = """The Python Nearest Alignment Space Termination tool
-http://qiime.org/pynast
 
-PyNAST: a flexible tool for aligning sequences to a template alignment. 
-J. Gregory Caporaso, Kyle Bittinger, Frederic D. Bushman, Todd Z. DeSantis, Gary L. Andersen, and Rob Knight. 
-January 15, 2010, DOI 10.1093/bioinformatics/btp636. Bioinformatics 26: 266-267.
-
+# classes/classifiers code adapted from Celery and pyqi:
+# https://github.com/celery/celery/blob/master/setup.py
+# https://github.com/bipy/pyqi/blob/master/setup.py
+#
+# PyPI's list of classifiers can be found here:
+# https://pypi.python.org/pypi?%3Aaction=list_classifiers
+classes = """
+    Development Status :: 4 - Beta
+    License :: OSI Approved :: BSD License
+    Topic :: Software Development :: Libraries :: Application Frameworks
+    Topic :: Software Development :: User Interfaces 
+    Programming Language :: Python
+    Programming Language :: Python :: 2.7
+    Programming Language :: Python :: Implementation :: CPython
+    Operating System :: OS Independent
+    Operating System :: POSIX
+    Operating System :: MacOS :: MacOS X
 """
+classifiers = [s.strip() for s in classes.split('\n') if s]
+
 try:
     import cogent
 except ImportError:
-    print "PyCogent not installed but required. (Is it installed? Is it in the current users $PYTHONPATH or site-packages?) See http://pycogent.sourceforge.net."
+    print "PyCogent not installed but required. (Is it installed? Is it in the current user's $PYTHONPATH or site-packages?) See http://www.pycogent.org"
     exit(1)
 
 pycogent_version = tuple([int(v) \
@@ -51,5 +63,11 @@ setup(name='PyNAST',
       url='http://qiime.org/pynast',
       packages=['pynast'],
       scripts=['scripts/pynast'],
-      long_description=long_description
+      long_description=open('README.md').read(),
+      install_requires=["cogent >= 1.5.3"],
+      extras_require={'test':["nose >= 0.10.1",
+                              "tox >= 1.6.1"],
+                      'doc':"Sphinx >= 0.3"
+                     },
+      classifiers=classifiers
 )
