@@ -12,14 +12,6 @@ from __future__ import division
 from distutils.core import setup
 import re
 
-__author__ = "Greg Caporaso"
-__copyright__ = "Copyright 2010, The PyNAST project"
-__credits__ = ["Greg Caporaso"]
-__license__ = "Modified BSD"
-__version__ = "1.2.1-dev"
-__maintainer__ = "Greg Caporaso"
-__email__ = "gregcaporaso@gmail.com"
-
 # classes/classifiers code adapted from Celery and pyqi:
 # https://github.com/celery/celery/blob/master/setup.py
 # https://github.com/bipy/pyqi/blob/master/setup.py
@@ -54,7 +46,7 @@ if pycogent_version < (1,5,3):
     exit(1)
 
 setup(name='PyNAST',
-      version=__version__,
+      version="1.2.1-dev",
       description='The Python Nearest Alignment Space Termination tool',
       author=__maintainer__,
       author_email=__email__,
