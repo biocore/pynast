@@ -32,19 +32,6 @@ classes = """
 """
 classifiers = [s.strip() for s in classes.split('\n') if s]
 
-try:
-    import cogent
-except ImportError:
-    print "PyCogent not installed but required. (Is it installed? Is it in the current user's $PYTHONPATH or site-packages?) See http://www.pycogent.org"
-    exit(1)
-
-pycogent_version = tuple([int(v) \
-        for v in re.split("[^\d]", cogent.__version__) if v.isdigit()])
-
-if pycogent_version < (1,5,3):
-    print "PyCogent >= 1.5.3 required, but %s is installed." % cogent.__version__
-    exit(1)
-
 # long_despcription should be all of the information from README.md, minus 
 # the jenkins build status line
 long_description = ''.join([line for line in open('README.md')
@@ -61,8 +48,8 @@ setup(name='pynast',
       packages=['pynast'],
       scripts=['scripts/pynast'],
       long_description=long_description,
-      install_requires=["cogent >= 1.5.3",
-                        "numpy >= 1.5.1"],
+      install_requires=["numpy >= 1.5.1",
+                        "cogent >= 1.5.3"],
       extras_require={'test':["nose >= 0.10.1",
                               "tox >= 1.6.1"],
                       'doc':"Sphinx >= 0.3"
