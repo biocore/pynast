@@ -50,9 +50,6 @@ setup(name='pynast',
       long_description=long_description,
       install_requires=["numpy >= 1.5.1",
                         "cogent >= 1.5.3"],
-      extras_require={'test':["nose >= 0.10.1",
-                              "tox >= 1.6.1"],
-                      'doc':"Sphinx >= 0.3"
-                     },
+      extras_require={'doc':"Sphinx >= 0.3"},
       classifiers=classifiers
 )
