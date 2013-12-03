@@ -27,14 +27,6 @@ from pynast.util import (align_two_seqs, reintroduce_template_spacing,
  remove_template_terminal_gaps, get_pynast_temp_dir)
 from pynast.logger import NastLogger
 
-__author__ = "Greg Caporaso"
-__copyright__ = "Copyright 2010, The PyNAST Project"
-__credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
-__license__ = "Modified BSD"
-__version__ = "1.2.1-dev"
-__maintainer__ = "Greg Caporaso"
-__email__ = "gregcaporaso@gmail.com"
-
 class PyNastTests(TestCase):
     """ Tests of the PyNAST functionality
     """

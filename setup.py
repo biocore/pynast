@@ -12,44 +12,44 @@ from __future__ import division
 from distutils.core import setup
 import re
 
-__author__ = "Greg Caporaso"
-__copyright__ = "Copyright 2010, The PyNAST project"
-__credits__ = ["Greg Caporaso"]
-__license__ = "Modified BSD"
-__version__ = "1.2.1-dev"
-__maintainer__ = "Greg Caporaso"
-__email__ = "gregcaporaso@gmail.com"
- 
-long_description = """The Python Nearest Alignment Space Termination tool
-http://qiime.org/pynast
-
-PyNAST: a flexible tool for aligning sequences to a template alignment. 
-J. Gregory Caporaso, Kyle Bittinger, Frederic D. Bushman, Todd Z. DeSantis, Gary L. Andersen, and Rob Knight. 
-January 15, 2010, DOI 10.1093/bioinformatics/btp636. Bioinformatics 26: 266-267.
-
+# classes/classifiers code adapted from Celery and pyqi:
+# https://github.com/celery/celery/blob/master/setup.py
+# https://github.com/bipy/pyqi/blob/master/setup.py
+#
+# PyPI's list of classifiers can be found here:
+# https://pypi.python.org/pypi?%3Aaction=list_classifiers
+classes = """
+    Development Status :: 4 - Beta
+    License :: OSI Approved :: BSD License
+    Topic :: Software Development :: Libraries :: Application Frameworks
+    Topic :: Software Development :: User Interfaces 
+    Programming Language :: Python
+    Programming Language :: Python :: 2.7
+    Programming Language :: Python :: Implementation :: CPython
+    Operating System :: OS Independent
+    Operating System :: POSIX
+    Operating System :: MacOS :: MacOS X
 """
-try:
-    import cogent
-except ImportError:
-    print "PyCogent not installed but required. (Is it installed? Is it in the current users $PYTHONPATH or site-packages?) See http://pycogent.sourceforge.net."
-    exit(1)
+classifiers = [s.strip() for s in classes.split('\n') if s]
 
-pycogent_version = tuple([int(v) \
-        for v in re.split("[^\d]", cogent.__version__) if v.isdigit()])
+# long_despcription should be all of the information from README.md, minus 
+# the jenkins build status line
+long_description = ''.join([line for line in open('README.md')
+                            if not line.startswith("[![Build Status]")])
 
-if pycogent_version < (1,5,3):
-    print "PyCogent >= 1.5.3 required, but %s is installed." % cogent.__version__
-    exit(1)
-
-setup(name='PyNAST',
-      version=__version__,
+setup(name='pynast',
+      version="1.2.1-dev",
       description='The Python Nearest Alignment Space Termination tool',
-      author=__maintainer__,
-      author_email=__email__,
-      maintainer=__maintainer__,
-      maintainer_email=__email__,
+      author="Greg Caporaso",
+      author_email="gregcaporaso@gmail.com",
+      maintainer="Greg Caporaso",
+      maintainer_email="gregcaporaso@gmail.com",
       url='http://qiime.org/pynast',
       packages=['pynast'],
       scripts=['scripts/pynast'],
-      long_description=long_description
+      long_description=long_description,
+      install_requires=["numpy >= 1.5.1",
+                        "cogent >= 1.5.3"],
+      extras_require={'doc':"Sphinx >= 0.3"},
+      classifiers=classifiers
 )

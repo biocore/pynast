@@ -1,0 +1,14 @@
+include README.md
+include COPYING.txt
+include ChangeLog.md
+
+graft pynast
+graft tests
+graft scripts
+graft doc
+
+prune docs/_build
+
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude .git

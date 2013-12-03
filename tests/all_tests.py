@@ -14,14 +14,6 @@ from os.path import join, abspath, dirname, split
 from glob import glob
 import re
 
-__author__ = "Rob Knight"
-__copyright__ = "Copyright 2010, The PyNAST Project"
-__credits__ = ["Rob Knight","Greg Caporaso", "Jai Ram Rideout"]
-__license__ = "Modified BSD"
-__version__ = "1.2.1-dev"
-__maintainer__ = "Greg Caporaso"
-__email__ = "gregcaporaso@gmail.com"
-
 def main():
     pynast_dir = abspath(join(dirname(__file__),'..'))
     test_dir = join(pynast_dir,'tests')

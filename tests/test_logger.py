@@ -17,14 +17,6 @@ from cogent.parse.fasta import MinimalFastaParser
 from pynast.logger import NastLogger
 from pynast.util import get_pynast_temp_dir
 
-__author__ = "Kyle Bittinger"
-__copyright__ = "Copyright 2010, The PyNAST Project"
-__credits__ = ["Greg Caporaso", "Kyle Bittinger"]
-__license__ = "Modified BSD"
-__version__ = "1.2.1-dev"
-__maintainer__ = "Kyle Bittinger"
-__email__ = "kylebittinger@gmail.com"
-
 class NastLoggerTests(TestCase):
     """Tests of the PyNAST logging class"""
 

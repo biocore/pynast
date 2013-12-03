@@ -17,15 +17,6 @@ from pynast.util import ipynast_seqs, pairwise_alignment_methods,\
     null_status_callback_f, get_pynast_temp_dir
 from pynast.logger import NastLogger
 
-__author__ = "Greg Caporaso"
-__copyright__ = "Copyright 2010, The PyNAST Project"
-__credits__ = ["Greg Caporaso", "Kyle Bittinger"]
-__license__ = "Modified BSD"
-__version__ = "1.2.1-dev"
-__maintainer__ = "Greg Caporaso"
-__email__ = "gregcaporaso@gmail.com"
-
-
 pynast_usage_string = """usage: %prog [options] {-i input_fp -t template_fp}
 
 [] indicates optional input (order unimportant)
