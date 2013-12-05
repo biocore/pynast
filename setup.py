@@ -12,6 +12,8 @@ from __future__ import division
 from distutils.core import setup
 import re
 
+__version__ = "1.2.1-dev"
+
 # classes/classifiers code adapted from Celery and pyqi:
 # https://github.com/celery/celery/blob/master/setup.py
 # https://github.com/bipy/pyqi/blob/master/setup.py
@@ -38,7 +40,7 @@ long_description = ''.join([line for line in open('README.md')
                             if not line.startswith("[![Build Status]")])
 
 setup(name='pynast',
-      version="1.2.1-dev",
+      version=__version__,
       description='The Python Nearest Alignment Space Termination tool',
       author="Greg Caporaso",
       author_email="gregcaporaso@gmail.com",
