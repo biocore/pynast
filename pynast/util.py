@@ -652,7 +652,8 @@ def ipynast_seqs(candidate_sequences, template_alignment,
             candidate_fasta_filepath,
             template_fasta_filepath,
             percent_ID=min_pct,
-            enable_rev_strand_matching=True)
+            enable_rev_strand_matching=True,
+            tmp_dir=temp_dir)
 
     try:
         current_result = pw_alignment_iterator.next()
