@@ -14,6 +14,7 @@ from os.path import exists
 from tempfile import gettempdir, NamedTemporaryFile
 from shutil import copy as copy_file
 from glob import glob
+
 from cogent import DNA, LoadSeqs, Sequence
 from cogent.util.misc import remove_files
 from cogent.core.alignment import SequenceCollection, DenseAlignment
@@ -24,10 +25,11 @@ from cogent.app.formatdb import build_blast_db_from_seqs, \
 from cogent.app.muscle_v38 import align_unaligned_seqs as muscle_align_unaligned_seqs
 from cogent.app.mafft import align_unaligned_seqs as mafft_align_unaligned_seqs
 from cogent.app.clustalw import align_unaligned_seqs as clustal_align_unaligned_seqs
-from cogent.app.uclust import uclust_search_and_align_from_fasta_filepath
 from cogent.parse.blast import BlastResult
 from cogent.parse.fasta import MinimalFastaParser
+
 from pynast.logger import NastLogger
+from pynast.pycogent_backports.uclust import uclust_search_and_align_from_fasta_filepath
 
 __author__ = "Greg Caporaso"
 __copyright__ = "Copyright 2010, The PyNAST Project"

@@ -8,11 +8,13 @@ Modified from Daniel McDonald's test_cd_hit.py code on Feb-4-2010 """
 from os import getcwd, rmdir, remove
 from subprocess import Popen, PIPE, STDOUT
 from os.path import isfile
+
 from cogent.util.misc import remove_files
 from cogent.core.moltype import DNA
 from cogent.util.unit_test import TestCase, main
 from cogent.app.util import ApplicationError, get_tmp_filename
-from cogent.app.uclust import (Uclust, 
+
+from pynast.pycogent_backports.uclust import (Uclust, 
  uclust_fasta_sort_from_filepath,
  uclust_cluster_from_sorted_fasta_filepath,
  get_output_filepaths,clusters_from_uc_file,
