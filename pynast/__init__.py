@@ -12,6 +12,6 @@ __credits__ = ["Greg Caporaso",
                "Rob Knight",
                "Kyle Bittinger",
                "Jai Ram Rideout",]
-__version__ = "1.2.2"
+__version__ = "1.2.2-dev"
 
 __all__ = ['logger','util','pycogent_backports']
