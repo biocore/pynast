@@ -4,37 +4,55 @@
 Installing and using the PyNAST command line application
 ********************************************************
 
-Downloading PyNAST
-==================
-You can download the latest stable release of PyNAST `here <ftp://thebeast.colorado.edu/pub/pynast-releases/pynast-1.2.1.tar.gz>`_.
-
-You can download the latest development version of PyNAST here with the following command: ::
-
-    git clone git://github.com/qiime/pynast.git pynast
+PyNAST is installable with ``pip``, but also has non-python dependencies so installation is a little (but not much) more complicated than ``pip install pynast``.
 
 Required software
 =================
 PyNAST_ is built on the PyCogent_ package, and uses uclust_. 
 
-You must have PyCogent `1.5.3 <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.3/PyCogent-1.5.3.tgz/download>`_ and uclust `v1.2.22q <http://www.drive5.com/uclust/downloads1_2_22q.html>`_ installed to run PyNAST_. You should first obtain these software packages, and install them according to the instructions provided by their authors.
+You must have uclust `v1.2.22q <http://www.drive5.com/uclust/downloads1_2_22q.html>`_ installed to run PyNAST_. You should first obtain uclust, and install it according to the instructions provided by their authors.
+
+PyNAST_ also depends on PyCogent_ and NumPy_. If you install PyNAST using the ``pip`` instructions below, these will be installed for you. Alternatively, you can download and install each according to the instructions on the project websites.
 
 Optional software
 =================
 If you'd like to perform pairwise alignments using BLAST_, MUSCLE_, MAFFT_, or ClustalW_, you must have those programs installed on your machine and in your system path. Currently tested versions are BLAST_ 2.2.22, MUSCLE_ v3.8.31, MAFFT v6.602b (**MAFFT v6.925b is known to NOT work with PyNAST**), and ClustalW 1.81 or 1.83. Note that PyNAST makes use of the legacy BLAST software, not BLAST+.
 
-Installation steps
-==================
+pip installation of the latest stable PyNAST release: the easy way
+==================================================================
+
+#. Download and install uclust_. Binaries are available (`uclust v1.2.22q binaries <http://www.drive5.com/uclust/downloads1_2_22q.html>`_).
+
+#. Run ``pip install numpy``
+
+#. Run ``pip install pynast``
+
+That's it! You should now have a working ``PyNAST`` installation. (Note that you must run ``pip` in two steps, due to an `issue with PyCogent <https://github.com/pycogent/pycogent/issues/59>`_.)
+
+pip installation of the latest development version of PyNAST: the easy way
+==========================================================================
+
+#. Download and install uclust_. Binaries are available (`uclust v1.2.22q binaries <http://www.drive5.com/uclust/downloads1_2_22q.html>`_).
+
+#. Run ``pip install numpy``
+
+#. Run ``pip install git://github.com/qiime/pynast.git``
+
+That's it! You should now have a working ``PyNAST`` installation. (Note that you must run ``pip` in two steps, due to an `issue with PyCogent <https://github.com/pycogent/pycogent/issues/59>`_.)
+
+Manual installation: the harder way
+===================================
 #. Download PyCogent_ 1.5.3 (`src <http://sourceforge.net/projects/pycogent/files/PyCogent/1.5.3/PyCogent-1.5.3.tgz/download>`_) and its dependencies, Python_ 2.6 or greater (but less than Python 3.0) and NumPy 1.3.0 or greater. PyNAST was tested with Python 2.7.1 and 2.7.2 and NumPy 1.5.1, though other versions may work as well.
 
 #. Download and install uclust_. Binaries are available (`uclust v1.2.22q binaries <http://www.drive5.com/uclust/downloads1_2_22q.html>`_).
 
-#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST 1.2.1 from here <ftp://thebeast.colorado.edu/pub/pynast-releases/pynast-1.2.1.tar.gz>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the GitHub repository with the command: ::
+#. From your command terminal on an OS X or Linux system, change to the directory where you wish to install PyNAST_. You can either download `PyNAST from PyPI <https://pypi.python.org/pypi/pynast>`_, or if you want the latest development version you can checkout the latest version of PyNAST_ from the GitHub repository with the command: ::
 
     git clone git://github.com/qiime/pynast.git pynast
 
-#. If you downloaded from GitHub, you will have a new folder in the current working directory called ``pynast``. If you downloaded PyNAST-1.2.1, after untar/unzipping ``pynast-1.2.1.tar.gz``, you will have a new directory named ``pynast-1.2.1``. Change to whichever of these directories is relevant for your install procedure, for example::
+#. If you downloaded from GitHub, you will have a new folder in the current working directory called ``pynast``. If you downloaded PyPI, after untar/unzipping the ``tar.gz`` file, you will have a new directory named ``pynast-<version>``, where ``<version>`` is the PyNAST version number. Change to whichever of these directories is relevant for your install procedure, for example::
 
-    cd pynast-1.2.1
+    cd pynast
 
 #. Run ``setup.py``. You may need to do this as root (see :ref:`customizing_your_installation` below if this is not an option, or if you'd like to install the PyNAST library code and/or scripts in non-default locations)::
 
