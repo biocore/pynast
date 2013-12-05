@@ -3,7 +3,7 @@ PyNAST: Python Nearest Alignment Space Termination tool
 
 [![Build Status](http://ci.qiime.org/job/PyNAST/badge/icon)](http://ci.qiime.org/job/PyNAST/)
 
-The official PyNAST source code repository. For details on PyNAST, see http://qiime.org/pynast. This documentation will refer to the latest release version of PyNAST. If you're working with a development version of PyNAST, you should refer to the documentation in PyNAST/doc/.
+The official PyNAST source code repository. For documentation on installing and using PyNAST, see http://qiime.org/pynast. This documentation will refer to the latest release version of PyNAST. If you're working with a development version of PyNAST, you should refer to the documentation in PyNAST/doc/.
 
 See the [QIIME GitHub organization](https://github.com/qiime) for related software projects and data.
 
