@@ -1,5 +1,7 @@
-PyNAST 1.2.1-dev (changes since 1.2.1 go here)
-==============================================
+PyNAST 1.2.2 (5 Dec 2013)
+=========================
+* Fixed bug where some temporary files were (still) being written to /tmp.
+* PyNAST is now pip-installable.
 
 PyNAST 1.2.1 - (14 Nov 2013)
 ============================
