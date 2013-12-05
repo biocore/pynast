@@ -5,16 +5,6 @@
 PyNAST Documentation
 ====================
 
-Downloading PyNAST: Latest stable release
-=========================================
-You can download the latest `stable release of PyNAST here <ftp://thebeast.colorado.edu/pub/pynast-releases/pynast-1.2.1.tar.gz>`_ and the `PyNAST OS X GUI (still PyNAST 1.0) here <https://github.com/downloads/qiime/pynast/PyNAST.app.zip>`_.
-
-Downloading PyNAST: Development version
-=======================================
-If you want access to the latest-and-greatest features of PyNAST and can tolerate some instability we recommend that you check out the latest version from GitHub. You can do that with the following command: ::
-
-    git clone git://github.com/qiime/pynast.git pynast
-
 Installing PyNAST
 =================
 `Notes on installing and using the PyNAST command line application. <install.html>`_
