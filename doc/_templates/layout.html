@@ -1,0 +1,56 @@
+{% extends "!layout.html" %}
+
+
+{% block rootrellink %}
+        <li><a href="{{ pathto('index') }}">home</a>|&nbsp;</li>
+        <li><a href="{{ pathto('search') }}">search</a>&nbsp;</li>
+{% endblock %}
+
+{% block extrahead %}     
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAdyJBQQABvxRaME0S-wyQoxTmluCkmlcBcOZMfdDozzndIHJ6lxRpv5opdXpr1SRwPuMUtSSFwWiDgw"></script>
+<script type="text/javascript" src="{{ pathto("_static/google_feed.js",1)}}"></script>
+{% endblock %}
+
+{% block relbar1 %}
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="{{ pathto('index') }}">
+	<h1>PyNAST: Python Nearest Alignment Space Termination tool</h1></a>
+</div>
+
+{{ super() }}
+{% endblock %}
+
+{# put the sidebar before the body #}
+
+{% block sidebartoc %}
+
+<h3><a href="http://pynast.wordpress.com/">PyNAST News and Announcements</a></h3>
+<p>
+<div class="news"><table style="font-size:12pt;padding: 5px;" id="feed">
+</tr></table></div>	
+</p>
+
+    {{ super() }}
+
+{% endblock %}
+
+{% block sidebar1 %}{{ sidebar() }}{% endblock %}
+{% block sidebar2 %}{% endblock %}
+
+
+{# include the Google Analytics Tracker #}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6636235-3");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+{% endblock %}
+

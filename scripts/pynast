@@ -1,0 +1,194 @@
+#!/usr/bin/env python
+
+#-----------------------------------------------------------------------------
+# Copyright (c) 2013, The PyNAST Development Team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file COPYING.txt, distributed with this software.
+#-----------------------------------------------------------------------------
+
+from optparse import OptionParser
+from os.path import exists, splitext
+from cogent import LoadSeqs, DNA
+from cogent.core.alignment import DenseAlignment
+from cogent.parse.fasta import MinimalFastaParser
+from pynast.util import ipynast_seqs, pairwise_alignment_methods,\
+    null_status_callback_f, get_pynast_temp_dir
+from pynast.logger import NastLogger
+
+pynast_usage_string = """usage: %prog [options] {-i input_fp -t template_fp}
+
+[] indicates optional input (order unimportant)
+{} indicates required input (order unimportant)
+
+Example usage:
+ %prog -i my_input.fasta -t my_template.fasta
+"""
+
+def parse_command_line_parameters():
+    """ Parses command line arguments """
+    usage = pynast_usage_string
+    version = 'Version: %prog 0.1'
+    parser = OptionParser(usage=usage, version=version)
+
+    parser.add_option('-t','--template_fp',action='store',\
+          type='string',help='path to template '+\
+          'alignment file [REQUIRED]')
+    parser.add_option('-i','--input_fp',action='store',\
+          type='string',help='path to input '+\
+          'fasta file [REQUIRED]')
+
+    parser.add_option('-v','--verbose',action='store_true',\
+        dest='verbose',default=False,\
+        help='Print status and other information '+\
+        'during execution [default: %default]')
+    parser.add_option('-p','--min_pct_id',action='store',\
+          type='float',default=75.0,help='minimum percent sequence '+\
+          ' identity to consider a sequence a match [default: %default]')
+    parser.add_option('-l','--min_len',action='store',\
+          type='int',default=1000,help='minimum sequence length '+\
+          'to include in NAST alignment [default: %default]')
+    parser.add_option('-m','--pairwise_alignment_method',action='store',\
+          type='string',default='uclust',help='method '+\
+          'for performing pairwise alignment ' +\
+          '[default: %default]')
+          
+    parser.add_option('-a','--fasta_out_fp',action='store',\
+          type='string',dest='fasta_out_fp',help='path to store '+\
+          'resulting alignment file ' +\
+          '[default: derived from input filepath]')
+    parser.add_option('-g','--log_fp',action='store',\
+          type='string',dest='log_fp',help='path to store '+\
+          'log file ' +\
+          '[default: derived from input filepath]')
+    parser.add_option('-f','--failure_fp',action='store',\
+          type='string',dest='failure_fp',help='path to store '+\
+          'file of seqs which fail to align ' +\
+          '[default: derived from input filepath]')
+    parser.add_option('--temp_dir',action='store',\
+          help='path to store any temp files that are created'+\
+          ' [default: %default]', default=get_pynast_temp_dir())
+          
+    parser.add_option('-e','--max_e_value',
+          type='float',default=None,
+          help='Deprecated. Will be removed in PyNAST 1.3')
+    parser.add_option('-d','--blast_db',\
+          default=None,help='Deprecated. Will be removed in PyNAST 1.3')
+          
+    opts,args = parser.parse_args()
+    
+    if opts.max_e_value:
+        print "Deprecation Warning: max_e_value no longer used "+\
+        "as database search now uses uclust. "
+        
+    if opts.blast_db:
+        print "Deprecation Warning: blast_db no longer used "+\
+        "as database search now uses uclust. "
+    
+    if args:
+        parser.error('All parameters must be passed as options.'+\
+        ' Offending parameter(s):\n %s' % '\n '.join(args))
+
+    required_options = ['input_fp','template_fp']    
+    for option in required_options:
+        if eval('opts.%s' % option) == None:
+            parser.error('Required option --%s omitted.' % option) 
+        
+    pairwise_alignment_methods = {}.fromkeys([\
+     'muscle','mafft','clustal','pair_hmm','blast','uclust'])
+    if opts.pairwise_alignment_method not in pairwise_alignment_methods:
+        parser.error(\
+         'Unknown pairwise alignment method. Available options are:\n %s' %\
+         ' '.join(pairwise_alignment_methods))
+         
+    if not exists(opts.template_fp):
+        parser.error(\
+         'Template filepath does not exist:\n %s\n Pass a valid one via -t.'%\
+         opts.template_fp)
+         
+    if not exists(opts.input_fp):
+        parser.error(\
+         'Input filepath does not exist:\n %s\n Pass a valid one via -i.'%\
+         opts.input_fp)
+
+    return opts,args
+
+def main():
+    opts, args = parse_command_line_parameters()
+    verbose = opts.verbose
+    
+    seqs_fp = opts.input_fp
+    min_pct_id = opts.min_pct_id
+    min_len = opts.min_len
+    template_fp = opts.template_fp
+    temp_dir = opts.temp_dir
+
+    align_unaligned_seqs_f =\
+     pairwise_alignment_methods[opts.pairwise_alignment_method]
+
+    # If necessary, derive default locations for alignment, log, and
+    # failure files by removing the file extension from the sequences
+    # filepath, seqs_fp.
+    seqs_fp_base = splitext(seqs_fp)[0]
+    aln_fp = opts.fasta_out_fp or (seqs_fp_base + '_pynast_aligned.fasta')
+    log_fp = opts.log_fp or (seqs_fp_base + '_pynast_log.txt') 
+    fail_fp = opts.failure_fp or (seqs_fp_base + '_pynast_fail.fasta')
+
+    if verbose:
+        print "Input file              : %s" % seqs_fp
+        print "Template alignment      : %s" % template_fp
+        print "Output alignment        : %s" % aln_fp
+        print "Log file                : %s" % log_fp
+        print "Failure file            : %s" % fail_fp
+
+    logger = NastLogger(log_fp)
+
+    candidate_sequences = MinimalFastaParser(open(seqs_fp))
+    
+    template_alignment = []
+    for seq_id, seq in MinimalFastaParser(open(template_fp)):
+        # replace '.' chars with '-' chars
+        # and lowercase chars with uppercase chars
+        template_alignment.append((seq_id,seq.replace('.','-').upper()))
+        
+    try:
+        template_alignment = LoadSeqs(data=template_alignment,moltype=DNA,\
+         aligned=DenseAlignment)
+    except KeyError, e:
+        raise KeyError,\
+         'Only ACGT-. characters can be contained in template alignments.'+\
+         ' The offending character was: %s' % e
+        
+    
+    pynast_iterator = ipynast_seqs(\
+      candidate_sequences,\
+      template_alignment,\
+      max_hits=30,\
+      min_pct=min_pct_id,\
+      min_len=min_len,\
+      align_unaligned_seqs_f=align_unaligned_seqs_f,\
+      logger=logger,
+      temp_dir=temp_dir)
+    
+    aln_file = open(aln_fp,'w')
+    fail_file = open(fail_fp,'w')
+    completed_seq_count = 0
+    
+    for seq, status in pynast_iterator:
+        if status == 0: 
+            aln_file.write('>%s\n%s\n' % (seq.Name,str(seq)))
+        else:
+            fail_file.write('>%s\n%s\n' % (seq.Name,str(seq)))
+        
+        # Update completed sequence count, and print status message
+        # when requested by user.
+        completed_seq_count += 1
+        if verbose and completed_seq_count % 100 == 0:
+            print '%d sequences completed.' % completed_seq_count
+
+    aln_file.close()
+    fail_file.close()
+
+if __name__ == "__main__":
+    main()
