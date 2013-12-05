@@ -31,14 +31,6 @@ from cogent.parse.fasta import MinimalFastaParser
 from pynast.logger import NastLogger
 from pynast.pycogent_backports.uclust import uclust_search_and_align_from_fasta_filepath
 
-__author__ = "Greg Caporaso"
-__copyright__ = "Copyright 2010, The PyNAST Project"
-__credits__ = ["Greg Caporaso", "Kyle Bittinger", "Jai Ram Rideout"]
-__license__ = "Modified BSD"
-__version__ = "1.2.1-dev"
-__maintainer__ = "Greg Caporaso"
-__email__ = "gregcaporaso@gmail.com"
-
 """ PyNAST is a complete rewrite of the NAST algorithm written in python.
  While PyNAST 1.0 strived to exactly match the results of the original 
  NAST algorithm, the later version (beginning with the post-1.0 development
