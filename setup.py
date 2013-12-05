@@ -12,7 +12,7 @@ from __future__ import division
 from distutils.core import setup
 import re
 
-__version__ = "1.2.1-dev"
+__version__ = "1.2.2"
 
 # classes/classifiers code adapted from Celery and pyqi:
 # https://github.com/celery/celery/blob/master/setup.py
