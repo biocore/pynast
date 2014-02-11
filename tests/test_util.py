@@ -99,6 +99,7 @@ class PyNastTests(TestCase):
         log_file.close()
 
         self.assertEqual(contents, expected_logfile_contents)
+        self.assertTrue(False)
 
     def test_pynast_logging_for_stringent_user_requirements(self):
         """pynast_seqs() should record info if best hit does not meet min requirements
