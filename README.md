@@ -3,9 +3,9 @@ PyNAST: Python Nearest Alignment Space Termination tool
 
 [![Build Status](http://ci.qiime.org/job/PyNAST/badge/icon)](http://ci.qiime.org/job/PyNAST/)
 
-The official PyNAST source code repository. For documentation on installing and using PyNAST, see http://qiime.org/pynast. This documentation will refer to the latest release version of PyNAST. If you're working with a development version of PyNAST, you should refer to the documentation in PyNAST/doc/.
+The official PyNAST source code repository. For documentation on installing and using PyNAST, see http://biocore.github.io/pynast/. This documentation will refer to the latest release version of PyNAST. If you're working with a development version of PyNAST, you should refer to the documentation in PyNAST/doc/.
 
-See the [QIIME GitHub organization](https://github.com/qiime) for related software projects and data.
+See the [biocore GitHub organization](https://github.com/biocore) for related software projects and data.
 
 Stay up-to-date on PyNAST news
 ------------------------------
@@ -15,7 +15,7 @@ The QIIME blog is the primary means by which we will communicate information on 
 
 Citing PyNAST
 -------------
-If you make use of [PyNAST](http://qiime.org/pynast) in published work, please cite:
+If you make use of [PyNAST](http://biocore.github.io/pynast/) in published work, please cite:
 
 PyNAST: a flexible tool for aligning sequences to a template alignment.
 J. Gregory Caporaso, Kyle Bittinger, Frederic D. Bushman, Todd Z. DeSantis, Gary L. Andersen, and Rob Knight. 
