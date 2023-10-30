@@ -1,3 +1,5 @@
+The PyNAST project is no longer active. We recommend using [QIIME 2](https://qiime2.org) for microbiome analysis projects. 
+
 PyNAST: Python Nearest Alignment Space Termination tool
 =======================================================
 
